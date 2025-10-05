@@ -1,0 +1,5 @@
+C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/CMakeFiles/Dream.dir
+C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/CMakeFiles/Dream_autogen_timestamp_deps.dir
+C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/CMakeFiles/Dream_autogen.dir
