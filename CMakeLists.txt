@@ -38,6 +38,8 @@ add_executable(Dream
         WaveManager.cpp
         LevelEditorWidget.h
         LevelEditorWidget.cpp
+        LevelLoader.h
+        LevelLoader.cpp
         # 如果有 .ui 和 .qrc 文件，也在这里添加
         # MainWindow.ui
         # resources.qrc

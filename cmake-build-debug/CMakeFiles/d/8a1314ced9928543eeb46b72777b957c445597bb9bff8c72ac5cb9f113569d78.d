@@ -362,6 +362,8 @@ Dream_autogen/timestamp: \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameManager.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.h \
+  C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelLoader.cpp \
+  C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelLoader.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/MainWindow.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/MainWindow.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Player.cpp \
@@ -376,82 +378,23 @@ Dream_autogen/timestamp: \
   Dream_autogen/moc_predefs.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/main.cpp \
   D:/Toolbox/CLion/bin/cmake/win/x64/bin/cmake.exe \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCXXCompiler.cmake.in \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCXXInformation.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCompilerIdDetection.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineCompileFeatures.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineRCCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeFindBinUtils.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeGenericSystem.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeLanguageInformation.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeParseImplicitIncludeInfo.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeParseImplicitLinkInfo.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeParseLibraryArchitecture.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeRCCompiler.cmake.in \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeRCInformation.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeSystem.cmake.in \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeTestCompilerCommon.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeTestRCCompiler.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CheckCXXCompilerFlag.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CheckIncludeFileCXX.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CheckLibraryExists.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/ADSP-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/ARMCC-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/ARMClang-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/AppleClang-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Borland-DetermineCompiler.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Clang-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Clang-DetermineCompilerInternal.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Comeau-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Compaq-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Cray-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/CrayClang-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Embarcadero-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Fujitsu-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/GHS-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/GNU-CXX-DetermineCompiler.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/GNU-CXX.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/GNU-FindBinUtils.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/GNU.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/HP-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/IAR-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/IBMClang-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Intel-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/LCC-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/MSVC-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/NVHPC-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/NVIDIA-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/OrangeC-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/PGI-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/PathScale-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/SCO-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/SunPro-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/TI-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Tasking-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/VisualAge-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/Watcom-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/XL-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/XLClang-CXX-DetermineCompiler.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Compiler/zOS-CXX-DetermineCompiler.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/FindPackageMessage.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/FindThreads.cmake \
@@ -460,8 +403,6 @@ Dream_autogen/timestamp: \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Internal/CheckCompilerFlag.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Internal/CheckFlagCommonConfig.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Internal/FeatureTesting.cmake \
-  D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Platform/Windows-Determine-CXX.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Platform/Windows-GNU-CXX-ABI.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Platform/Windows-GNU-CXX.cmake \
   D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/Platform/Windows-GNU.cmake \
