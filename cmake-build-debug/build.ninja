@@ -137,6 +137,22 @@ build CMakeFiles/Dream.dir/LevelLoader.cpp.obj: CXX_COMPILER__Dream_unscanned_De
   OBJECT_DIR = CMakeFiles\Dream.dir
   OBJECT_FILE_DIR = CMakeFiles\Dream.dir
 
+build CMakeFiles/Dream.dir/Obstacle.cpp.obj: CXX_COMPILER__Dream_unscanned_Debug C$:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Obstacle.cpp || cmake_object_order_depends_target_Dream
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
+  DEP_FILE = CMakeFiles\Dream.dir\Obstacle.cpp.obj.d
+  FLAGS = -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug -IC:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream -IC:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/Dream_autogen/include -isystem C:/Qt/6.9.0/mingw_64/include/QtCore -isystem C:/Qt/6.9.0/mingw_64/include -isystem C:/Qt/6.9.0/mingw_64/mkspecs/win32-g++ -isystem C:/Qt/6.9.0/mingw_64/include/QtGui -isystem C:/Qt/6.9.0/mingw_64/include/QtWidgets
+  OBJECT_DIR = CMakeFiles\Dream.dir
+  OBJECT_FILE_DIR = CMakeFiles\Dream.dir
+
+build CMakeFiles/Dream.dir/GameMap.cpp.obj: CXX_COMPILER__Dream_unscanned_Debug C$:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameMap.cpp || cmake_object_order_depends_target_Dream
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
+  DEP_FILE = CMakeFiles\Dream.dir\GameMap.cpp.obj.d
+  FLAGS = -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug -IC:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream -IC:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/Dream_autogen/include -isystem C:/Qt/6.9.0/mingw_64/include/QtCore -isystem C:/Qt/6.9.0/mingw_64/include -isystem C:/Qt/6.9.0/mingw_64/mkspecs/win32-g++ -isystem C:/Qt/6.9.0/mingw_64/include/QtGui -isystem C:/Qt/6.9.0/mingw_64/include/QtWidgets
+  OBJECT_DIR = CMakeFiles\Dream.dir
+  OBJECT_FILE_DIR = CMakeFiles\Dream.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Dream
@@ -145,7 +161,7 @@ build CMakeFiles/Dream.dir/LevelLoader.cpp.obj: CXX_COMPILER__Dream_unscanned_De
 #############################################
 # Link the executable Dream.exe
 
-build Dream.exe: CXX_EXECUTABLE_LINKER__Dream_Debug CMakeFiles/Dream.dir/Dream_autogen/mocs_compilation.cpp.obj CMakeFiles/Dream.dir/main.cpp.obj CMakeFiles/Dream.dir/MainWindow.cpp.obj CMakeFiles/Dream.dir/GameManager.cpp.obj CMakeFiles/Dream.dir/Player.cpp.obj CMakeFiles/Dream.dir/Tower.cpp.obj CMakeFiles/Dream.dir/Enemy.cpp.obj CMakeFiles/Dream.dir/Bullet.cpp.obj CMakeFiles/Dream.dir/WaveManager.cpp.obj CMakeFiles/Dream.dir/LevelEditorWidget.cpp.obj CMakeFiles/Dream.dir/LevelLoader.cpp.obj | C$:/Qt/6.9.0/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.9.0/mingw_64/lib/libQt6Gui.a C$:/Qt/6.9.0/mingw_64/lib/libQt6Core.a || Dream_autogen Dream_autogen_timestamp_deps
+build Dream.exe: CXX_EXECUTABLE_LINKER__Dream_Debug CMakeFiles/Dream.dir/Dream_autogen/mocs_compilation.cpp.obj CMakeFiles/Dream.dir/main.cpp.obj CMakeFiles/Dream.dir/MainWindow.cpp.obj CMakeFiles/Dream.dir/GameManager.cpp.obj CMakeFiles/Dream.dir/Player.cpp.obj CMakeFiles/Dream.dir/Tower.cpp.obj CMakeFiles/Dream.dir/Enemy.cpp.obj CMakeFiles/Dream.dir/Bullet.cpp.obj CMakeFiles/Dream.dir/WaveManager.cpp.obj CMakeFiles/Dream.dir/LevelEditorWidget.cpp.obj CMakeFiles/Dream.dir/LevelLoader.cpp.obj CMakeFiles/Dream.dir/Obstacle.cpp.obj CMakeFiles/Dream.dir/GameMap.cpp.obj | C$:/Qt/6.9.0/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.9.0/mingw_64/lib/libQt6Gui.a C$:/Qt/6.9.0/mingw_64/lib/libQt6Core.a || Dream_autogen Dream_autogen_timestamp_deps
   FLAGS = -g
   LINK_LIBRARIES = C:/Qt/6.9.0/mingw_64/lib/libQt6Widgets.a  C:/Qt/6.9.0/mingw_64/lib/libQt6Gui.a  C:/Qt/6.9.0/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -ld3d11  -ldxgi  -ldxguid  -ld3d12  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Dream.dir
@@ -204,7 +220,7 @@ build Dream_autogen/timestamp Dream_autogen/mocs_compilation.cpp | ${cmake_ninja
 #############################################
 # Phony custom command for CMakeFiles\Dream_autogen_timestamp_deps
 
-build CMakeFiles/Dream_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/Dream_autogen_timestamp_deps: phony C$:/Qt/6.9.0/mingw_64/lib/libQt6Gui.a C$:/Qt/6.9.0/mingw_64/bin/moc.exe C$:/Qt/6.9.0/mingw_64/lib/libQt6Core.a C$:/Qt/6.9.0/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.9.0/mingw_64/bin/uic.exe
+build CMakeFiles/Dream_autogen_timestamp_deps | ${cmake_ninja_workdir}CMakeFiles/Dream_autogen_timestamp_deps: phony C$:/Qt/6.9.0/mingw_64/lib/libQt6Gui.a C$:/Qt/6.9.0/mingw_64/lib/libQt6Core.a C$:/Qt/6.9.0/mingw_64/bin/moc.exe C$:/Qt/6.9.0/mingw_64/bin/uic.exe C$:/Qt/6.9.0/mingw_64/lib/libQt6Widgets.a
 
 
 #############################################

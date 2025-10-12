@@ -6,7 +6,6 @@
 #include <QDebug>
 
 bool LevelLoader::loadForLevel(int levelId, LevelData& levelData) {
-    // 【已修正】使用 QString::number() 来避免编译器在解析 arg() 时产生歧义
     QString filePath = QString("./levels/level_%1.json").arg(QString::number(levelId));
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {

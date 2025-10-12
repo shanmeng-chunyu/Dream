@@ -1,89 +1,68 @@
+// ... 其他include ...
 #include "GameManager.h"
-#include <QGraphicsScene>
+#include "GameMap.h"
+#include "Player.h"
+#include "WaveManager.h"
+#include "Tower.h"
+#include "Enemy.h"
+#include "Obstacle.h" // <-- 必须包含新加的头文件
 
-// 初始化静态实例指针
-GameManager *GameManager::m_instance = nullptr;
+// ... getInstance(), 构造, 析构等函数不变 ...
 
-GameManager *GameManager::instance() {
-    if (!m_instance) {
-        m_instance = new GameManager();
-    }
-    return m_instance;
-}
+void GameManager::startGame(int levelId) {
+    cleanup(); // 开始新游戏前先清理旧场景
 
-GameManager::GameManager(QObject *parent)
-    : QObject(parent), m_scene(nullptr), m_waveManager(new WaveManager(this)), m_player(new Player(this)) {
-    m_gameTimer = new QTimer(this);
-    connect(m_gameTimer, &QTimer::timeout, this, &GameManager::gameLoop);
-}
+    // 初始化核心组件
+    player = std::make_unique<Player>();
+    map = std::make_unique<GameMap>();
 
-GameManager::~GameManager() {
-    // 清理工作
-    m_gameTimer->stop();
-}
+    if (map->loadMap(levelId)) {
+        // ... 加载WaveManager, 设置玩家初始状态等代码 ...
 
-void GameManager::initialize(QGraphicsScene *scene) {
-    m_scene = scene;
-    // 设置玩家初始状态
-    m_player->setInitialState(100, 500);
-    // 启动游戏循环，例如每16毫秒更新一次（约60FPS）
-    m_gameTimer->start(16);
-}
+        // =================================================================
+        // 新增内容: 根据地图数据创建障碍物实例
+        // 负责人: P1 / P2
+        // 说明: 这是连接数据和表现的关键一步。
+        //      1. 从map对象获取所有障碍物的数据(ObstacleData)。
+        //      2. 遍历这些数据。
+        //      3. 为每一条数据创建一个Obstacle的图形实例。
+        //      4. 将实例的指针存入GameManager的obstacles容器中进行统一管理。
+        //      5. (重要) 将实例添加到QGraphicsScene中进行渲染 (这步由P2在场景类中完成)。
+        const auto& obstacleData = map->getObstacles();
+        for (const auto& data : obstacleData) {
+            auto obstacle = std::make_unique<Obstacle>(data.typeId);
+            obstacle->setPos(data.position);
+            // scene->addItem(obstacle.get()); // P2同学需要将这个实例添加到场景中
+            obstacles.push_back(std::move(obstacle));
+        }
+        // =================================================================
 
-void GameManager::addTower(Tower *tower) {
-    if (m_scene && tower) {
-        // m_towers.append(tower);
-        m_scene->addItem(tower);
-    }
-}
-
-void GameManager::removeTower(Tower *tower) {
-    if (tower) {
-        // m_towers.removeOne(tower);
-        delete tower;
+    } else {
+        // 处理地图加载失败的情况
     }
 }
 
-void GameManager::addEnemy(Enemy *enemy) {
-    if (m_scene && enemy) {
-        // m_enemies.append(enemy);
-        m_scene->addItem(enemy);
-    }
+void GameManager::cleanup() {
+    // ... 清理 towers, enemies, projectiles ...
+    towers.clear();
+    enemies.clear();
+    projectiles.clear();
+
+    // =================================================================
+    // 新增内容: 清理障碍物
+    // 说明: 当游戏结束或重新开始时, obstacles容器会被清空。
+    //      由于我们使用了std::unique_ptr, 容器清空时会自动删除所有
+    //      它管理的Obstacle对象，安全地释放内存。
+    obstacles.clear();
+    // =================================================================
+
+    // ... reset player, map, waveManager ...
 }
 
-void GameManager::removeEnemy(Enemy *enemy) {
-    if (enemy) {
-        // m_enemies.removeOne(enemy);
-        delete enemy;
-    }
+void GameManager::update() {
+    // 主循环...
+    // 注意：障碍物是静态的, 所以不需要在update循环中调用它们的任何方法。
+    // 这也是我们将它与需要每帧更新的GameObject分开设计的原因，可以提升性能。
 }
 
-void GameManager::addBullet(QGraphicsItem *bullet) {
-    if (m_scene && bullet) {
-        m_scene->addItem(bullet);
-    }
-}
-
-void GameManager::removeBullet(QGraphicsItem *bullet) {
-    if (bullet) {
-        delete bullet;
-    }
-}
-
-Player *GameManager::getPlayer() const {
-    return m_player;
-}
-
-void GameManager::gameLoop() {
-    if (!m_scene) return;
-
-    // 游戏主循环逻辑
-    // 1. 更新所有游戏元素（塔、敌人、子弹）
-    // 2. 检测碰撞
-    // 3. 处理敌人波次
-    // 4. 更新UI
-
-    // 示例：让场景中的所有可动对象前进
-    // QGraphicsScene::advance() 会调用场景中所有item的advance()方法
-    m_scene->advance();
-}
+// ... 其他函数的实现 ...

@@ -1,57 +1,54 @@
-#ifndef DREAM_GAMEMANAGER_H
-#define DREAM_GAMEMANAGER_H
+#pragma once
 
 #include <QObject>
-#include <QGraphicsScene>
-#include <QTimer>
-#include "WaveManager.h"
-#include "Player.h"
-#include "Tower.h"
-#include "Enemy.h"
-#include "Bullet.h"
+#include <memory>
+#include <vector>
+
+// --- 前向声明 ---
+class Tower;
+class Enemy;
+class Projectile;
+class WaveManager;
+class Player;
+class GameMap;
+class Obstacle; // <-- 新增前向声明
 
 class GameManager : public QObject {
     Q_OBJECT
 
-    public:
-    static GameManager *instance();
+public:
+    static GameManager* getInstance();
+    void startGame(int levelId);
+    void stopGame();
+    void pauseGame();
+    void resumeGame();
 
-    void initialize(QGraphicsScene *scene);
-
-    void addTower(Tower *tower);
-
-    void removeTower(Tower *tower);
-
-    void addEnemy(Enemy *enemy);
-
-    void removeEnemy(Enemy *enemy);
-
-    void addBullet(QGraphicsItem *bullet);
-
-    void removeBullet(QGraphicsItem *bullet);
-
-    Player *getPlayer() const;
+    public slots:
+        void update();
 
 private:
-    explicit GameManager(QObject *parent = nullptr);
+    explicit GameManager(QObject* parent = nullptr);
+    ~GameManager();
+    GameManager(const GameManager&) = delete;
+    GameManager& operator=(const GameManager&) = delete;
+    void cleanup();
 
-    ~GameManager() override;
+    static GameManager* instance;
 
-    // 防止拷贝
-    GameManager(const GameManager &) = delete;
+    std::unique_ptr<Player> player;
+    std::unique_ptr<GameMap> map;
+    std::unique_ptr<WaveManager> waveManager;
 
-    GameManager &operator=(const GameManager &) = delete;
+    std::vector<std::unique_ptr<Tower>> towers;
+    std::vector<std::unique_ptr<Enemy>> enemies;
+    std::vector<std::unique_ptr<Projectile>> projectiles;
 
-    void gameLoop();
+    // =================================================================
+    // 新增内容: 存储障碍物实例的容器
+    // 说明: 尽管障碍物不在update()循环中更新，但由GameManager持有其所有权
+    //      可以确保它们的生命周期被正确管理，在游戏结束时统一释放资源。
+    std::vector<std::unique_ptr<Obstacle>> obstacles;
+    // =================================================================
 
-    static GameManager *m_instance;
-    QGraphicsScene *m_scene;
-    WaveManager *m_waveManager;
-    Player *m_player;
-    QTimer *m_gameTimer;
-    // 可以添加塔、敌人的列表
-    // QList<Tower*> m_towers;
-    // QList<Enemy*> m_enemies;
+    bool isPaused;
 };
-
-#endif //DREAM_GAMEMANAGER_H
