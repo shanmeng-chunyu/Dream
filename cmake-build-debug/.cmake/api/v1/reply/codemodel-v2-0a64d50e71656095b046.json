@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Dream",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Dream::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Dream-Debug-a712d0c1b996ed706bd1.json",
+					"name" : "Dream",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Dream_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Dream_autogen-Debug-01ba1353a86e9c8efb2a.json",
+					"name" : "Dream_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Dream_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Dream_autogen_timestamp_deps-Debug-95a1e7b91fde30083ad6.json",
+					"name" : "Dream_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug",
+		"source" : "C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

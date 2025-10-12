@@ -1,6 +1,8 @@
 Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QObject \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/QPoint \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QPointF \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/QSize \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QTimer \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q17memory.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q20functional.h \
