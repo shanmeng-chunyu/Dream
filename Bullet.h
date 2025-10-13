@@ -1,28 +1,29 @@
-#ifndef DREAM_BULLET_H
-#define DREAM_BULLET_H
+#ifndef BULLET_H
+#define BULLET_H
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
 
-class Enemy; // 前向声明
+class Enemy;
 
 class Bullet : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
-    public:
-    explicit Bullet(Enemy *target, int damage, QGraphicsItem *parent = nullptr);
+public:
+    explicit Bullet(int damage, double speed, Enemy* target, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
+    int getDamage() const;
+    Enemy* getTarget() const;
 
-    // QGraphicsItem 的虚函数，用于动画
-    void advance(int phase) override;
+    public slots:
+        void move();
 
     signals:
-
-        void hitTarget(Bullet *bullet);
+        void hitTarget(Bullet* bullet);
 
 private:
-    Enemy *m_target;
-    int m_damage;
-    int m_speed;
+    int damage;
+    double speed;
+    Enemy* target;
 };
 
-#endif //DREAM_BULLET_H
+#endif // BULLET_H

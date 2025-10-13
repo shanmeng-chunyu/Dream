@@ -1,37 +1,40 @@
 #include "Bullet.h"
 #include "Enemy.h"
 #include <QLineF>
-#include <qmath.h>
-#include "GameManager.h"
+#include <QtMath>
 
-Bullet::Bullet(Enemy *target, int damage, QGraphicsItem *parent)
-    : QObject(nullptr), QGraphicsPixmapItem(parent), m_target(target), m_damage(damage), m_speed(10) {
-    // 设置子弹图像 (这里用一个简单的颜色块代替)
-    QPixmap pixmap(10, 10);
-    pixmap.fill(Qt::yellow);
-    setPixmap(pixmap);
-}
+Bullet::Bullet(int damage, double speed, Enemy* target, const QPixmap& pixmap, QGraphicsItem* parent)
+    : QObject(nullptr),
+      QGraphicsPixmapItem(pixmap, parent),
+      damage(damage),
+      speed(speed),
+      target(target) {}
 
-void Bullet::advance(int phase) {
-    if (!phase) return;
-
-    if (!m_target || !scene() || !m_target->scene()) {
-        // 目标失效
-        GameManager::instance()->removeBullet(this);
-        return;
-    }
-
-    QLineF line(pos(), m_target->pos());
-    if (line.length() < m_speed) {
-        m_target->takeDamage(m_damage);
+void Bullet::move() {
+    if (!target) {
+        // 目标不存在，自我销毁
         emit hitTarget(this);
         return;
     }
 
-    // 移动子弹
-    double angle = qAtan2(m_target->pos().y() - y(), m_target->pos().x() - x());
-    double dx = m_speed * qCos(angle);
-    double dy = m_speed * qSin(angle);
+    QLineF line(pos(), target->pos());
+    if (line.length() < speed) {
+        // 到达目标
+        emit hitTarget(this);
+        return;
+    }
 
-    setPos(x() + dx, y() + dy);
+    // 朝目标移动
+    double angle = atan2(target->pos().y() - pos().y(), target->pos().x() - pos().x());
+    double dx = speed * cos(angle);
+    double dy = speed * sin(angle);
+    setPos(pos().x() + dx, pos().y() + dy);
+}
+
+int Bullet::getDamage() const {
+    return damage;
+}
+
+Enemy* Bullet::getTarget() const {
+    return target;
 }

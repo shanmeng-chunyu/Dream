@@ -1,49 +1,80 @@
 #include "WaveManager.h"
-#include "GameManager.h"
-#include "Enemy.h"
 
-WaveManager::WaveManager(QObject *parent)
-    : QObject(parent), m_currentWave(0), m_enemiesToSpawn(0) {
-    m_spawnTimer = new QTimer(this);
-    connect(m_spawnTimer, &QTimer::timeout, this, &WaveManager::spawnEnemy);
+WaveManager::WaveManager(GameMap* map, QObject* parent)
+    : QObject(parent), currentWaveIndex(-1), gameMap(map), screenSize(800, 600) {
+    spawnTimer = new QTimer(this);
+    connect(spawnTimer, &QTimer::timeout, this, &WaveManager::spawnEnemyFromQueue);
+}
 
-    // 示例波次数据
-    m_waves.push_back({0, 10, 1000});
-    m_waves.push_back({0, 15, 800});
+void WaveManager::loadWaves(const QJsonArray& wavesData) {
+    waves.clear();
+    for (const auto& waveValue : wavesData) {
+        Wave wave;
+        QJsonArray enemiesData = waveValue.toObject()["enemies"].toArray();
+        for (const auto& enemyValue : enemiesData) {
+            QJsonObject enemyObj = enemyValue.toObject();
+            EnemyWaveData enemyData;
+            enemyData.type = enemyObj["type"].toString();
+            enemyData.count = enemyObj["count"].toInt();
+            enemyData.interval = enemyObj["interval"].toDouble();
+            wave.enemies.append(enemyData);
+        }
+        waves.append(wave);
+    }
 }
 
 void WaveManager::startNextWave() {
-    if (m_currentWave >= m_waves.size()) {
-        // 所有波次已完成
+    if (currentWaveIndex + 1 >= waves.size()) {
+        emit allWavesCompleted();
         return;
     }
 
-    WaveInfo &wave = m_waves[m_currentWave];
-    m_enemiesToSpawn = wave.enemyCount;
-    m_spawnTimer->start(wave.spawnInterval);
-
-    m_currentWave++;
+    currentWaveIndex++;
+    spawnQueue = waves[currentWaveIndex].enemies;
+    if (!spawnQueue.isEmpty()) {
+        spawnTimer->start(spawnQueue.first().interval * 1000);
+    }
 }
 
-void WaveManager::loadWavesFromFile(const QString &filePath) {
-    // 从JSON或XML文件加载波次信息
-}
-
-void WaveManager::spawnEnemy() {
-    if (m_enemiesToSpawn <= 0) {
-        m_spawnTimer->stop();
+void WaveManager::spawnEnemyFromQueue() {
+    if (spawnQueue.isEmpty()) {
+        spawnTimer->stop();
+        if (currentWaveIndex >= waves.size() - 1) {
+             emit allWavesCompleted();
+        }
         return;
     }
 
-    // 简化: 创建一个敌人并添加到游戏中
-    // 路径应该从关卡数据中读取
-    std::vector<QPointF> path;
-    path.push_back(QPointF(0, 100));
-    path.push_back(QPointF(700, 100));
-    path.push_back(QPointF(700, 400));
+    EnemyWaveData& current = spawnQueue.first();
 
-    Enemy *enemy = new Enemy(path);
-    GameManager::instance()->addEnemy(enemy);
+    // 将地图的相对路径转换为绝对路径
+    std::vector<QPointF> absolutePath;
+    const auto& relativePath = gameMap->getPath();
+    for(const QPointF& relPt : relativePath) {
+        absolutePath.emplace_back(relPt.x() * screenSize.width(), relPt.y() * screenSize.height());
+    }
 
-    m_enemiesToSpawn--;
+    emit spawnEnemy(current.type, absolutePath);
+
+    current.count--;
+    if (current.count <= 0) {
+        spawnQueue.removeFirst();
+        if (spawnQueue.isEmpty()) {
+            spawnTimer->stop();
+             if (currentWaveIndex >= waves.size() - 1) {
+                emit allWavesCompleted();
+            }
+        } else {
+            spawnTimer->setInterval(spawnQueue.first().interval * 1000);
+        }
+    }
+}
+
+
+bool WaveManager::isFinished() const {
+    return currentWaveIndex >= waves.size() - 1 && spawnQueue.isEmpty();
+}
+
+void WaveManager::setScreenSize(const QSizeF& size) {
+    screenSize = size;
 }

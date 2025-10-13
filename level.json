@@ -1,55 +1,78 @@
 {
-  // "backgroundPath" 保持不变
-  "backgroundPath": ":/images/backgrounds/level_1_background.png",
-
-  // 新增: "gridSize" (对象)
-  // 描述: 定义地图的网格维度。这是所有相对坐标的基础。
-  // 用途: 渲染和逻辑代码将使用这个尺寸来计算每个格子的实际像素大小和位置。
-  "gridSize": {
-    "cols": 20,
-    "rows": 15
+  "level_name": "第一关：学业的烦恼",
+  "map": {
+    "background": ":/backgrounds/level1_bg.png",
+    "path": [
+      { "x": 0.05, "y": 0.5 },
+      { "x": 0.2, "y": 0.5 },
+      { "x": 0.2, "y": 0.2 },
+      { "x": 0.8, "y": 0.2 },
+      { "x": 0.8, "y": 0.8 },
+      { "x": 0.95, "y": 0.8 }
+    ],
+    "tower_positions": [
+      { "x": 0.15, "y": 0.35 },
+      { "x": 0.4, "y": 0.35 },
+      { "x": 0.6, "y": 0.35 },
+      { "x": 0.75, "y": 0.5 },
+      { "x": 0.6, "y": 0.65 },
+      { "x": 0.4, "y": 0.65 }
+    ],
+    "obstacles": [
+      {
+        "type": "BookStack",
+        "pixmap": ":/obstacles/book.png",
+        "position": { "x": 0.5, "y": 0.5 },
+        "health": 200,
+        "resource": 50
+      }
+    ]
   },
-
-  // "pathPoints": (网格坐标对象数组)
-  // 描述: 敌人移动路径的网格点索引。
-  // 格式: 每个点是一个包含 "col" (列) 和 "row" (行) 两个整数键的对象。
-  // 注意: 索引从0开始。{ "col": 0, "row": 3 } 表示第1列，第4行。
-  "pathPoints": [
-    { "col": 0, "row": 3 },
-    { "col": 4, "row": 3 },
-    { "col": 4, "row": 8 },
-    { "col": 12, "row": 8 },
-    { "col": 12, "row": 2 },
-    { "col": 19, "row": 2 }
+  "player": {
+    "initial_stability": 20,
+    "initial_resource": 150
+  },
+  "available_towers": [
+    {
+      "type": "KnowledgeTree",
+      "name": "知识古树",
+      "cost": 100,
+      "pixmap": ":/towers/tree.png",
+      "bullet_pixmap": ":/bullets/tree_bullet.png",
+      "damage": 25,
+      "range": 0.2,
+      "fire_rate": 1
+    }
   ],
-
-  // "towerBases": (网格坐标对象数组)
-  // 描述: 可以建造防御塔的网格单元。
-  // 格式: 与 pathPoints 相同。
-  "towerBases": [
-    { "col": 2, "row": 5 },
-    { "col": 6, "row": 6 },
-    { "col": 10, "row": 4 },
-    { "col": 15, "row": 4 }
+  "available_enemies": [
+    {
+      "type": "bug",
+      "name": "BUG",
+      "pixmap": ":/enemies/bug.png",
+      "health": 50,
+      "speed": 1.5,
+      "damage": 1
+    },
+    {
+      "type": "ddl",
+      "name": "DDL",
+      "pixmap": ":/enemies/ddl.png",
+      "health": 100,
+      "speed": 1.0,
+      "damage": 2
+    }
   ],
-
-  // "waves" 保持不变，其逻辑与坐标系统无关
   "waves": [
     {
-      "enemyType": 0,
-      "enemyCount": 10,
-      "spawnInterval": 1500
+      "enemies": [
+        { "type": "bug", "count": 10, "interval": 1.0 }
+      ]
     },
     {
-      "enemyType": 1,
-      "enemyCount": 5,
-      "spawnInterval": 2000
-    },
-    {
-      "enemyType": 10,
-      "enemyCount": 1,
-      "spawnInterval": 5000
+      "enemies": [
+        { "type": "bug", "count": 15, "interval": 0.8 },
+        { "type": "ddl", "count": 5, "interval": 3.0 }
+      ]
     }
   ]
 }
-

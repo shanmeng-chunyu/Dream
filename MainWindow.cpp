@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(m_view);
 
     // 4. 初始化并启动游戏管理器
-    GameManager::instance()->initialize(m_scene);
+    GameManager::instance()->init(m_scene);
 }
 
 MainWindow::~MainWindow() {

@@ -1,47 +1,39 @@
-#pragma once
+#ifndef GAMEMAP_H
+#define GAMEMAP_H
 
-#include <QObject>
-#include <QPixmap>
-#include <QPointF>
 #include <vector>
+#include <QPointF>
+#include <QString>
 
-// =================================================================
-// 新增内容: ObstacleData 结构体
-// 说明: 用于在加载和编辑关卡时，存储单个障碍物的核心数据。
-//      将数据（位置、类型）与它的图形表现（Obstacle类）分离，
-//      是一种良好的解耦设计。
+// 用于存储从JSON加载的障碍物初始数据
 struct ObstacleData {
-    QPointF position;
-    int typeId;
+    QString type;
+    QString pixmapPath;
+    QPointF relativePosition;
+    int health;
+    int resourceValue;
 };
-// =================================================================
 
-class GameMap : public QObject {
-    Q_OBJECT
-
+class GameMap {
 public:
-    explicit GameMap(QObject* parent = nullptr);
+    GameMap();
 
-    bool loadMap(int levelId);
+    // 设置和获取敌人的行进路径（相对坐标）
+    void setPath(const std::vector<QPointF>& path);
+    const std::vector<QPointF>& getPath() const;
 
-    const std::vector<QPointF>& getPathPoints() const;
-    const std::vector<QPointF>& getTowerBasePositions() const;
+    // 设置和获取防御塔可放置的位置（相对坐标）
+    void setTowerPositions(const std::vector<QPointF>& positions);
+    const std::vector<QPointF>& getTowerPositions() const;
 
-    // =================================================================
-    // 新增内容: 获取障碍物数据的接口
-    // 说明: 为GameManager和场景渲染模块提供所有障碍物的数据。
+    // 设置和获取障碍物的初始数据
+    void setObstacles(const std::vector<ObstacleData>& obstacles);
     const std::vector<ObstacleData>& getObstacles() const;
-    // =================================================================
-
-    const QPixmap& getBackground() const;
 
 private:
-    std::vector<QPointF> pathPoints;
-    std::vector<QPointF> towerBasePositions;
-    QPixmap mapBackground;
-
-    // =================================================================
-    // 新增内容: 存储障碍物数据的容器
-    std::vector<ObstacleData> obstacles;
-    // =================================================================
+    std::vector<QPointF> enemyPath;
+    std::vector<QPointF> towerPositions;
+    std::vector<ObstacleData> obstacleData;
 };
+
+#endif // GAMEMAP_H

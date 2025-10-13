@@ -1,54 +1,97 @@
-#pragma once
+#ifndef GAMEMANAGER_H
+#define GAMEMANAGER_H
 
 #include <QObject>
-#include <memory>
-#include <vector>
+#include <QList>
+#include <QMap>
+#include <QString>
+#include <QJsonObject>
+#include <QSizeF>
+#include <QGraphicsItem>
 
-// --- 前向声明 ---
-class Tower;
+// 前向声明，避免在头文件中引入过多依赖
+class QGraphicsScene;
+class QTimer;
 class Enemy;
-class Projectile;
-class WaveManager;
+class Tower;
+class Bullet;
+class Obstacle;
 class Player;
+class WaveManager;
 class GameMap;
-class Obstacle; // <-- 新增前向声明
 
 class GameManager : public QObject {
     Q_OBJECT
 
 public:
-    static GameManager* getInstance();
-    void startGame(int levelId);
-    void stopGame();
-    void pauseGame();
-    void resumeGame();
+    // 单例模式
+    static GameManager* instance();
 
-    public slots:
-        void update();
+    // 初始化
+    void init(QGraphicsScene* scene);
+    // 加载关卡
+    void loadLevel(const QString& levelPath);
+    // 开始游戏
+    void startGame();
+    // 响应窗口大小变化
+    void setScreenSize(const QSizeF& size);
+
+    // 建造防御塔
+    void buildTower(const QString& type, const QPointF& relativePosition);
+
+public slots:
+    // 响应WaveManager的信号来生成敌人
+    void onSpawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath);
+    // 响应Tower的信号来生成子弹
+    void onNewBullet(Tower* tower, Enemy* target);
+    // 响应Enemy信号
+    void onEnemyReachedEnd(Enemy* enemy);
+    void onEnemyDied(Enemy* enemy);
+    // 响应Bullet信号
+    void onBulletHitTarget(Bullet* bullet);
+    // 响应Obstacle信号
+    void onObstacleDestroyed(Obstacle* obstacle, int resourceValue);
+
+private slots:
+    // 游戏主循环
+    void updateGame();
 
 private:
-    explicit GameManager(QObject* parent = nullptr);
-    ~GameManager();
+    GameManager(QObject* parent = nullptr);
+    ~GameManager() override;
     GameManager(const GameManager&) = delete;
     GameManager& operator=(const GameManager&) = delete;
-    void cleanup();
 
-    static GameManager* instance;
+    void loadPrototypes(const QJsonObject& rootObj);
+    void cleanupEntities();
+    void updateTowerTargets();
+    void checkWinLossConditions();
 
-    std::unique_ptr<Player> player;
-    std::unique_ptr<GameMap> map;
-    std::unique_ptr<WaveManager> waveManager;
+    static GameManager* m_instance;
 
-    std::vector<std::unique_ptr<Tower>> towers;
-    std::vector<std::unique_ptr<Enemy>> enemies;
-    std::vector<std::unique_ptr<Projectile>> projectiles;
+    QGraphicsScene* m_scene;
+    QTimer* m_gameTimer;
+    QSizeF m_screenSize;
 
-    // =================================================================
-    // 新增内容: 存储障碍物实例的容器
-    // 说明: 尽管障碍物不在update()循环中更新，但由GameManager持有其所有权
-    //      可以确保它们的生命周期被正确管理，在游戏结束时统一释放资源。
-    std::vector<std::unique_ptr<Obstacle>> obstacles;
-    // =================================================================
+    // 游戏模块
+    Player* m_player;
+    WaveManager* m_waveManager;
+    GameMap* m_gameMap;
 
-    bool isPaused;
+    // 实体管理
+    QList<Enemy*> m_enemies;
+    QList<Tower*> m_towers;
+    QList<Bullet*> m_bullets;
+    QList<Obstacle*> m_obstacles;
+
+    // 待删除的实体列表，用于安全删除
+    QList<QGraphicsItem*> m_entitiesToClean;
+
+    // 从关卡文件加载的原型数据
+    QMap<QString, QJsonObject> m_enemyPrototypes;
+    QMap<QString, QJsonObject> m_towerPrototypes;
+
+    bool m_gameIsOver;
 };
+
+#endif // GAMEMANAGER_H

@@ -1,33 +1,35 @@
-#ifndef DREAM_ENEMY_H
-#define DREAM_ENEMY_H
+#ifndef ENEMY_H
+#define ENEMY_H
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QPointF>
 #include <vector>
+#include <string>
 
 class Enemy : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
-    public:
-    explicit Enemy(const std::vector<QPointF> &path, QGraphicsItem *parent = nullptr);
+public:
+    explicit Enemy(int health, double speed, int damage, const std::vector<QPointF>& path, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
 
-    void takeDamage(int damage);
+    void takeDamage(int damageAmount);
+    int getDamage() const;
+    void setAbsolutePath(const std::vector<QPointF>& path);
 
-    // QGraphicsItem 的虚函数，用于动画
-    void advance(int phase) override;
+    public slots:
+        void move();
 
     signals:
-
-        void reachedEnd(Enemy *enemy);
-
-    void died(Enemy *enemy);
+        void reachedEnd(Enemy* enemy);
+    void died(Enemy* enemy);
 
 private:
-    int m_health;
-    int m_speed;
-    std::vector<QPointF> m_path;
-    int m_pathIndex;
+    int currentHealth;
+    double speed;
+    int damage;
+    std::vector<QPointF> absolutePath;
+    int currentPathIndex;
 };
 
-#endif //DREAM_ENEMY_H
+#endif // ENEMY_H

@@ -1,77 +1,66 @@
-#pragma once
+#ifndef LEVELEDITORWIDGET_H
+#define LEVELEDITORWIDGET_H
 
 #include <QWidget>
-#include <QPoint>
-#include <QSize>
-#include <vector>
-#include "WaveManager.h"
 
-// --- 前向声明Qt控件类 ---
+// 前向声明所有需要的Qt控件类，避免在头文件中引入大量头文件
+class QLineEdit;
 class QPushButton;
-class QRadioButton;
-class QLabel;
-class QVBoxLayout;
+class QListWidget;
+class QSpinBox;
+class QDoubleSpinBox;
+class QTabWidget;
+class QListWidgetItem;
 
-/*
- * 类名: LevelEditorWidget
- * 负责人: P8 - 数据管理与关卡编辑器
- * 说明: (已重构) 完全使用C++代码构建UI，不依赖.ui文件。
- * 增加了编辑模式切换功能。
- */
 class LevelEditorWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit LevelEditorWidget(QWidget *parent = nullptr);
-    ~LevelEditorWidget() = default; // 使用默认析构
+    explicit LevelEditorWidget(QWidget* parent = nullptr);
+    ~LevelEditorWidget() override = default;
 
     private slots:
-        // 文件操作槽函数
-        void onSaveButtonPressed();
-    void onLoadButtonPressed();
-
-    // 编辑模式切换槽函数
-    void onModeChanged();
-
-protected:
-    void paintEvent(QPaintEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent* event) override; // 添加鼠标移动事件用于预览
+        void saveLevel();
+    void loadLevel();
+    void addWave();
+    void removeWave();
+    void addEnemyToWave();
+    void removeEnemyFromWave();
+    void onWaveSelectionChanged();
+    void onEnemySelectionChanged();
+    void updateSelectedEnemy();
 
 private:
-    // 初始化UI，在构造函数中调用
     void setupUI();
+    void clearEnemyDetails();
 
-    // 文件序列化/反序列化
-    void saveLevelToFile(const QString& filePath);
-    void loadLevelFromFile(const QString& filePath);
+    // 主布局
+    QTabWidget* tabWidget;
 
-    // --- 编辑模式 ---
-    enum class EditMode {
-        PlacePath,
-        PlaceTowerBase,
-        Erase
-    };
-    EditMode currentMode;
+    // --- 波次编辑器 Tab ---
+    QWidget* waveTab;
+    QListWidget* waveListWidget;
+    QListWidget* enemyInWaveListWidget;
 
-    // --- 关卡数据 ---
-    QString backgroundPath;
-    QSize gridSize;
-    std::vector<QPoint> path;
-    std::vector<QPoint> towerBases;
-    std::vector<WaveInfo> waves;
+    QPushButton* addWaveButton;
+    QPushButton* removeWaveButton;
+    QPushButton* addEnemyToWaveButton;
+    QPushButton* removeEnemyFromWaveButton;
 
-    // --- UI 控件指针 ---
-    QVBoxLayout* mainLayout; // 主布局
-    // (此处可以添加更多控件, 如关卡设置的输入框等)
-    QPushButton* loadButton;
+    // 敌人详情编辑区
+    QLineEdit* enemyTypeLineEdit;
+    QSpinBox* enemyCountSpinBox;
+    QDoubleSpinBox* enemyIntervalSpinBox;
+
+    // --- 关卡配置 Tab ---
+    QWidget* configTab;
+    // (可以扩展此处来定义关卡可用的防御塔和敌人)
+    QLineEdit* levelNameEdit;
+
+
+    // 底部按钮
     QPushButton* saveButton;
-    QRadioButton* pathModeButton;
-    QRadioButton* towerModeButton;
-    QRadioButton* eraseModeButton;
-    QLabel* statusLabel; // 用于显示当前状态
-
-    // --- 编辑器辅助变量 ---
-    QPoint currentMouseGridPos; // 当前鼠标所在的网格坐标
+    QPushButton* loadButton;
 };
 
+#endif // LEVELEDITORWIDGET_H
