@@ -42,7 +42,8 @@ template <> constexpr inline auto Bullet::qt_create_metaobjectdata<qt_meta_tag_Z
         "hitTarget",
         "",
         "Bullet*",
-        "bullet"
+        "bullet",
+        "move"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -50,6 +51,8 @@ template <> constexpr inline auto Bullet::qt_create_metaobjectdata<qt_meta_tag_Z
         QtMocHelpers::SignalData<void(Bullet *)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 3, 4 },
         }}),
+        // Slot 'move'
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -74,6 +77,7 @@ void Bullet::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->hitTarget((*reinterpret_cast< std::add_pointer_t<Bullet*>>(_a[1]))); break;
+        case 1: _t->move(); break;
         default: ;
         }
     }
@@ -116,14 +120,14 @@ int Bullet::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 1)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     }
     return _id;
 }

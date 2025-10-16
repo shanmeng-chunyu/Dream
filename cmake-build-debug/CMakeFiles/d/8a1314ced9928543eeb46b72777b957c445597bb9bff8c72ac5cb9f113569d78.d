@@ -1,8 +1,12 @@
 Dream_autogen/timestamp: \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QJsonArray \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QJsonObject \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QList \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QMap \
   C:/Qt/6.9.0/mingw_64/include/QtCore/QObject \
-  C:/Qt/6.9.0/mingw_64/include/QtCore/QPoint \
   C:/Qt/6.9.0/mingw_64/include/QtCore/QPointF \
-  C:/Qt/6.9.0/mingw_64/include/QtCore/QSize \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QSizeF \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QString \
   C:/Qt/6.9.0/mingw_64/include/QtCore/QTimer \
   C:/Qt/6.9.0/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/q20functional.h \
@@ -27,6 +31,9 @@ Dream_autogen/timestamp: \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qbytearrayalgorithms.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qbytearraylist.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qbytearrayview.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qcalendar.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qcborcommon.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qcborvalue.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qchar.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qcompare.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qcompare_impl.h \
@@ -40,6 +47,7 @@ Dream_autogen/timestamp: \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qcontiguouscache.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qdarwinhelpers.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qdatastream.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qdatetime.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qdeadlinetimer.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qdebug.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qelapsedtimer.h \
@@ -59,9 +67,15 @@ Dream_autogen/timestamp: \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qiodevicebase.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qiterable.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qiterator.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qjsonarray.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qjsondocument.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qjsonobject.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qjsonparseerror.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qjsonvalue.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qlatin1stringview.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qline.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qlist.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qlocale.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qlogging.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qmalloc.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qmap.h \
@@ -82,6 +96,7 @@ Dream_autogen/timestamp: \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qprocessordetection.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qrect.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qrefcount.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qregularexpression.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qscopedpointer.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qscopeguard.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qset.h \
@@ -129,7 +144,9 @@ Dream_autogen/timestamp: \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qtversionchecks.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qtypeinfo.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qtypes.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/qurl.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qutf8stringview.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/quuid.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qvariant.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qvarlengtharray.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/qversiontagging.h \
@@ -165,6 +182,7 @@ Dream_autogen/timestamp: \
   C:/Qt/6.9.0/mingw_64/include/QtGui/qtransform.h \
   C:/Qt/6.9.0/mingw_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.9.0/mingw_64/include/QtGui/qwindowdefs_win.h \
+  C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsItem \
   C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsPixmapItem \
   C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsScene \
   C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsView \
@@ -362,12 +380,16 @@ Dream_autogen/timestamp: \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Enemy.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameManager.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameManager.h \
+  C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameMap.cpp \
+  C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameMap.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelLoader.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelLoader.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/MainWindow.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/MainWindow.h \
+  C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Obstacle.cpp \
+  C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Obstacle.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Player.cpp \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Player.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/Tower.cpp \

@@ -4,6 +4,7 @@
 #include "EWIEGA46WW/moc_GameManager.cpp"
 #include "EWIEGA46WW/moc_LevelEditorWidget.cpp"
 #include "EWIEGA46WW/moc_MainWindow.cpp"
+#include "EWIEGA46WW/moc_Obstacle.cpp"
 #include "EWIEGA46WW/moc_Player.cpp"
 #include "EWIEGA46WW/moc_Tower.cpp"
 #include "EWIEGA46WW/moc_WaveManager.cpp"

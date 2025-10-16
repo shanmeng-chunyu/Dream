@@ -40,12 +40,23 @@ template <> constexpr inline auto WaveManager::qt_create_metaobjectdata<qt_meta_
     QtMocHelpers::StringRefStorage qt_stringData {
         "WaveManager",
         "spawnEnemy",
-        ""
+        "",
+        "type",
+        "std::vector<QPointF>",
+        "absolutePath",
+        "allWavesCompleted",
+        "spawnEnemyFromQueue"
     };
 
     QtMocHelpers::UintData qt_methods {
-        // Slot 'spawnEnemy'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Signal 'spawnEnemy'
+        QtMocHelpers::SignalData<void(const QString &, const std::vector<QPointF> &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 }, { 0x80000000 | 4, 5 },
+        }}),
+        // Signal 'allWavesCompleted'
+        QtMocHelpers::SignalData<void()>(6, 2, QMC::AccessPublic, QMetaType::Void),
+        // Slot 'spawnEnemyFromQueue'
+        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -69,11 +80,18 @@ void WaveManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
     auto *_t = static_cast<WaveManager *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->spawnEnemy(); break;
+        case 0: _t->spawnEnemy((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<std::vector<QPointF>>>(_a[2]))); break;
+        case 1: _t->allWavesCompleted(); break;
+        case 2: _t->spawnEnemyFromQueue(); break;
         default: ;
         }
     }
-    (void)_a;
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (WaveManager::*)(const QString & , const std::vector<QPointF> & )>(_a, &WaveManager::spawnEnemy, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (WaveManager::*)()>(_a, &WaveManager::allWavesCompleted, 1))
+            return;
+    }
 }
 
 const QMetaObject *WaveManager::metaObject() const
@@ -95,15 +113,27 @@ int WaveManager::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 3;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 1)
+        if (_id < 3)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 1;
+        _id -= 3;
     }
     return _id;
+}
+
+// SIGNAL 0
+void WaveManager::spawnEnemy(const QString & _t1, const std::vector<QPointF> & _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
+}
+
+// SIGNAL 1
+void WaveManager::allWavesCompleted()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 QT_WARNING_POP
