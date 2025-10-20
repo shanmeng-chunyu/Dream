@@ -1,0 +1,122 @@
+#include "widget_choose_level.h"
+#include "ui_widget_choose_level.h"
+
+widget_choose_level::widget_choose_level(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::widget_choose_level)
+    ,titles({"第 一 关","第 二 关","第 三 关"})
+    ,descriptions(3,"Description")
+    ,map({":/map/resources/map/brief_first.png",":/map/resources/map/brief_second.png",":/map/resources/map/brief_third.png"})
+    ,frames({":/frame/resources/frame/level1.png",":/frame/resources/frame/level2.png",":/frame/resources/frame/level3.png"})
+{
+    ui->setupUi(this);
+    connect(ui->next,&QPushButton::clicked,this,[=]{
+        choice=(choice+1)%3;
+        smoothImageTransition(ui->map_picture,map[choice]);
+        smoothTextTransition(ui->description,descriptions[choice]);
+        ui->frame->setPixmap(frames[choice]);
+        ui->btn_level->setText(titles[choice]);
+    });
+    connect(ui->btn_level,&QPushButton::clicked,this,[=](){
+        switch(choice){
+        case 0:emit level1();break;
+        case 1:emit level2();break;
+        case 2:emit level3();break;
+        }
+    });
+}
+
+widget_choose_level::~widget_choose_level()
+{
+    delete ui;
+}
+
+void widget_choose_level::set_title(QVector<QString> t){
+    titles=t;
+}
+
+void widget_choose_level::set_descriptions(QVector<QString> d){
+    descriptions=d;
+}
+
+void widget_choose_level::smoothImageTransition(QLabel *imageLabel, const QString &newImagePath, int duration ){
+    if (!imageLabel || newImagePath.isEmpty()) {
+        return;
+    }
+    // 检查新图片是否存在
+    QPixmap newPixmap(newImagePath);
+    if (newPixmap.isNull()) {
+        qWarning() << "Failed to load image:" << newImagePath;
+        return;
+    }
+
+    // 创建透明度效果
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(imageLabel);
+    imageLabel->setGraphicsEffect(effect);
+
+    // 创建顺序动画组
+    QSequentialAnimationGroup *sequence = new QSequentialAnimationGroup;
+
+    // 第一阶段：淡出（50%时间）
+    QPropertyAnimation *fadeOut = new QPropertyAnimation(effect, "opacity");
+    fadeOut->setDuration(duration / 2);
+    fadeOut->setStartValue(1.0);
+    fadeOut->setEndValue(0.2);
+    fadeOut->setEasingCurve(QEasingCurve::InOutCubic);
+
+    // 第二阶段：淡入（50%时间）
+    QPropertyAnimation *fadeIn = new QPropertyAnimation(effect, "opacity");
+    fadeIn->setDuration(duration / 2);
+    fadeIn->setStartValue(0.2);
+    fadeIn->setEndValue(1.0);
+    fadeIn->setEasingCurve(QEasingCurve::InOutCubic);
+
+    // 在淡出完成后切换图片
+    QObject::connect(fadeOut, &QPropertyAnimation::finished, [imageLabel, newPixmap]() {
+        // 保持原有尺寸或自适应缩放
+        QPixmap scaledPixmap = newPixmap.scaled(imageLabel->size(),
+                                                Qt::KeepAspectRatio,
+                                                Qt::SmoothTransformation);
+        imageLabel->setPixmap(scaledPixmap);
+    });
+
+    sequence->addAnimation(fadeOut);
+    sequence->addAnimation(fadeIn);
+    sequence->start(QAbstractAnimation::DeleteWhenStopped);
+}
+void widget_choose_level::smoothTextTransition(QLabel *label, const QString &newText, int duration ){
+    if (!label || newText.isEmpty()) {
+        return;
+    }
+
+    // 创建透明度效果
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(label);
+    label->setGraphicsEffect(effect);
+
+    // 创建顺序动画组
+    QSequentialAnimationGroup *sequence = new QSequentialAnimationGroup;
+
+    // 第一阶段：淡出（50%时间）
+    QPropertyAnimation *fadeOut = new QPropertyAnimation(effect, "opacity");
+    fadeOut->setDuration(duration / 2);
+    fadeOut->setStartValue(1.0);
+    fadeOut->setEndValue(0.0);
+    fadeOut->setEasingCurve(QEasingCurve::InOutCubic);
+
+    // 第二阶段：淡入（50%时间）
+    QPropertyAnimation *fadeIn = new QPropertyAnimation(effect, "opacity");
+    fadeIn->setDuration(duration / 2);
+    fadeIn->setStartValue(0.0);
+    fadeIn->setEndValue(1.0);
+    fadeIn->setEasingCurve(QEasingCurve::InOutCubic);
+
+    // 在淡出完成后切换文字
+    QObject::connect(fadeOut, &QPropertyAnimation::finished, [label, newText]() {
+        label->setText(newText);
+    });
+
+    sequence->addAnimation(fadeOut);
+    sequence->addAnimation(fadeIn);
+    sequence->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
