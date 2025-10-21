@@ -314,6 +314,12 @@
 			null
 		],
 		[
+			"C:/Users/11245/Desktop/work/Dream/IconButton.h",
+			"MU",
+			"EWIEGA46WW/moc_IconButton.cpp",
+			null
+		],
+		[
 			"C:/Users/11245/Desktop/work/Dream/LevelEditorWidget.h",
 			"MU",
 			"EWIEGA46WW/moc_LevelEditorWidget.cpp",
@@ -362,9 +368,21 @@
 			null
 		],
 		[
+			"C:/Users/11245/Desktop/work/Dream/widget_level_loading.h",
+			"MU",
+			"EWIEGA46WW/moc_widget_level_loading.cpp",
+			null
+		],
+		[
 			"C:/Users/11245/Desktop/work/Dream/widget_menu.h",
 			"MU",
 			"EWIEGA46WW/moc_widget_menu.cpp",
+			null
+		],
+		[
+			"C:/Users/11245/Desktop/work/Dream/widget_post_game.h",
+			"MU",
+			"EWIEGA46WW/moc_widget_post_game.cpp",
 			null
 		]
 	],
@@ -444,6 +462,7 @@
 		[ "C:/Users/11245/Desktop/work/Dream/Enemy.cpp", "MU", null ],
 		[ "C:/Users/11245/Desktop/work/Dream/GameManager.cpp", "MU", null ],
 		[ "C:/Users/11245/Desktop/work/Dream/GameMap.cpp", "MU", null ],
+		[ "C:/Users/11245/Desktop/work/Dream/IconButton.cpp", "MU", null ],
 		[ "C:/Users/11245/Desktop/work/Dream/LevelEditorWidget.cpp", "MU", null ],
 		[ "C:/Users/11245/Desktop/work/Dream/LevelLoader.cpp", "MU", null ],
 		[ "C:/Users/11245/Desktop/work/Dream/MainWindow.cpp", "MU", null ],
@@ -457,7 +476,13 @@
 			"MU",
 			null
 		],
-		[ "C:/Users/11245/Desktop/work/Dream/widget_menu.cpp", "MU", null ]
+		[
+			"C:/Users/11245/Desktop/work/Dream/widget_level_loading.cpp",
+			"MU",
+			null
+		],
+		[ "C:/Users/11245/Desktop/work/Dream/widget_menu.cpp", "MU", null ],
+		[ "C:/Users/11245/Desktop/work/Dream/widget_post_game.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

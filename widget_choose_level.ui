@@ -50,50 +50,6 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="frame">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>330</y>
-     <width>300</width>
-     <height>300</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true"/>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/frame/resources/frame/level1.png</pixmap>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btn_level">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>410</y>
-     <width>231</width>
-     <height>91</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>幼圆</family>
-     <pointsize>30</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background: transparent;
-border: 1px solid transparent;
-color:white
-</string>
-   </property>
-   <property name="text">
-    <string>第 一 关</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="map_picture">
    <property name="geometry">
     <rect>
@@ -147,26 +103,13 @@ color:white
     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
    </property>
   </widget>
-  <widget class="QLabel" name="icon">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>410</y>
-     <width>128</width>
-     <height>128</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="next">
+  <widget class="IconButton" name="next">
    <property name="geometry">
     <rect>
      <x>660</x>
      <y>490</y>
-     <width>61</width>
-     <height>51</height>
+     <width>50</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="text">
@@ -175,16 +118,97 @@ color:white
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::DocumentSend"/>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>50</width>
+     <height>50</height>
+    </size>
+   </property>
   </widget>
-  <zorder>background</zorder>
-  <zorder>label</zorder>
-  <zorder>frame</zorder>
-  <zorder>map_picture</zorder>
-  <zorder>description</zorder>
-  <zorder>icon</zorder>
-  <zorder>next</zorder>
-  <zorder>btn_level</zorder>
+  <widget class="IconButton" name="btn_level">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>350</y>
+     <width>300</width>
+     <height>250</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/frame/resources/frame/level1.png</normaloff>:/frame/resources/frame/level1.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>300</width>
+     <height>300</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="icon">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>420</y>
+     <width>85</width>
+     <height>85</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/map_items/resources/map_items/first/books_100_100.png</normaloff>:/map_items/resources/map_items/first/books_100_100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="btn_back">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>40</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentRevert"/>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IconButton</class>
+   <extends>QPushButton</extends>
+   <header>IconButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

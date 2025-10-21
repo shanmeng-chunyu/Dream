@@ -8,14 +8,17 @@ widget_choose_level::widget_choose_level(QWidget *parent)
     ,descriptions(3,"Description")
     ,map({":/map/resources/map/brief_first.png",":/map/resources/map/brief_second.png",":/map/resources/map/brief_third.png"})
     ,frames({":/frame/resources/frame/level1.png",":/frame/resources/frame/level2.png",":/frame/resources/frame/level3.png"})
+    ,icons({":/map_items/resources/map_items/first/books_100_100.png",":/map_items/resources/map_items/second/photo_100_100.png",":/map_items/resources/map_items/third/third_start_100_100.png"})
 {
     ui->setupUi(this);
+    title=ui->btn_level;
+    description=ui->description;
     connect(ui->next,&QPushButton::clicked,this,[=]{
         choice=(choice+1)%3;
         smoothImageTransition(ui->map_picture,map[choice]);
         smoothTextTransition(ui->description,descriptions[choice]);
-        ui->frame->setPixmap(frames[choice]);
-        ui->btn_level->setText(titles[choice]);
+        ui->btn_level->setIcon(QIcon(frames[choice]));
+        ui->icon->setIcon(QIcon(icons[choice]));
     });
     connect(ui->btn_level,&QPushButton::clicked,this,[=](){
         switch(choice){
@@ -24,6 +27,7 @@ widget_choose_level::widget_choose_level(QWidget *parent)
         case 2:emit level3();break;
         }
     });
+    connect(ui->btn_back,&QPushButton::clicked,this,&widget_choose_level::back);
 }
 
 widget_choose_level::~widget_choose_level()
@@ -31,12 +35,10 @@ widget_choose_level::~widget_choose_level()
     delete ui;
 }
 
-void widget_choose_level::set_title(QVector<QString> t){
-    titles=t;
-}
 
 void widget_choose_level::set_descriptions(QVector<QString> d){
     descriptions=d;
+    description->setText(d[choice]);
 }
 
 void widget_choose_level::smoothImageTransition(QLabel *imageLabel, const QString &newImagePath, int duration ){

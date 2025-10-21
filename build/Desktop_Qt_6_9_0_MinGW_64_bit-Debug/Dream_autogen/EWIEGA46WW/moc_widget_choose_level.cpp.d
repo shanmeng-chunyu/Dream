@@ -168,10 +168,13 @@ C:/Users/11245/Desktop/work/Dream/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/Drea
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtGui/qwindowdefs_win.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsOpacityEffect \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QLabel \
+  D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QPushButton \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QWidget \
+  D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qabstractbutton.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qframe.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicseffect.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qlabel.h \
+  D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qpushbutton.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qsizepolicy.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qtwidgets-config.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qtwidgetsexports.h \

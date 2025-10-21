@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>widget_level_loading</class>
+ <widget class="QWidget" name="widget_level_loading">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="background">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>600</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/background/resources/background/first_background.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="map">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>90</y>
+     <width>400</width>
+     <height>300</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::Box</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <property name="lineWidth">
+    <number>2</number>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/map/resources/map/brief_first.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="progressBar">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>530</y>
+     <width>500</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QProgressBar {
+    border: 3px solid rgba(220, 220, 220, 1) ;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,0.1);
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+QProgressBar::chunk {
+    border-radius: 14px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(116, 235, 213, 0.8),
+        stop:1 rgba(172, 182, 229, 0.8));
+    border: 1px solid rgba(255,255,255,0.5);
+}</string>
+   </property>
+   <property name="value">
+    <number>0</number>
+   </property>
+   <property name="textVisible">
+    <bool>false</bool>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="description">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>440</y>
+     <width>481</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white</string>
+   </property>
+   <property name="text">
+    <string>Description</string>
+   </property>
+  </widget>
+  <widget class="IconButton" name="icon1">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>120</y>
+     <width>85</width>
+     <height>85</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="icon2">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>280</y>
+     <width>85</width>
+     <height>85</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="icon3">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>120</y>
+     <width>85</width>
+     <height>85</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="icon4">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>280</y>
+     <width>85</width>
+     <height>85</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IconButton</class>
+   <extends>QPushButton</extends>
+   <header>IconButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -43,7 +43,8 @@ template <> constexpr inline auto widget_choose_level::qt_create_metaobjectdata<
         "level1",
         "",
         "level2",
-        "level3"
+        "level3",
+        "back"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -53,6 +54,8 @@ template <> constexpr inline auto widget_choose_level::qt_create_metaobjectdata<
         QtMocHelpers::SignalData<void()>(3, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'level3'
         QtMocHelpers::SignalData<void()>(4, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'back'
+        QtMocHelpers::SignalData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -79,6 +82,7 @@ void widget_choose_level::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         case 0: _t->level1(); break;
         case 1: _t->level2(); break;
         case 2: _t->level3(); break;
+        case 3: _t->back(); break;
         default: ;
         }
     }
@@ -88,6 +92,8 @@ void widget_choose_level::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         if (QtMocHelpers::indexOfMethod<void (widget_choose_level::*)()>(_a, &widget_choose_level::level2, 1))
             return;
         if (QtMocHelpers::indexOfMethod<void (widget_choose_level::*)()>(_a, &widget_choose_level::level3, 2))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (widget_choose_level::*)()>(_a, &widget_choose_level::back, 3))
             return;
     }
 }
@@ -111,14 +117,14 @@ int widget_choose_level::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
@@ -139,5 +145,11 @@ void widget_choose_level::level2()
 void widget_choose_level::level3()
 {
     QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
+}
+
+// SIGNAL 3
+void widget_choose_level::back()
+{
+    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
 }
 QT_WARNING_POP

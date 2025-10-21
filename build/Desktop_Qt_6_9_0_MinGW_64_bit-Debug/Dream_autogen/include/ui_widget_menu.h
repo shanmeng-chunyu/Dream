@@ -13,8 +13,8 @@
 #include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
+#include "IconButton.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -22,10 +22,10 @@ class Ui_widget_menu
 {
 public:
     QLabel *background;
-    QPushButton *btn_choose_level;
+    IconButton *btn_choose_level;
     QLabel *label;
     QLabel *text1;
-    QPushButton *btn_exit_game;
+    IconButton *btn_exit_game;
     QLabel *text2;
 
     void setupUi(QWidget *widget_menu)
@@ -38,13 +38,15 @@ public:
         background->setObjectName("background");
         background->setGeometry(QRect(0, 0, 800, 600));
         background->setPixmap(QPixmap(QString::fromUtf8(":/background/resources/background/menu_.png")));
-        btn_choose_level = new QPushButton(widget_menu);
+        btn_choose_level = new IconButton(widget_menu);
         btn_choose_level->setObjectName("btn_choose_level");
-        btn_choose_level->setGeometry(QRect(540, 180, 192, 108));
+        btn_choose_level->setGeometry(QRect(540, 180, 200, 100));
         btn_choose_level->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "        background: transparent;       /* \350\203\214\346\231\257\351\200\217\346\230\216 */\n"
 "        border: none;                  /* \346\227\240\350\276\271\346\241\206 */\n"
 "    }\n"
+"\n"
+"\n"
 ""));
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/button/resources/button/button_.png"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
@@ -61,17 +63,16 @@ public:
 ""));
         text1 = new QLabel(widget_menu);
         text1->setObjectName("text1");
-        text1->setGeometry(QRect(560, 210, 151, 51));
+        text1->setGeometry(QRect(550, 120, 151, 51));
         QFont font;
         font.setFamilies({QString::fromUtf8("\345\271\274\345\234\206")});
         font.setPointSize(18);
         text1->setFont(font);
-        text1->setStyleSheet(QString::fromUtf8("color:white\n"
-""));
+        text1->setStyleSheet(QString::fromUtf8("color:white"));
         text1->setAlignment(Qt::AlignmentFlag::AlignCenter);
-        btn_exit_game = new QPushButton(widget_menu);
+        btn_exit_game = new IconButton(widget_menu);
         btn_exit_game->setObjectName("btn_exit_game");
-        btn_exit_game->setGeometry(QRect(540, 320, 192, 108));
+        btn_exit_game->setGeometry(QRect(540, 320, 200, 100));
         btn_exit_game->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "        background: transparent;       /* \350\203\214\346\231\257\351\200\217\346\230\216 */\n"
 "        border: none;                  /* \346\227\240\350\276\271\346\241\206 */\n"
@@ -81,7 +82,7 @@ public:
         btn_exit_game->setIconSize(QSize(192, 108));
         text2 = new QLabel(widget_menu);
         text2->setObjectName("text2");
-        text2->setGeometry(QRect(560, 350, 151, 51));
+        text2->setGeometry(QRect(580, 470, 151, 51));
         text2->setFont(font);
         text2->setStyleSheet(QString::fromUtf8("color:white\n"
 ""));
@@ -90,8 +91,8 @@ public:
         label->raise();
         btn_choose_level->raise();
         btn_exit_game->raise();
-        text1->raise();
         text2->raise();
+        text1->raise();
 
         retranslateUi(widget_menu);
 

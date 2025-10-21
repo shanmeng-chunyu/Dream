@@ -2,12 +2,16 @@
 #include "GameManager.h"
 #include "widget_menu.h"
 #include "widget_choose_level.h"
+#include "widget_level_loading.h"
+#include "widget_post_game.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
     // 设置窗口大小
     setFixedSize(800, 600);
     setWindowTitle("Dream Guardian");
-    auto m=new widget_choose_level();
+
+     auto m=new widget_level_loading(1);
+    //auto m=new widget_choose_level();
     m->show();
 
     // 1. 创建场景

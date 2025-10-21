@@ -8,6 +8,8 @@ Dream_autogen/timestamp: \
 	C:/Users/11245/Desktop/work/Dream/GameManager.h \
 	C:/Users/11245/Desktop/work/Dream/GameMap.cpp \
 	C:/Users/11245/Desktop/work/Dream/GameMap.h \
+	C:/Users/11245/Desktop/work/Dream/IconButton.cpp \
+	C:/Users/11245/Desktop/work/Dream/IconButton.h \
 	C:/Users/11245/Desktop/work/Dream/LevelEditorWidget.cpp \
 	C:/Users/11245/Desktop/work/Dream/LevelEditorWidget.h \
 	C:/Users/11245/Desktop/work/Dream/LevelLoader.cpp \
@@ -31,13 +33,18 @@ Dream_autogen/timestamp: \
 	C:/Users/11245/Desktop/work/Dream/resources.qrc \
 	C:/Users/11245/Desktop/work/Dream/widget_choose_level.cpp \
 	C:/Users/11245/Desktop/work/Dream/widget_choose_level.h \
+	C:/Users/11245/Desktop/work/Dream/widget_level_loading.cpp \
+	C:/Users/11245/Desktop/work/Dream/widget_level_loading.h \
 	C:/Users/11245/Desktop/work/Dream/widget_menu.cpp \
 	C:/Users/11245/Desktop/work/Dream/widget_menu.h \
+	C:/Users/11245/Desktop/work/Dream/widget_post_game.cpp \
+	C:/Users/11245/Desktop/work/Dream/widget_post_game.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QJsonArray \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QJsonObject \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QList \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QMap \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QObject \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QPauseAnimation \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QPointF \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QPropertyAnimation \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QSequentialAnimationGroup \
@@ -133,6 +140,7 @@ Dream_autogen/timestamp: \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qobjectdefs_impl.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qoverload.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qpair.h \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qpauseanimation.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qpoint.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qprocessordetection.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qpropertyanimation.h \
@@ -197,6 +205,7 @@ Dream_autogen/timestamp: \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qversiontagging.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qxptype_traits.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/qyieldcpu.h \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtGui/QIcon \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtGui/qaction.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtGui/qbitmap.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtGui/qbrush.h \
@@ -236,7 +245,10 @@ Dream_autogen/timestamp: \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsView \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QLabel \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QMainWindow \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QProgressBar \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QPushButton \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/QWidget \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qabstractbutton.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qframe.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicseffect.h \
@@ -245,6 +257,8 @@ Dream_autogen/timestamp: \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicsview.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qlabel.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qmainwindow.h \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qprogressbar.h \
+	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qpushbutton.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qscrollarea.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qsizepolicy.h \
 	D:/asoftwere/Qt/6.9.0/mingw_64/include/QtWidgets/qtabwidget.h \
@@ -668,5 +682,7 @@ Dream_autogen/timestamp: \
 	D:/asoftwere/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/vadefs.h \
 	D:/asoftwere/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h \
 	C:/Users/11245/Desktop/work/Dream/widget_choose_level.ui \
+	C:/Users/11245/Desktop/work/Dream/widget_level_loading.ui \
 	C:/Users/11245/Desktop/work/Dream/widget_menu.ui \
+	C:/Users/11245/Desktop/work/Dream/widget_post_game.ui \
 	D:/asoftwere/Qt/Tools/CMake_64/bin/cmake.exe

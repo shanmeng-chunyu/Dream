@@ -5,6 +5,7 @@
 #include <QVector>
 #include <Qstring>
 #include <QLabel>
+#include <QPushButton>
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
 #include <QGraphicsOpacityEffect>
@@ -21,9 +22,6 @@ public:
     explicit widget_choose_level(QWidget *parent = nullptr);
     ~widget_choose_level();
 
-    //设置按钮上的关卡名称，默认为第n关
-    void set_title(QVector<QString> t);
-
     //设置各关卡的描述
     void set_descriptions(QVector<QString> d);
 
@@ -32,13 +30,17 @@ signals:
     void level1();
     void level2();
     void level3();
+    void back();
 
 private:
     Ui::widget_choose_level *ui;
     QVector<QString> titles;
+    QPushButton *title;
     QVector<QString> descriptions;
+    QLabel *description;
     QVector<QString> map;
     QVector<QString> frames;
+    QVector<QString> icons;
     int choice=0;
 
     void smoothImageTransition(QLabel *imageLabel, const QString &newImagePath, int duration = 800);

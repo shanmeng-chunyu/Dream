@@ -47,6 +47,9 @@ add_executable(Dream
         resources.qrc
         widget_menu.h widget_menu.cpp widget_menu.ui
         widget_choose_level.h widget_choose_level.cpp widget_choose_level.ui
+        widget_level_loading.h widget_level_loading.cpp widget_level_loading.ui
+        IconButton.h IconButton.cpp
+        widget_post_game.h widget_post_game.cpp widget_post_game.ui
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

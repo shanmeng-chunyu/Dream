@@ -32,13 +32,13 @@
     <pixmap resource="resources.qrc">:/background/resources/background/menu_.png</pixmap>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_choose_level">
+  <widget class="IconButton" name="btn_choose_level">
    <property name="geometry">
     <rect>
      <x>540</x>
      <y>180</y>
-     <width>192</width>
-     <height>108</height>
+     <width>200</width>
+     <height>100</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -46,6 +46,8 @@
         background: transparent;       /* 背景透明 */
         border: none;                  /* 无边框 */
     }
+
+
 </string>
    </property>
    <property name="text">
@@ -86,8 +88,8 @@
   <widget class="QLabel" name="text1">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>210</y>
+     <x>550</x>
+     <y>120</y>
      <width>151</width>
      <height>51</height>
     </rect>
@@ -99,8 +101,7 @@
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:white
-</string>
+    <string notr="true">color:white</string>
    </property>
    <property name="text">
     <string>选 择 关 卡</string>
@@ -109,13 +110,13 @@
     <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="btn_exit_game">
+  <widget class="IconButton" name="btn_exit_game">
    <property name="geometry">
     <rect>
      <x>540</x>
      <y>320</y>
-     <width>192</width>
-     <height>108</height>
+     <width>200</width>
+     <height>100</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -142,8 +143,8 @@
   <widget class="QLabel" name="text2">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>350</y>
+     <x>580</x>
+     <y>470</y>
      <width>151</width>
      <height>51</height>
     </rect>
@@ -169,9 +170,16 @@
   <zorder>label</zorder>
   <zorder>btn_choose_level</zorder>
   <zorder>btn_exit_game</zorder>
-  <zorder>text1</zorder>
   <zorder>text2</zorder>
+  <zorder>text1</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IconButton</class>
+   <extends>QPushButton</extends>
+   <header>IconButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>
