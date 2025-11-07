@@ -3,6 +3,12 @@
         <file>resources/button/not_pressed.png</file>
         <file>resources/button/pressed.png</file>
         <file>resources/button/button_.png</file>
+        <file>resources/button/left.png</file>
+        <file>resources/button/right.png</file>
+        <file>resources/button/win_continue.png</file>
+        <file>resources/button/win_repeat.png</file>
+        <file>resources/button/lose_continue.png</file>
+        <file>resources/button/lose_repeat.png</file>
     </qresource>
     <qresource prefix="/background">
         <file>resources/background/choose.png</file>
@@ -18,6 +24,7 @@
         <file>resources/background/first_background.png</file>
         <file>resources/background/second_background.png</file>
         <file>resources/background/third_background.png</file>
+        <file>resources/background/title.png</file>
     </qresource>
     <qresource prefix="/frame">
         <file>resources/frame/level1.png</file>

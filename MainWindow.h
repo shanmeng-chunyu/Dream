@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QDebug>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

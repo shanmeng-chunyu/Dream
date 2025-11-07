@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     setFixedSize(800, 600);
     setWindowTitle("Dream Guardian");
 
-     auto m=new widget_level_loading(1);
+     auto m=new widget_post_game(1,100,45);
     //auto m=new widget_choose_level();
     m->show();
 

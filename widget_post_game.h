@@ -12,8 +12,13 @@ class widget_post_game : public QWidget
     Q_OBJECT
 
 public:
-    explicit widget_post_game(bool win,QWidget *parent = nullptr);
+    //初始化时传入是否胜利、稳定度、消灭怪物数量
+    explicit widget_post_game(bool win,int stability,int kill_nums,QWidget *parent = nullptr);
     ~widget_post_game();
+
+signals:
+    void repeat();
+    void next();
 
 private:
     Ui::widget_post_game *ui;

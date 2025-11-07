@@ -67,10 +67,11 @@ public:
         description->setAlignment(Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop);
         next = new IconButton(widget_choose_level);
         next->setObjectName("next");
-        next->setGeometry(QRect(660, 490, 50, 50));
-        QIcon icon1(QIcon::fromTheme(QIcon::ThemeIcon::DocumentSend));
+        next->setGeometry(QRect(620, 410, 65, 65));
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/button/resources/button/right.png"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
         next->setIcon(icon1);
-        next->setIconSize(QSize(50, 50));
+        next->setIconSize(QSize(70, 70));
         btn_level = new IconButton(widget_choose_level);
         btn_level->setObjectName("btn_level");
         btn_level->setGeometry(QRect(260, 350, 300, 250));
@@ -97,9 +98,11 @@ public:
         icon->setIconSize(QSize(100, 100));
         btn_back = new IconButton(widget_choose_level);
         btn_back->setObjectName("btn_back");
-        btn_back->setGeometry(QRect(0, 0, 40, 30));
-        QIcon icon4(QIcon::fromTheme(QIcon::ThemeIcon::DocumentRevert));
+        btn_back->setGeometry(QRect(0, 0, 45, 45));
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8(":/button/resources/button/left.png"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
         btn_back->setIcon(icon4);
+        btn_back->setIconSize(QSize(50, 50));
 
         retranslateUi(widget_choose_level);
 

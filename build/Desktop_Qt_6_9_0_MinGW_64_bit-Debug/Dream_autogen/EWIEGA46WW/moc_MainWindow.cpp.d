@@ -1,5 +1,6 @@
 C:/Users/11245/Desktop/work/Dream/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/Dream_autogen/EWIEGA46WW/moc_MainWindow.cpp: C:/Users/11245/Desktop/work/Dream/MainWindow.h \
   C:/Users/11245/Desktop/work/Dream/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/Dream_autogen/moc_predefs.h \
+  D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/QDebug \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/q17memory.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/q20functional.h \
   D:/asoftwere/Qt/6.9.0/mingw_64/include/QtCore/q20iterator.h \

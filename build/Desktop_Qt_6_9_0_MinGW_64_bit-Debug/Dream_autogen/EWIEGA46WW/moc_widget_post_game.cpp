@@ -38,10 +38,17 @@ template <> constexpr inline auto widget_post_game::qt_create_metaobjectdata<qt_
 {
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
-        "widget_post_game"
+        "widget_post_game",
+        "repeat",
+        "",
+        "next"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'repeat'
+        QtMocHelpers::SignalData<void()>(1, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'next'
+        QtMocHelpers::SignalData<void()>(3, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -63,10 +70,19 @@ Q_CONSTINIT const QMetaObject widget_post_game::staticMetaObject = { {
 void widget_post_game::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     auto *_t = static_cast<widget_post_game *>(_o);
-    (void)_t;
-    (void)_c;
-    (void)_id;
-    (void)_a;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->repeat(); break;
+        case 1: _t->next(); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (widget_post_game::*)()>(_a, &widget_post_game::repeat, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (widget_post_game::*)()>(_a, &widget_post_game::next, 1))
+            return;
+    }
 }
 
 const QMetaObject *widget_post_game::metaObject() const
@@ -85,6 +101,30 @@ void *widget_post_game::qt_metacast(const char *_clname)
 int widget_post_game::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QWidget::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 2)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 2;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 2)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 2;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void widget_post_game::repeat()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+}
+
+// SIGNAL 1
+void widget_post_game::next()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 QT_WARNING_POP

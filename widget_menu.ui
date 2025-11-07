@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>540</x>
-     <y>180</y>
+     <y>110</y>
      <width>200</width>
      <height>100</height>
     </rect>
@@ -67,10 +67,10 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>90</y>
-     <width>311</width>
-     <height>431</height>
+     <x>30</x>
+     <y>70</y>
+     <width>741</width>
+     <height>461</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -85,36 +85,11 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="text1">
-   <property name="geometry">
-    <rect>
-     <x>550</x>
-     <y>120</y>
-     <width>151</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>幼圆</family>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">color:white</string>
-   </property>
-   <property name="text">
-    <string>选 择 关 卡</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="IconButton" name="btn_exit_game">
    <property name="geometry">
     <rect>
      <x>540</x>
-     <y>320</y>
+     <y>380</y>
      <width>200</width>
      <height>100</height>
     </rect>
@@ -140,38 +115,75 @@
     </size>
    </property>
   </widget>
-  <widget class="QLabel" name="text2">
+  <widget class="IconButton" name="title">
    <property name="geometry">
     <rect>
-     <x>580</x>
-     <y>470</y>
-     <width>151</width>
-     <height>51</height>
+     <x>0</x>
+     <y>0</y>
+     <width>550</width>
+     <height>550</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <family>幼圆</family>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
    <property name="styleSheet">
-    <string notr="true">color:white
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+
 </string>
    </property>
    <property name="text">
-    <string>退 出 游 戏</string>
+    <string/>
    </property>
-   <property name="alignment">
-    <set>Qt::AlignmentFlag::AlignCenter</set>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/background/resources/background/title.png</normaloff>:/background/resources/background/title.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>600</width>
+     <height>600</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="btn_choose_level_2">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>240</y>
+     <width>200</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+
+
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>192</width>
+     <height>108</height>
+    </size>
    </property>
   </widget>
   <zorder>background</zorder>
   <zorder>label</zorder>
   <zorder>btn_choose_level</zorder>
   <zorder>btn_exit_game</zorder>
-  <zorder>text2</zorder>
-  <zorder>text1</zorder>
+  <zorder>title</zorder>
+  <zorder>btn_choose_level_2</zorder>
  </widget>
  <customwidgets>
   <customwidget>
