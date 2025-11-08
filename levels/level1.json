@@ -1,7 +1,7 @@
 {
   "level_name": "第一关：学业的烦恼",
   "map": {
-    "background": ":/backgrounds/level1_bg.png",
+    "background": "./美术素材（透明）/画面背景/第一关（仅地图方块）.png",
     "path": [
       { "x": 0.779296875, "y": 0.725260416666 },
       { "x": 0.779296875, "y": 0.625 },
@@ -136,43 +136,43 @@
         "type": "Cable",
         "pixmap": "./美术素材（透明）/地图方块/第一关/数据线障碍方块.png",
         "position": { "x": 0.1982421875, "y": 0.826822916666 },
-        "health": 200,
-        "resource": 50
+        "health": 300,
+        "resource": 100
       },
       {
         "type": "Stationery",
         "pixmap": "./美术素材（透明）/地图方块/第一关/文具障碍方块.png",
         "position": { "x": 0.1982421875, "y": 0.826822916666 },
-        "health": 200,
-        "resource": 50
+        "health": 300,
+        "resource": 100
       },
       {
         "type": "Stationery",
         "pixmap": "./美术素材（透明）/地图方块/第一关/文具障碍方块.png",
         "position": { "x": 0.6494140625, "y": 0.826822916666 },
-        "health": 200,
-        "resource": 50
+        "health": 300,
+        "resource": 100
       },
       {
         "type": "Stationery",
         "pixmap": "./美术素材（透明）/地图方块/第一关/文具障碍方块.png",
         "position": { "x": 0.5751953125, "y": 0.826822916666 },
-        "health": 200,
-        "resource": 50
+        "health": 300,
+        "resource": 100
       },
       {
         "type": "Book",
         "pixmap": "./美术素材（透明）/地图方块/第一关/书本障碍方块.png",
         "position": { "x": 0.349609375, "y": 0.565104166666 },
-        "health": 200,
-        "resource": 50
+        "health": 300,
+        "resource": 100
       },
       {
         "type": "Book",
         "pixmap": "./美术素材（透明）/地图方块/第一关/书本障碍方块.png",
         "position": { "x": 0.58203125, "y": 0.565104166666 },
-        "health": 200,
-        "resource": 50
+        "health": 300,
+        "resource": 100
       }
     ]
   },
