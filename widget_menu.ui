@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>widget_menu</class>
+ <widget class="QWidget" name="widget_menu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>menu</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QLabel" name="background">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>600</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/background/resources/background/menu_.png</pixmap>
+   </property>
+  </widget>
+  <widget class="IconButton" name="btn_choose_level">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>110</y>
+     <width>200</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+
+
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>192</width>
+     <height>108</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>70</y>
+     <width>741</width>
+     <height>461</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel {
+        background-color: rgba(150, 150,150,128); /* 浅灰 */
+        border-radius: 4px; /* 圆角（可选） */
+    }
+    /* 鼠标悬停状态：加深为深灰色 */
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="IconButton" name="btn_exit_game">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>380</y>
+     <width>200</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>192</width>
+     <height>108</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="title">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>550</width>
+     <height>550</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/background/resources/background/title.png</normaloff>:/background/resources/background/title.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>600</width>
+     <height>600</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="btn_choose_level_2">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>240</y>
+     <width>200</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background: transparent;       /* 背景透明 */
+        border: none;                  /* 无边框 */
+    }
+
+
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>192</width>
+     <height>108</height>
+    </size>
+   </property>
+  </widget>
+  <zorder>background</zorder>
+  <zorder>label</zorder>
+  <zorder>btn_choose_level</zorder>
+  <zorder>btn_exit_game</zorder>
+  <zorder>title</zorder>
+  <zorder>btn_choose_level_2</zorder>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IconButton</class>
+   <extends>QPushButton</extends>
+   <header>IconButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

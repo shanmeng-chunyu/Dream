@@ -1,25 +1,25 @@
 cmake_minimum_required(VERSION 3.16)
 
-# 项目名称
+# 锟斤拷目锟斤拷锟斤拷
 project(Dream LANGUAGES CXX)
 
-# 设置 C++ 标准
+# 锟斤拷锟斤拷 C++ 锟斤拷准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 包含当前目录，用于 #include "MyClass.h"
+# 锟斤拷锟斤拷锟斤拷前目录锟斤拷锟斤拷锟斤拷 #include "MyClass.h"
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# 自动处理 Qt 的 MOC, UIC, RCC
+# 锟皆讹拷锟斤拷锟斤拷 Qt 锟斤拷 MOC, UIC, RCC
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# 查找 Qt6 的核心模块
-# 确保你的项目需要的模块都在这里列出
+# 锟斤拷锟斤拷 Qt6 锟侥猴拷锟斤拷模锟斤拷
+# 确锟斤拷锟斤拷锟斤拷锟斤拷目锟斤拷要锟斤拷模锟介都锟斤拷锟斤拷锟斤拷锟叫筹拷
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
-# 定义可执行文件及其源文件
+# 锟斤拷锟斤拷锟斤拷执锟斤拷锟侥硷拷锟斤拷锟斤拷源锟侥硷拷
 add_executable(Dream
         main.cpp
         MainWindow.h
@@ -44,10 +44,16 @@ add_executable(Dream
         Obstacle.h
         GameMap.h
         GameMap.cpp
-        # 如果有 .ui 和 .qrc 文件，也在这里添加
+        resources.qrc
+        widget_menu.h widget_menu.cpp widget_menu.ui
+        widget_choose_level.h widget_choose_level.cpp widget_choose_level.ui
+        widget_level_loading.h widget_level_loading.cpp widget_level_loading.ui
+        IconButton.h IconButton.cpp
+        widget_post_game.h widget_post_game.cpp widget_post_game.ui
+        # 锟斤拷锟斤拷锟斤拷 .ui 锟斤拷 .qrc 锟侥硷拷锟斤拷也锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
         # MainWindow.ui
         # resources.qrc
 )
 
-# 链接 Qt6 的库到你的项目中
+# 锟斤拷锟斤拷 Qt6 锟侥库到锟斤拷锟斤拷锟斤拷目锟斤拷
 target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)

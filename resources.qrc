@@ -1,0 +1,53 @@
+<RCC>
+    <qresource prefix="/button">
+        <file>resources/button/not_pressed.png</file>
+        <file>resources/button/pressed.png</file>
+        <file>resources/button/button_.png</file>
+        <file>resources/button/left.png</file>
+        <file>resources/button/right.png</file>
+        <file>resources/button/win_continue.png</file>
+        <file>resources/button/win_repeat.png</file>
+        <file>resources/button/lose_continue.png</file>
+        <file>resources/button/lose_repeat.png</file>
+    </qresource>
+    <qresource prefix="/background">
+        <file>resources/background/choose.png</file>
+        <file>resources/background/first.png</file>
+        <file>resources/background/first_map.png</file>
+        <file>resources/background/menu.png</file>
+        <file>resources/background/second.png</file>
+        <file>resources/background/second_map.png</file>
+        <file>resources/background/third.png</file>
+        <file>resources/background/third_map.png</file>
+        <file>resources/background/menu_.png</file>
+        <file>resources/background/choose_.png</file>
+        <file>resources/background/first_background.png</file>
+        <file>resources/background/second_background.png</file>
+        <file>resources/background/third_background.png</file>
+        <file>resources/background/title.png</file>
+    </qresource>
+    <qresource prefix="/frame">
+        <file>resources/frame/level1.png</file>
+        <file>resources/frame/level2.png</file>
+        <file>resources/frame/level3.png</file>
+        <file>resources/frame/defeat.png</file>
+        <file>resources/frame/victory.png</file>
+    </qresource>
+    <qresource prefix="/map">
+        <file>resources/map/brief_first.png</file>
+        <file>resources/map/brief_second.png</file>
+        <file>resources/map/brief_third.png</file>
+    </qresource>
+    <qresource prefix="/map_items">
+        <file>resources/map_items/first/books_100_100.png</file>
+        <file>resources/map_items/first/draft_100_100.png</file>
+        <file>resources/map_items/first/stationary_100_100.png</file>
+        <file>resources/map_items/first/usb_100_100.png</file>
+        <file>resources/map_items/second/box_100_100.png</file>
+        <file>resources/map_items/second/flower_100_100.png</file>
+        <file>resources/map_items/second/photo_100_100.png</file>
+        <file>resources/map_items/second/ring_100_100.png</file>
+        <file>resources/map_items/third/third_end_100_100.png</file>
+        <file>resources/map_items/third/third_start_100_100.png</file>
+    </qresource>
+</RCC>
