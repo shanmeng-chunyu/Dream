@@ -4,10 +4,14 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QList \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QMap \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QObject \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/QPauseAnimation \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QPointF \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/QPropertyAnimation \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/QSequentialAnimationGroup \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QSizeF \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QString \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/QTimer \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/QVector \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q17memory.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q20functional.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q20iterator.h \
@@ -15,8 +19,10 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q20type_traits.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q20utility.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/q23utility.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qabstractanimation.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qabstracteventdispatcher.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qalgorithms.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qanimationgroup.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qanystringview.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qarraydata.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qarraydataops.h \
@@ -50,6 +56,7 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qdatetime.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qdeadlinetimer.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qdebug.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qeasingcurve.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qelapsedtimer.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qendian.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qeventloop.h \
@@ -64,6 +71,7 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qglobalstatic.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qhash.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qhashfunctions.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qiodevice.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qiodevicebase.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qiterable.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qiterator.h \
@@ -92,13 +100,16 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qobjectdefs_impl.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qoverload.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qpair.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qpauseanimation.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qpoint.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qprocessordetection.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qpropertyanimation.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qrect.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qrefcount.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qregularexpression.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qscopedpointer.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qscopeguard.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qsequentialanimationgroup.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qset.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qshareddata.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qshareddata_impl.h \
@@ -148,10 +159,13 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qutf8stringview.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/quuid.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qvariant.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qvariantanimation.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qvarlengtharray.h \
+	C:/Qt/6.9.0/mingw_64/include/QtCore/qvector.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qversiontagging.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qxptype_traits.h \
 	C:/Qt/6.9.0/mingw_64/include/QtCore/qyieldcpu.h \
+	C:/Qt/6.9.0/mingw_64/include/QtGui/QIcon \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qaction.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qbitmap.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qbrush.h \
@@ -169,12 +183,14 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qpainterpath.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qpalette.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qpen.h \
+	C:/Qt/6.9.0/mingw_64/include/QtGui/qpicture.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qpixelformat.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qpixmap.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qpolygon.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qregion.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qrgb.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qrgba64.h \
+	C:/Qt/6.9.0/mingw_64/include/QtGui/qtextdocument.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qtextoption.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qtgui-config.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qtguiexports.h \
@@ -183,17 +199,26 @@ Dream_autogen/timestamp: \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qwindowdefs.h \
 	C:/Qt/6.9.0/mingw_64/include/QtGui/qwindowdefs_win.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsItem \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsOpacityEffect \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsPixmapItem \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsScene \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QGraphicsView \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QLabel \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QMainWindow \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QProgressBar \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QPushButton \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/QWidget \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qabstractbutton.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qframe.h \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicseffect.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicsitem.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicsscene.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qgraphicsview.h \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qlabel.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qmainwindow.h \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qprogressbar.h \
+	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qpushbutton.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qscrollarea.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qsizepolicy.h \
 	C:/Qt/6.9.0/mingw_64/include/QtWidgets/qtabwidget.h \
@@ -382,6 +407,8 @@ Dream_autogen/timestamp: \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameManager.h \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameMap.cpp \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameMap.h \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/IconButton.cpp \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/IconButton.h \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.cpp \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.h \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelLoader.cpp \
@@ -401,6 +428,15 @@ Dream_autogen/timestamp: \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/CMakeFiles/3.28.1/CMakeSystem.cmake \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/Dream_autogen/moc_predefs.h \
 	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/main.cpp \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/resources.qrc \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_choose_level.cpp \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_choose_level.h \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_level_loading.cpp \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_level_loading.h \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_menu.cpp \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_menu.h \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_post_game.cpp \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_post_game.h \
 	D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCXXInformation.cmake \
 	D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
 	D:/Toolbox/CLion/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake \
@@ -644,4 +680,8 @@ Dream_autogen/timestamp: \
 	D:/Toolbox/CLion/bin/mingw/x86_64-w64-mingw32/include/time.h \
 	D:/Toolbox/CLion/bin/mingw/x86_64-w64-mingw32/include/vadefs.h \
 	D:/Toolbox/CLion/bin/mingw/x86_64-w64-mingw32/include/wchar.h \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_choose_level.ui \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_level_loading.ui \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_menu.ui \
+	C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_post_game.ui \
 	D:/Toolbox/CLion/bin/cmake/win/x64/bin/cmake.exe

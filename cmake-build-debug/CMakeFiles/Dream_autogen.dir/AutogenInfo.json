@@ -278,7 +278,8 @@
 		"C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets.cmake",
 		"C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginAdditionalTargetInfo.cmake",
-		"C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake"
+		"C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake",
+		"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/resources.qrc"
 	],
 	"CMAKE_SOURCE_DIR" : "C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream",
 	"DEP_FILE" : "C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/Dream_autogen/deps",
@@ -307,6 +308,12 @@
 			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/GameMap.h",
 			"MU",
 			"EWIEGA46WW/moc_GameMap.cpp",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/IconButton.h",
+			"MU",
+			"EWIEGA46WW/moc_IconButton.cpp",
 			null
 		],
 		[
@@ -349,6 +356,30 @@
 			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/WaveManager.h",
 			"MU",
 			"EWIEGA46WW/moc_WaveManager.cpp",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_choose_level.h",
+			"MU",
+			"EWIEGA46WW/moc_widget_choose_level.cpp",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_level_loading.h",
+			"MU",
+			"EWIEGA46WW/moc_widget_level_loading.cpp",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_menu.h",
+			"MU",
+			"EWIEGA46WW/moc_widget_menu.cpp",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_post_game.h",
+			"MU",
+			"EWIEGA46WW/moc_widget_post_game.cpp",
 			null
 		]
 	],
@@ -446,6 +477,11 @@
 			null
 		],
 		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/IconButton.cpp",
+			"MU",
+			null
+		],
+		[
 			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/LevelEditorWidget.cpp",
 			"MU",
 			null
@@ -482,6 +518,26 @@
 		],
 		[
 			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/main.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_choose_level.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_level_loading.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_menu.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/widget_post_game.cpp",
 			"MU",
 			null
 		]
