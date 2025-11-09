@@ -174,7 +174,7 @@
         "resource": 120
       },
       {
-        "type": "BrokenFreindship",
+        "type": "BrokenFriendship",
         "pixmap": "./美术素材（透明）/地图方块/第二关/破碎友谊障碍方块.png",
         "position": { "x":0.5458984375, "y":0.360677083333},
         "health": 400,
@@ -186,95 +186,8 @@
     "initial_stability": 0,
     "initial_resource": 150
   },
-  "available_towers": [
-    {
-      "type": "WarmMemories",
-      "name": "温暖的记忆",
-      "cost": 120,
-      "pixmap": "./美术素材（透明）/防御塔/第二关/温暖的记忆.png",
-      "bullet_pixmap": "",
-      "damage": 200,
-      "range": 2.5,
-      "fire_rate": 5
-    },
-    {
-      "type": "NightRadio",
-      "name": "深夜电台",
-      "cost": 150,
-      "pixmap": "./美术素材（透明）/防御塔/第二关/深夜电台.png",
-      "bullet_pixmap": "./美术素材（透明）/防御塔子弹/第二关/深夜电台子弹.png",
-      "damage": 100,
-      "range": 4.5,
-      "fire_rate": 1.5
-    },
-    {
-      "type": "PettingCatTime",
-      "name": "撸猫时间",
-      "cost": 180,
-      "pixmap": "./美术素材（透明）/防御塔/第二关/撸猫时间.png",
-      "bullet_pixmap": "",
-      "damage": 60,
-      "range": 1.5,
-      "fire_rate": 0.5
-    },
-    {
-      "type": "Companionship",
-      "name": "朋友的陪伴",
-      "cost": 100,
-      "pixmap": "./美术素材（透明）/防御塔/第二关/朋友陪伴.png",
-      "bullet_pixmap": "./美术素材（透明）/防御塔/第二关/朋友陪伴光环.png",
-      "damage": 0,
-      "range": 2.5,
-      "fire_rate": null
-    }
-  ],
-  "available_enemies": [
-    {
-      "type": "coldwords",
-      "name": "Cold Words",
-      "pixmap": "./美术素材（透明）/敌人/第二关/冰冷的言语.png",
-      "health": 100,
-      "speed": 1,
-      "drops": 10,
-      "damage": 1
-    },
-    {
-      "type": "lonelyness",
-      "name": "LONELYNESS",
-      "pixmap": "./美术素材（透明）/敌人/第二关/孤独怪物.png",
-      "health": 200,
-      "speed": 1,
-      "drops": 20,
-      "damage": 2
-    },
-    {
-      "type": "recall",
-      "name": "RECALL",
-      "pixmap": "./美术素材（透明）/敌人/第二关/回忆怪物.png",
-      "health": 400,
-      "speed": 1,
-      "drops": 25,
-      "damage": 3
-    },
-    {
-      "type": "tears",
-      "name": "TEARS",
-      "pixmap": "./美术素材（透明）/敌人/第二关/泪水怪物.png",
-      "health": 600,
-      "speed": 1,
-      "drops": 60,
-      "damage": 5
-    },
-    {
-      "type": "thephantomofthepast",
-      "name": "THEPHANTOMOFTHEPAST",
-      "pixmap": "./美术素材（透明）/敌人/第二关/昔日幻影boss.png",
-      "health": 10000,
-      "speed": 1,
-      "drops": 600,
-      "damage": 25
-    }
-  ],
+  "available_towers": ["WarmMemories", "NightRadio", "PettingCatTime", "Companionship"],
+  "available_enemies": ["coldwords", "lonelyness", "recall", "tears", "thephantomofthepast"],
   "waves": [
     {
       "enemies": [

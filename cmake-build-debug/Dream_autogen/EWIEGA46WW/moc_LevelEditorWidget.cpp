@@ -47,7 +47,15 @@ template <> constexpr inline auto LevelEditorWidget::qt_create_metaobjectdata<qt
         "addEnemyToWave",
         "removeEnemyFromWave",
         "onWaveSelectionChanged",
-        "onEnemySelectionChanged",
+        "onEnemyInWaveSelectionChanged",
+        "updateSelectedEnemyInWave",
+        "addAvailableTower",
+        "removeAvailableTower",
+        "onAvailableTowerChanged",
+        "updateSelectedTower",
+        "addAvailableEnemy",
+        "removeAvailableEnemy",
+        "onAvailableEnemyChanged",
         "updateSelectedEnemy"
     };
 
@@ -66,10 +74,26 @@ template <> constexpr inline auto LevelEditorWidget::qt_create_metaobjectdata<qt
         QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onWaveSelectionChanged'
         QtMocHelpers::SlotData<void()>(8, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onEnemySelectionChanged'
+        // Slot 'onEnemyInWaveSelectionChanged'
         QtMocHelpers::SlotData<void()>(9, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'updateSelectedEnemy'
+        // Slot 'updateSelectedEnemyInWave'
         QtMocHelpers::SlotData<void()>(10, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'addAvailableTower'
+        QtMocHelpers::SlotData<void()>(11, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'removeAvailableTower'
+        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onAvailableTowerChanged'
+        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'updateSelectedTower'
+        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'addAvailableEnemy'
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'removeAvailableEnemy'
+        QtMocHelpers::SlotData<void()>(16, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onAvailableEnemyChanged'
+        QtMocHelpers::SlotData<void()>(17, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'updateSelectedEnemy'
+        QtMocHelpers::SlotData<void()>(18, 2, QMC::AccessPrivate, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -100,8 +124,16 @@ void LevelEditorWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 4: _t->addEnemyToWave(); break;
         case 5: _t->removeEnemyFromWave(); break;
         case 6: _t->onWaveSelectionChanged(); break;
-        case 7: _t->onEnemySelectionChanged(); break;
-        case 8: _t->updateSelectedEnemy(); break;
+        case 7: _t->onEnemyInWaveSelectionChanged(); break;
+        case 8: _t->updateSelectedEnemyInWave(); break;
+        case 9: _t->addAvailableTower(); break;
+        case 10: _t->removeAvailableTower(); break;
+        case 11: _t->onAvailableTowerChanged(); break;
+        case 12: _t->updateSelectedTower(); break;
+        case 13: _t->addAvailableEnemy(); break;
+        case 14: _t->removeAvailableEnemy(); break;
+        case 15: _t->onAvailableEnemyChanged(); break;
+        case 16: _t->updateSelectedEnemy(); break;
         default: ;
         }
     }
@@ -127,14 +159,14 @@ int LevelEditorWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 17)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 17;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 17)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 9;
+        _id -= 17;
     }
     return _id;
 }

@@ -1,5 +1,6 @@
 C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/Dream_autogen/EWIEGA46WW/moc_MainWindow.cpp: C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/MainWindow.h \
   C:/Users/23104/OneDrive/Desktop/What_can_I_say/Dream/cmake-build-debug/Dream_autogen/moc_predefs.h \
+  C:/Qt/6.9.0/mingw_64/include/QtCore/QDebug \
   C:/Qt/6.9.0/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/q20functional.h \
   C:/Qt/6.9.0/mingw_64/include/QtCore/q20iterator.h \

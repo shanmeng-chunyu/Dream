@@ -172,12 +172,8 @@
     "initial_stability": 0,
     "initial_resource": 150
   },
-  "available_towers": [
-
-  ],
-  "available_enemies": [
-
-  ],
+  "available_towers": [],
+  "available_enemies": ["nightmare"],
   "waves": [
     {
       "enemies": [

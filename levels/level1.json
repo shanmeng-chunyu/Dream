@@ -142,21 +142,21 @@
       {
         "type": "Stationery",
         "pixmap": "./美术素材（透明）/地图方块/第一关/文具障碍方块.png",
-        "position": { "x": 0.1982421875, "y": 0.826822916666 },
+        "position": { "x": 0.1982421875, "y": 0.352864583333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
         "pixmap": "./美术素材（透明）/地图方块/第一关/文具障碍方块.png",
-        "position": { "x": 0.6494140625, "y": 0.826822916666 },
+        "position": { "x": 0.6494140625, "y": 0.352864583333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
         "pixmap": "./美术素材（透明）/地图方块/第一关/文具障碍方块.png",
-        "position": { "x": 0.5751953125, "y": 0.826822916666 },
+        "position": { "x": 0.5751953125, "y": 0.826822916667},
         "health": 300,
         "resource": 100
       },
@@ -180,95 +180,8 @@
     "initial_stability": 0,
     "initial_resource": 150
   },
-  "available_towers": [
-    {
-      "type": "InspirationBulb",
-      "name": "灵感灯泡",
-      "cost": 100,
-      "pixmap": "./美术素材（透明）/防御塔/第一关/灵感灯泡.png",
-      "bullet_pixmap": "./美术素材（透明）/防御塔子弹/第一关/灵感灯泡子弹.png",
-      "damage": 40,
-      "range": 2.5,
-      "fire_rate": 0.8
-    },
-    {
-      "type": "KnowledgeTree",
-      "name": "知识古树",
-      "cost": 200,
-      "pixmap": "./美术素材（透明）/防御塔/第一关/知识古树.png",
-      "bullet_pixmap": "./美术素材（透明）/防御塔子弹/第一关/知识古树子弹.png",
-      "damage": 160,
-      "range": 3.5,
-      "fire_rate": 2.0
-    },
-    {
-      "type": "FishingCatPillow",
-      "name": "摸鱼猫猫枕",
-      "cost": 120,
-      "pixmap": "./美术素材（透明）/防御塔/第一关/摸鱼猫猫枕.png",
-      "bullet_pixmap": "",
-      "damage": 0,
-      "range": 2.5,
-      "fire_rate": null
-    },
-    {
-      "type": "LiveCoffee",
-      "name": "续命咖啡",
-      "cost": 80,
-      "pixmap": "./美术素材（透明）/防御塔/第一关/续命咖啡.png",
-      "bullet_pixmap": "./美术素材（透明）/防御塔子弹/第一关/续命咖啡（光环特效）.png",
-      "damage": 0,
-      "range": 2.5,
-      "fire_rate": null
-    }
-  ],
-  "available_enemies": [
-    {
-      "type": "bug",
-      "name": "BUG",
-      "pixmap": "./美术素材（透明）/敌人/第一关/bug怪物.png",
-      "health": 150,
-      "speed": 1,
-      "drops": 10,
-      "damage": 1
-    },
-    {
-      "type": "gpa",
-      "name": "GPA",
-      "pixmap": "./美术素材（透明）/敌人/第一关/gpa怪物.png",
-      "health": 300,
-      "speed": 1.0,
-      "drops": 15,
-      "damage": 2
-    },
-    {
-      "type": "ddl",
-      "name": "DDL",
-      "pixmap": "./美术素材（透明）/敌人/第一关/ddl怪物.png",
-      "health": 80,
-      "speed": 1.5,
-      "drops": 8,
-      "damage": 1
-    },
-    {
-      "type": "pre",
-      "name": "PRE",
-      "pixmap": "./美术素材（透明）/敌人/第一关/pre怪物.png",
-      "health": 500,
-      "speed": 1.0,
-      "drops": 50,
-      "damage": 5
-    },
-    {
-      "type": "thesis",
-      "name": "THESIS",
-      "pixmap": "./美术素材（透明）/敌人/第一关/论文boss.png",
-      "health": 8000,
-      "speed": 1.0,
-      "drops": 500,
-      "damage": 20
-    }
-  ],
+  "available_towers": ["InspirationBulb", "KnowledgeTree", "FishingCatPillow", "LiveCoffee"],
+  "available_enemies": ["bug", "gpa", "ddl", "pre", "thesis"],
   "waves": [
     {
       "enemies": [
