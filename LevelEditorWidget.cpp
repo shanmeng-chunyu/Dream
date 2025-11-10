@@ -6,61 +6,231 @@
 #include <QListWidget>
 #include <QLineEdit>
 #include <QSpinBox>
-#include <QDoubleSpinBox>
-#include <QTabWidget>
-#include <QGroupBox>
+#include <QComboBox>
 #include <QLabel>
+#include <QGroupBox>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QMessageBox>
 #include <QFormLayout>
+#include <QSplitter>
+#include <QFile>
+#include <QDebug>
+#include <QStandardItemModel>
 
-LevelEditorWidget::LevelEditorWidget(QWidget* parent) : QWidget(parent) {
+LevelEditorWidget::LevelEditorWidget(QWidget* parent)
+    : QWidget(parent),
+      mainSplitter(nullptr),
+      levelNameEdit(nullptr),
+      saveButton(nullptr), loadButton(nullptr),
+      waveListWidget(nullptr), enemyInWaveListWidget(nullptr),
+      addWaveButton(nullptr), removeWaveButton(nullptr),
+      addEnemyToWaveButton(nullptr), removeEnemyFromWaveButton(nullptr),
+      wave_enemyTypeComboBox(nullptr), wave_enemyCountSpinBox(nullptr),
+      wave_enemyThumbnailLabel(nullptr),
+      availableTowersListWidget(nullptr),
+      tower_typeComboBox(nullptr), tower_thumbnailLabel(nullptr),
+      tower_warningLabel(nullptr),
+      m_firstEnemyType("bug") // 默认值，会被 loadPrototypes 覆盖
+{
+    // 1. 加载所有敌人和塔的原型数据
+    loadPrototypes();
+
+    // 2. 构建UI
     setupUI();
 
-    // --- 通用信号 ---
+    // 3. --- 连接通用信号 ---
     connect(saveButton, &QPushButton::clicked, this, &LevelEditorWidget::saveLevel);
     connect(loadButton, &QPushButton::clicked, this, &LevelEditorWidget::loadLevel);
 
-    // --- 波次编辑器 Tab 信号 ---
+    // 4. --- 连接波次编辑器信号 ---
     connect(addWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::addWave);
     connect(removeWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::removeWave);
     connect(waveListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onWaveSelectionChanged);
+
     connect(addEnemyToWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::addEnemyToWave);
     connect(removeEnemyFromWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::removeEnemyFromWave);
     connect(enemyInWaveListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onEnemyInWaveSelectionChanged);
 
-    // "波次"详情编辑框信号
-    connect(wave_enemyTypeLineEdit, &QLineEdit::textChanged, this, &LevelEditorWidget::updateSelectedEnemyInWave);
-    // 数量和间隔的信号不再连接到 update 函数，因为它们是只读的
+    // 连接敌人详情编辑控件
+    connect(wave_enemyTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LevelEditorWidget::onWaveEnemyTypeChanged);
+    connect(wave_enemyCountSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &LevelEditorWidget::onWaveEnemyCountChanged);
 
-    // --- 游戏配置 Tab 信号 ---
-    // 防御塔
-    connect(addTowerButton, &QPushButton::clicked, this, &LevelEditorWidget::addAvailableTower);
-    connect(removeTowerButton, &QPushButton::clicked, this, &LevelEditorWidget::removeAvailableTower);
-    connect(availableTowersListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onAvailableTowerChanged);
+    // 5. --- 连接防御塔选择器信号 ---
+    connect(availableTowersListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onTowerSlotSelectionChanged);
+    connect(tower_typeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LevelEditorWidget::onTowerTypeChanged);
 
-    // enemies
-    connect(addEnemyButton, &QPushButton::clicked, this, &LevelEditorWidget::addAvailableEnemy);
-    connect(removeEnemyButton, &QPushButton::clicked, this, &LevelEditorWidget::removeAvailableEnemy);
-    connect(availableEnemiesListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onAvailableEnemyChanged);
 
-    onWaveSelectionChanged(); // 初始化状态
+    // 6. --- 初始化UI状态 ---
+    onWaveSelectionChanged();
+    onTowerSlotSelectionChanged();
 }
 
+/**
+ * @brief 从 master JSON 文件加载敌人和塔的原型数据
+ */
+void LevelEditorWidget::loadPrototypes() {
+    m_enemyPrototypes.clear();
+    m_towerPrototypes.clear();
+
+    // --- 在此填充你的 enemy_data.json 和 tower_data.json 的实际路径 ---
+    // 提示: 最好使用 Qt 资源文件 (qrc) 路径，例如 ":/data/enemy_data.json"
+    // 为了方便测试，这里暂时使用你上传的文件名。
+    QString enemyDataPath = ":/data/enemy_data.json";
+    QString towerDataPath = ":/data/tower_data.json";
+    // -------------------------------------------------------------
+
+    // 加载敌人
+    QFile enemyFile(enemyDataPath);
+if (enemyFile.open(QIODevice::ReadOnly)) {
+    // 1. 读取所有数据
+    QByteArray fileData = enemyFile.readAll();
+    qDebug() << "Loaded enemy_data.json, size:" << fileData.size();
+
+    // 2. 准备一个错误捕获器
+    QJsonParseError jsonError;
+    QJsonDocument doc = QJsonDocument::fromJson(fileData, &jsonError);
+
+    // 3. 检查解析是否出错
+    if (jsonError.error != QJsonParseError::NoError) {
+        qWarning() << "[P8] JSON Parse Error in enemy_data.json:" << jsonError.errorString() << "at offset" << jsonError.offset;
+        enemyFile.close();
+        return; // 提前退出
+    }
+
+    // 4. 检查根是否为对象
+    if (!doc.isObject()) {
+        qWarning() << "[P8] JSON document is not an object (enemy_data.json)";
+        enemyFile.close();
+        return; // 提前退出
+    }
+
+    // 5. 检查 'master_enemies' 键是否存在
+    QJsonObject rootObj = doc.object();
+    if (!rootObj.contains("master_enemies")) {
+        qWarning() << "[P8] JSON object does not contain 'master_enemies' key.";
+        enemyFile.close();
+        return; // 提前退出
+    }
+
+    // 6. 一切正常，开始填充
+    QJsonArray enemies = rootObj["master_enemies"].toArray();
+    qDebug() << "[P8] Found" << enemies.size() << "master enemies.";
+
+    for (const QJsonValue& val : enemies) {
+        QJsonObject obj = val.toObject();
+        m_enemyPrototypes[obj["type"].toString()] = obj;
+    }
+    enemyFile.close();
+
+} else {
+    qWarning() << "LevelEditorWidget: Failed to load" << enemyDataPath;
+}
+
+// --- 加载防御塔 ---
+QFile towerFile(towerDataPath);
+if (towerFile.open(QIODevice::ReadOnly)) {
+    QByteArray fileData = towerFile.readAll();
+    qDebug() << "Loaded tower_data.json, size:" << fileData.size();
+
+    QJsonParseError jsonError;
+    QJsonDocument doc = QJsonDocument::fromJson(fileData, &jsonError);
+
+    if (jsonError.error != QJsonParseError::NoError) {
+        qWarning() << "[P8] JSON Parse Error in tower_data.json:" << jsonError.errorString();
+        towerFile.close();
+        return;
+    }
+    if (!doc.isObject()) {
+        qWarning() << "[P8] JSON document is not an object (tower_data.json)";
+        towerFile.close();
+        return;
+    }
+
+    QJsonObject rootObj = doc.object();
+    // 检查 tower_data.json 中的 "master_towers" 键
+    if (!rootObj.contains("master_towers")) {
+        qWarning() << "[P8] JSON object does not contain 'master_towers' key.";
+        towerFile.close();
+        return;
+    }
+
+    QJsonArray towers = rootObj["master_towers"].toArray();
+    qDebug() << "[P8] Found" << towers.size() << "master towers.";
+
+    for (const QJsonValue& val : towers) {
+        QJsonObject obj = val.toObject();
+        m_towerPrototypes[obj["type"].toString()] = obj;
+    }
+    towerFile.close();
+} else {
+    qWarning() << "LevelEditorWidget: Failed to load" << towerDataPath;
+}
+    // QFile enemyFile(enemyDataPath);
+    // if (enemyFile.open(QIODevice::ReadOnly)) {
+    //     QJsonDocument doc = QJsonDocument::fromJson(enemyFile.readAll());
+    //     QJsonArray enemies = doc.object()["master_enemies"].toArray();
+    //     for (const QJsonValue& val : enemies) {
+    //         QJsonObject obj = val.toObject();
+    //         m_enemyPrototypes[obj["type"].toString()] = obj;
+    //     }
+    //     enemyFile.close();
+    //
+    // } else {
+    //     qWarning() << "LevelEditorWidget: Failed to load" << enemyDataPath;
+    // }
+    //
+    // if (!m_enemyPrototypes.isEmpty()) {
+    //     m_firstEnemyType = m_enemyPrototypes.keys().first();
+    // }
+    //
+    // // 加载防御塔
+    // QFile towerFile(towerDataPath);
+    // if (towerFile.open(QIODevice::ReadOnly)) {
+    //     QJsonDocument doc = QJsonDocument::fromJson(towerFile.readAll());
+    //     QJsonArray towers = doc.object()["master_towers"].toArray();
+    //     for (const QJsonValue& val : towers) {
+    //         QJsonObject obj = val.toObject();
+    //         m_towerPrototypes[obj["type"].toString()] = obj;
+    //     }
+    //     towerFile.close();
+    // } else {
+    //     qWarning() << "LevelEditorWidget: Failed to load" << towerDataPath;
+    // }
+}
+
+/**
+ * @brief 构建编辑器的主UI布局
+ */
 void LevelEditorWidget::setupUI() {
     auto* mainLayout = new QVBoxLayout(this);
-    tabWidget = new QTabWidget(this);
 
-    // 创建两个 Tab
-    setupWaveTab();
-    setupConfigTab();
+    // 顶部：关卡名
+    // auto* levelNameLayout = new QHBoxLayout();
+    // levelNameLayout->addWidget(new QLabel("Level Name:"));
+    // levelNameEdit = new QLineEdit("Custom Level");
+    // levelNameLayout->addWidget(levelNameEdit);
+    // mainLayout->addLayout(levelNameLayout);
 
-    mainLayout->addWidget(tabWidget);
+    // 中间：主分割器 (波次 vs 塔)
+    mainSplitter = new QSplitter(Qt::Vertical, this);
 
-    // --- 底部按钮 ---
+    // 上半部分：波次编辑器
+    mainSplitter->addWidget(createWaveEditorGroup());
+
+    // 下半部分：防御塔选择器
+    mainSplitter->addWidget(createTowerSelectionGroup());
+
+    // 设置分割比例 (3/4 vs 1/4)
+    mainSplitter->setSizes({600, 200}); // 初始大小
+    mainSplitter->setStretchFactor(0, 3); // 波次编辑器占 3 份
+    mainSplitter->setStretchFactor(1, 1); // 塔选择器占 1 份
+
+    mainLayout->addWidget(mainSplitter, 1); // 允许分割器伸展
+
+    // 底部：保存/加载按钮
     auto* bottomButtonLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save Level to File...");
     loadButton = new QPushButton("Load Level from File...");
@@ -70,161 +240,120 @@ void LevelEditorWidget::setupUI() {
     mainLayout->addLayout(bottomButtonLayout);
 }
 
-void LevelEditorWidget::setupWaveTab() {
-    waveTab = new QWidget();
-    auto* waveTabLayout = new QHBoxLayout(waveTab);
+/**
+ * @brief 创建波次编辑器 (上半部分)
+ */
+QGroupBox* LevelEditorWidget::createWaveEditorGroup() {
+    auto* waveGroup = new QGroupBox("Wave Editor");
+    auto* waveTabLayout = new QHBoxLayout(waveGroup);
 
     // 左侧：波次列表
-    auto* waveGroup = new QGroupBox("Waves (Read-Only Structure)");
-    auto* waveGroupLayout = new QVBoxLayout();
+    auto* waveListLayout = new QVBoxLayout();
     waveListWidget = new QListWidget();
     auto* waveButtonLayout = new QHBoxLayout();
     addWaveButton = new QPushButton("Add Wave");
     removeWaveButton = new QPushButton("Remove Wave");
     waveButtonLayout->addWidget(addWaveButton);
     waveButtonLayout->addWidget(removeWaveButton);
-    waveGroupLayout->addWidget(waveListWidget);
-    waveGroupLayout->addLayout(waveButtonLayout);
-    waveGroup->setLayout(waveGroupLayout);
+    waveListLayout->addWidget(waveListWidget);
+    waveListLayout->addLayout(waveButtonLayout);
 
     // 中间：当前波次的敌人列表
-    auto* enemyGroup = new QGroupBox("Enemies in Selected Wave");
-    auto* enemyGroupLayout = new QVBoxLayout();
+    auto* enemyListLayout = new QVBoxLayout();
     enemyInWaveListWidget = new QListWidget();
     auto* enemyButtonLayout = new QHBoxLayout();
     addEnemyToWaveButton = new QPushButton("Add Enemy");
     removeEnemyFromWaveButton = new QPushButton("Remove Enemy");
     enemyButtonLayout->addWidget(addEnemyToWaveButton);
     enemyButtonLayout->addWidget(removeEnemyFromWaveButton);
-    enemyGroupLayout->addWidget(enemyInWaveListWidget);
-    enemyGroupLayout->addLayout(enemyButtonLayout);
-    enemyGroup->setLayout(enemyGroupLayout);
+    enemyListLayout->addWidget(enemyInWaveListWidget);
+    enemyListLayout->addLayout(enemyButtonLayout);
 
     // 右侧：选定敌人的详细信息
-    auto* detailsGroup = new QGroupBox("Enemy Details (Fixed Count/Interval)");
-    auto* detailsLayout = new QGridLayout();
-    detailsLayout->addWidget(new QLabel("Type:"), 0, 0);
-    wave_enemyTypeLineEdit = new QLineEdit();
-    detailsLayout->addWidget(wave_enemyTypeLineEdit, 0, 1);
+    auto* detailsLayout = new QFormLayout();
+    wave_enemyTypeComboBox = new QComboBox();
+    // 填充敌人种类
+    for (const QJsonObject& obj : m_enemyPrototypes.values()) {
+        wave_enemyTypeComboBox->addItem(obj["name"].toString(), obj["type"].toString());
+    }
 
-    detailsLayout->addWidget(new QLabel("Count (Fixed):"), 1, 0);
     wave_enemyCountSpinBox = new QSpinBox();
     wave_enemyCountSpinBox->setRange(1, 999);
-    wave_enemyCountSpinBox->setReadOnly(true); // <-- 核心修改：设为只读
-    detailsLayout->addWidget(wave_enemyCountSpinBox, 1, 1);
+    wave_enemyCountSpinBox->setValue(10);
 
-    detailsLayout->addWidget(new QLabel("Interval (Fixed):"), 2, 0);
-    wave_enemyIntervalSpinBox = new QDoubleSpinBox();
-    wave_enemyIntervalSpinBox->setRange(0.1, 60.0);
-    wave_enemyIntervalSpinBox->setSingleStep(0.1);
-    wave_enemyIntervalSpinBox->setReadOnly(true); // <-- 核心修改：设为只读
-    detailsLayout->addWidget(wave_enemyIntervalSpinBox, 2, 1);
-    detailsGroup->setLayout(detailsLayout);
+    wave_enemyThumbnailLabel = new QLabel("[Enemy Thumbnail]");
+    wave_enemyThumbnailLabel->setFixedSize(100, 100);
+    wave_enemyThumbnailLabel->setScaledContents(true);
+    wave_enemyThumbnailLabel->setAlignment(Qt::AlignCenter);
+    wave_enemyThumbnailLabel->setFrameShape(QFrame::Box);
 
-    waveTabLayout->addWidget(waveGroup, 1);
-    waveTabLayout->addWidget(enemyGroup, 1);
-    waveTabLayout->addWidget(detailsGroup, 1);
-    tabWidget->addTab(waveTab, "Wave Editor");
+    detailsLayout->addRow("Type:", wave_enemyTypeComboBox);
+    detailsLayout->addRow("Count:", wave_enemyCountSpinBox);
+    detailsLayout->addRow("Thumbnail:", wave_enemyThumbnailLabel);
+
+    // 组合三栏
+    waveTabLayout->addLayout(waveListLayout, 1);
+    waveTabLayout->addLayout(enemyListLayout, 2);
+    waveTabLayout->addLayout(detailsLayout, 1);
+
+    return waveGroup;
 }
 
-void LevelEditorWidget::setupConfigTab() {
-    configTab = new QWidget();
-    auto* configLayout = new QVBoxLayout(configTab);
+/**
+ * @brief 创建防御塔选择器 (下半部分)
+ */
+QGroupBox* LevelEditorWidget::createTowerSelectionGroup() {
+    auto* towerGroup = new QGroupBox("Available Towers (Choose 4)");
+    auto* towerGroupLayout = new QHBoxLayout(towerGroup);
 
-    // --- 关卡名 ---
-    auto* levelNameLayout = new QHBoxLayout();
-    levelNameLayout->addWidget(new QLabel("Level Name:"));
-    levelNameEdit = new QLineEdit("Custom Level");
-    levelNameLayout->addWidget(levelNameEdit);
-    configLayout->addLayout(levelNameLayout);
-
-    // --- 可用防御塔 ---
-    auto* towerGroup = new QGroupBox("Available Towers (Editable)");
-    auto* towerGroupLayout = new QHBoxLayout();
+    // 左侧：固定的4个槽位
     availableTowersListWidget = new QListWidget();
+    for (int i = 1; i <= 4; ++i) {
+        auto* item = new QListWidgetItem(QString("Tower Slot %1").arg(QString::number(i)));
+        item->setData(Qt::UserRole, QJsonObject()); // 存储 QJsonObject { "type": "..." }
+        availableTowersListWidget->addItem(item);
+    }
+    availableTowersListWidget->setFixedWidth(150);
+
+    // 中间：选择栏
+    auto* towerSelectLayout = new QFormLayout();
+    tower_typeComboBox = new QComboBox();
+    tower_typeComboBox->addItem("None", "None");
+    // 迭代 m_towerPrototypes
+    for (const QJsonObject& obj : m_towerPrototypes.values()) {
+        tower_typeComboBox->addItem(obj["name"].toString(), obj["type"].toString());
+    }
+
+    tower_warningLabel = new QLabel("Cannot select duplicate tower type!");
+    tower_warningLabel->setStyleSheet("color: red;");
+    tower_warningLabel->setVisible(false);
+    tower_warningLabel->setWordWrap(true);
+
+    towerSelectLayout->addRow("Select Type:", tower_typeComboBox);
+    towerSelectLayout->addRow(tower_warningLabel);
+
+    // 右侧：缩略图
+    tower_thumbnailLabel = new QLabel("[Tower Thumbnail]");
+    tower_thumbnailLabel->setFixedSize(100, 100);
+    tower_thumbnailLabel->setScaledContents(true);
+    tower_thumbnailLabel->setAlignment(Qt::AlignCenter);
+    tower_thumbnailLabel->setFrameShape(QFrame::Box);
+
+    // 组合三栏
     towerGroupLayout->addWidget(availableTowersListWidget, 1);
+    towerGroupLayout->addLayout(towerSelectLayout, 2);
+    towerGroupLayout->addWidget(tower_thumbnailLabel, 1);
 
-    // 防御塔详情
-    towerDetailsLayout = new QFormLayout();
-    towerPropertyWidgets["type"] = new QLineEdit();
-    towerPropertyWidgets["name"] = new QLineEdit();
-    towerPropertyWidgets["cost"] = new QSpinBox();
-    towerPropertyWidgets["pixmap"] = new QLineEdit();
-    towerPropertyWidgets["bullet_pixmap"] = new QLineEdit();
-    towerPropertyWidgets["damage"] = new QSpinBox();
-    towerPropertyWidgets["range"] = new QDoubleSpinBox();
-    towerPropertyWidgets["fire_rate"] = new QDoubleSpinBox();
-    // 设置范围
-    qobject_cast<QSpinBox*>(towerPropertyWidgets["cost"])->setRange(0, 9999);
-    qobject_cast<QSpinBox*>(towerPropertyWidgets["damage"])->setRange(0, 9999);
-    qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets["range"])->setRange(0.0, 99.0);
-    qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets["fire_rate"])->setRange(0.0, 99.0);
-
-    // 添加到Form
-    for(const QString& key : towerPropertyWidgets.keys()) {
-        towerDetailsLayout->addRow(key + ":", towerPropertyWidgets[key]);
-        // 连接信号
-        connect(qobject_cast<QLineEdit*>(towerPropertyWidgets[key]), &QLineEdit::textChanged, this, &LevelEditorWidget::updateSelectedTower);
-        connect(qobject_cast<QSpinBox*>(towerPropertyWidgets[key]), QOverload<int>::of(&QSpinBox::valueChanged), this, &LevelEditorWidget::updateSelectedTower);
-        connect(qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets[key]), QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LevelEditorWidget::updateSelectedTower);
-    }
-    towerGroupLayout->addLayout(towerDetailsLayout, 2);
-
-    // 按钮
-    auto* towerButtons = new QVBoxLayout();
-    addTowerButton = new QPushButton("Add Tower");
-    removeTowerButton = new QPushButton("Remove Tower");
-    towerButtons->addWidget(addTowerButton);
-    towerButtons->addWidget(removeTowerButton);
-    towerGroupLayout->addLayout(towerButtons);
-    towerGroup->setLayout(towerGroupLayout);
-    configLayout->addWidget(towerGroup);
-
-    // --- 可用敌人 ---
-    auto* enemyGroup = new QGroupBox("Available Enemies (Editable)");
-    auto* enemyGroupLayout = new QHBoxLayout();
-    availableEnemiesListWidget = new QListWidget();
-    enemyGroupLayout->addWidget(availableEnemiesListWidget, 1);
-
-    // 敌人详情
-    enemyDetailsLayout = new QFormLayout();
-    enemyPropertyWidgets["type"] = new QLineEdit();
-    enemyPropertyWidgets["name"] = new QLineEdit();
-    enemyPropertyWidgets["pixmap"] = new QLineEdit();
-    enemyPropertyWidgets["health"] = new QSpinBox();
-    enemyPropertyWidgets["speed"] = new QDoubleSpinBox();
-    enemyPropertyWidgets["damage"] = new QSpinBox();
-    // 设置范围
-    qobject_cast<QSpinBox*>(enemyPropertyWidgets["health"])->setRange(1, 99999);
-    qobject_cast<QDoubleSpinBox*>(enemyPropertyWidgets["speed"])->setRange(0.1, 99.0);
-    qobject_cast<QSpinBox*>(enemyPropertyWidgets["damage"])->setRange(0, 9999);
-
-    for(const QString& key : enemyPropertyWidgets.keys()) {
-        enemyDetailsLayout->addRow(key + ":", enemyPropertyWidgets[key]);
-        // 连接信号
-        connect(qobject_cast<QLineEdit*>(enemyPropertyWidgets[key]), &QLineEdit::textChanged, this, &LevelEditorWidget::updateSelectedEnemy);
-        connect(qobject_cast<QSpinBox*>(enemyPropertyWidgets[key]), QOverload<int>::of(&QSpinBox::valueChanged), this, &LevelEditorWidget::updateSelectedEnemy);
-        connect(qobject_cast<QDoubleSpinBox*>(enemyPropertyWidgets[key]), QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &LevelEditorWidget::updateSelectedEnemy);
-    }
-    enemyGroupLayout->addLayout(enemyDetailsLayout, 2);
-
-    // 按钮
-    auto* enemyButtons = new QVBoxLayout();
-    addEnemyButton = new QPushButton("Add Enemy");
-    removeEnemyButton = new QPushButton("Remove Enemy");
-    enemyButtons->addWidget(addEnemyButton);
-    enemyButtons->addWidget(removeEnemyButton);
-    enemyGroupLayout->addLayout(enemyButtons);
-    enemyGroup->setLayout(enemyGroupLayout);
-    configLayout->addWidget(enemyGroup);
-
-    tabWidget->addTab(configTab, "Game Config (Editable)");
+    return towerGroup;
 }
+
+
+// --- Wave Editor Slots ---
 
 void LevelEditorWidget::addWave() {
     int waveCount = waveListWidget->count();
     auto* item = new QListWidgetItem(QString("Wave %1").arg(QString::number(waveCount + 1)));
-    item->setData(Qt::UserRole, QJsonArray());
+    item->setData(Qt::UserRole, QJsonArray()); // 波次数据存储为敌人数组
     waveListWidget->addItem(item);
     waveListWidget->setCurrentItem(item);
 }
@@ -235,7 +364,7 @@ void LevelEditorWidget::removeWave() {
 
 void LevelEditorWidget::onWaveSelectionChanged() {
     enemyInWaveListWidget->clear();
-    clearEnemyInWaveDetails();
+    updateWaveEnemyDetailsUI(nullptr); // 清空并禁用详情
 
     QListWidgetItem* currentWave = waveListWidget->currentItem();
     if (!currentWave) {
@@ -246,12 +375,13 @@ void LevelEditorWidget::onWaveSelectionChanged() {
 
     addEnemyToWaveButton->setEnabled(true);
 
+    // 加载该波次的敌人列表
     QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
     for (const QJsonValue& enemyValue : enemies) {
         QJsonObject enemyObj = enemyValue.toObject();
-        QString type = enemyObj["type"].toString("default");
-        int count = enemyObj["count"].toInt(1);
-        auto* item = new QListWidgetItem(QString("%1 (x%2)").arg(type).arg(QString::number(count)));
+        QString type = enemyObj["type"].toString(m_firstEnemyType);
+        int count = enemyObj["count"].toInt(10);
+        auto* item = new QListWidgetItem(QString("%1 x%2").arg(type).arg(QString::number(count)));
         item->setData(Qt::UserRole, enemyObj);
         enemyInWaveListWidget->addItem(item);
     }
@@ -263,16 +393,17 @@ void LevelEditorWidget::addEnemyToWave() {
     QListWidgetItem* currentWave = waveListWidget->currentItem();
     if (!currentWave) return;
 
+    // 需求：新增默认为 种类1 (m_firstEnemyType)，数量10
     QJsonObject newEnemy;
-    newEnemy["type"] = "new_enemy";
-    newEnemy["count"] = 10;   // 固定的数量
-    newEnemy["interval"] = 1.0; // 固定的间隔
+    newEnemy["type"] = m_firstEnemyType;
+    newEnemy["count"] = 10;
+    newEnemy["interval"] = 1.0; // 需求：间隔固定，我们在此硬编码
 
-    auto* item = new QListWidgetItem(QString("%1 (x%2)").arg("new_enemy").arg(QString::number(10)));
+    auto* item = new QListWidgetItem(QString("%1 x%2").arg(m_firstEnemyType).arg(QString::number(10)));
     item->setData(Qt::UserRole, newEnemy);
     enemyInWaveListWidget->addItem(item);
 
-    // 更新wave的数据
+    // 更新 wave item 的数据
     QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
     enemies.append(newEnemy);
     currentWave->setData(Qt::UserRole, enemies);
@@ -288,64 +419,277 @@ void LevelEditorWidget::removeEnemyFromWave() {
     int row = enemyInWaveListWidget->currentRow();
     delete enemyInWaveListWidget->takeItem(row);
 
+    // 更新 wave item 的数据
     QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
     enemies.removeAt(row);
     currentWave->setData(Qt::UserRole, enemies);
 }
 
 void LevelEditorWidget::onEnemyInWaveSelectionChanged() {
-    QListWidgetItem* currentEnemy = enemyInWaveListWidget->currentItem();
-    if (!currentEnemy) {
-        clearEnemyInWaveDetails();
-        wave_enemyTypeLineEdit->setEnabled(false);
+    updateWaveEnemyDetailsUI(enemyInWaveListWidget->currentItem());
+}
+
+/**
+ * @brief (辅助) 更新敌人详情UI
+ */
+void LevelEditorWidget::updateWaveEnemyDetailsUI(QListWidgetItem* item) {
+    if (!item) {
+        wave_enemyTypeComboBox->setEnabled(false);
         wave_enemyCountSpinBox->setEnabled(false);
-        wave_enemyIntervalSpinBox->setEnabled(false);
         removeEnemyFromWaveButton->setEnabled(false);
+        wave_enemyTypeComboBox->setCurrentIndex(0);
+        wave_enemyCountSpinBox->setValue(0);
+        wave_enemyThumbnailLabel->clear();
         return;
     }
 
-    wave_enemyTypeLineEdit->setEnabled(true);
-    wave_enemyCountSpinBox->setEnabled(true); // 启用以显示
-    wave_enemyIntervalSpinBox->setEnabled(true); // 启用以显示
+    wave_enemyTypeComboBox->setEnabled(true);
+    wave_enemyCountSpinBox->setEnabled(true);
     removeEnemyFromWaveButton->setEnabled(true);
 
-    QJsonObject enemyObj = currentEnemy->data(Qt::UserRole).toJsonObject();
+    QJsonObject enemyObj = item->data(Qt::UserRole).toJsonObject();
+    QString type = enemyObj["type"].toString(m_firstEnemyType);
 
-    wave_enemyTypeLineEdit->blockSignals(true);
+    // 暂停信号，防止触发槽函数
+    wave_enemyTypeComboBox->blockSignals(true);
     wave_enemyCountSpinBox->blockSignals(true);
-    wave_enemyIntervalSpinBox->blockSignals(true);
 
-    wave_enemyTypeLineEdit->setText(enemyObj["type"].toString());
-    wave_enemyCountSpinBox->setValue(enemyObj["count"].toInt());
-    wave_enemyIntervalSpinBox->setValue(enemyObj["interval"].toDouble());
+    // 1. 查找 ComboBox 中 'type' 对应的索引
+    int index = wave_enemyTypeComboBox->findData(type);
+    // 2. 设置 ComboBox 的当前索引
+    wave_enemyTypeComboBox->setCurrentIndex(index != -1 ? index : 0);
 
-    wave_enemyTypeLineEdit->blockSignals(false);
+    // 更新缩略图
+    QString pixmapPath = getPixmapPath(m_enemyPrototypes, enemyObj["type"].toString());
+    if (!pixmapPath.isEmpty()) {
+        wave_enemyThumbnailLabel->setPixmap(QPixmap(":/enemies/" + pixmapPath));
+    } else {
+        wave_enemyThumbnailLabel->setText("[Image N/A]");
+    }
+
+    // 恢复信号
+    wave_enemyTypeComboBox->blockSignals(false);
     wave_enemyCountSpinBox->blockSignals(false);
-    wave_enemyIntervalSpinBox->blockSignals(false);
 }
 
-void LevelEditorWidget::clearEnemyInWaveDetails() {
-    wave_enemyTypeLineEdit->clear();
-    wave_enemyCountSpinBox->setValue(0);
-    wave_enemyIntervalSpinBox->setValue(0.0);
+void LevelEditorWidget::onWaveEnemyTypeChanged(int index) {
+    QListWidgetItem* enemyItem = enemyInWaveListWidget->currentItem();
+    QListWidgetItem* waveItem = waveListWidget->currentItem();
+    if (!enemyItem || !waveItem || index == -1) return;
+
+    // 1. 从 ComboBox 的 'index' 获取 'type'
+    QString type = wave_enemyTypeComboBox->itemData(index).toString();
+
+    QJsonObject enemyData = enemyItem->data(Qt::UserRole).toJsonObject();
+    enemyData["type"] = type;
+
+    int row = enemyInWaveListWidget->row(enemyItem);
+    updateWaveItemData(waveItem, row, enemyData);
+
+    // 更新缩略图
+    QString pixmapPath = getPixmapPath(m_enemyPrototypes, type);
+    if (!pixmapPath.isEmpty()) {
+        wave_enemyThumbnailLabel->setPixmap(QPixmap(":/enemies/" + pixmapPath));
+    } else {
+        wave_enemyThumbnailLabel->setText("[Image N/A]");
+    }
 }
 
-void LevelEditorWidget::updateSelectedEnemyInWave() {
-    QListWidgetItem* currentWave = waveListWidget->currentItem();
-    QListWidgetItem* currentEnemyItem = enemyInWaveListWidget->currentItem();
-    if (!currentWave || !currentEnemyItem) return;
+void LevelEditorWidget::onWaveEnemyCountChanged(int count) {
+    QListWidgetItem* enemyItem = enemyInWaveListWidget->currentItem();
+    QListWidgetItem* waveItem = waveListWidget->currentItem();
+    if (!enemyItem || !waveItem) return;
 
-    // 只更新 "type"，因为 count 和 interval 是只读的
-    QJsonObject updatedEnemy = currentEnemyItem->data(Qt::UserRole).toJsonObject();
-    updatedEnemy["type"] = wave_enemyTypeLineEdit->text();
+    QJsonObject enemyData = enemyItem->data(Qt::UserRole).toJsonObject();
+    enemyData["count"] = count;
 
-    currentEnemyItem->setText(QString("%1 (x%2)").arg(updatedEnemy["type"].toString()).arg(QString::number(updatedEnemy["count"].toInt())));
-    currentEnemyItem->setData(Qt::UserRole, updatedEnemy);
+    int row = enemyInWaveListWidget->row(enemyItem);
+    updateWaveItemData(waveItem, row, enemyData);
+}
 
-    int row = enemyInWaveListWidget->currentRow();
-    QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
-    enemies[row] = updatedEnemy;
-    currentWave->setData(Qt::UserRole, enemies);
+/**
+ * @brief (辅助) 更新列表项和父波次的数据
+ */
+void LevelEditorWidget::updateWaveItemData(QListWidgetItem* waveItem, int enemyRow, const QJsonObject& enemyData) {
+    QListWidgetItem* enemyItem = enemyInWaveListWidget->item(enemyRow);
+    if (!enemyItem) return;
+    // 我们需要 'name' 来显示
+    QString type = enemyData["type"].toString();
+    QString name = m_enemyPrototypes.value(type).value("name").toString(type); // 找不到 'name' 时回退到 'type'
+
+    // 1. 更新敌人列表项 (enemyInWaveListWidget)
+    enemyItem->setText(QString("%1 x%2").arg(name).arg(QString::number(enemyData["count"].toInt())));
+    enemyItem->setData(Qt::UserRole, enemyData);
+
+    // 2. 更新波次列表项 (waveListWidget)
+    QJsonArray enemies = waveItem->data(Qt::UserRole).toJsonArray();
+    if (enemyRow >= 0 && enemyRow < enemies.size()) {
+        enemies[enemyRow] = enemyData;
+        waveItem->setData(Qt::UserRole, enemies);
+    }
+}
+
+
+// --- Tower Selector Slots ---
+
+void LevelEditorWidget::onTowerSlotSelectionChanged() {
+    updateTowerDetailsUI(availableTowersListWidget->currentItem());
+}
+
+/**
+ * @brief (辅助) 更新塔详情UI
+ */
+void LevelEditorWidget::updateTowerDetailsUI(QListWidgetItem* item) {
+    tower_warningLabel->setVisible(false);
+
+    if (!item) {
+        tower_typeComboBox->setEnabled(false);
+        tower_thumbnailLabel->clear();
+        return;
+    }
+
+    tower_typeComboBox->setEnabled(true);
+
+    // 暂停信号
+    tower_typeComboBox->blockSignals(true);
+
+    // 从槽位数据中获取塔类型
+    QJsonObject towerData = item->data(Qt::UserRole).toJsonObject();
+    QString type = towerData.value("type").toString("None");
+
+    // 1. 查找 'type' 对应的索引
+    int index = tower_typeComboBox->findData(type);
+    // 2. 设置 ComboBox 的当前索引
+    tower_typeComboBox->setCurrentIndex(index != -1 ? index : 0);
+
+    // 更新缩略图
+    QString pixmapPath = getPixmapPath(m_towerPrototypes, type);
+    if (!pixmapPath.isEmpty()) {
+        tower_thumbnailLabel->setPixmap(QPixmap(":/towers/" + pixmapPath));
+    } else {
+        tower_thumbnailLabel->setText("[Tower N/A]");
+    }
+
+    // 更新下拉列表的可用性
+    updateTowerTypeComboBox();
+
+    // 恢复信号
+    tower_typeComboBox->blockSignals(false);
+}
+
+
+void LevelEditorWidget::onTowerTypeChanged(int index) {
+    QListWidgetItem* currentSlot = availableTowersListWidget->currentItem();
+    if (!currentSlot || index == -1) return;
+
+    QString type = tower_typeComboBox->itemData(index).toString();
+
+    // 检查唯一性
+    for (int i = 0; i < availableTowersListWidget->count(); ++i) {
+        QListWidgetItem* item = availableTowersListWidget->item(i);
+        if (item == currentSlot) continue; // 跳过自己
+
+        QJsonObject data = item->data(Qt::UserRole).toJsonObject();
+        QString itemType = data.value("type").toString();
+
+        if (!type.isEmpty() && type != "None" && itemType == type) {
+            // 冲突！
+            tower_warningLabel->setVisible(true);
+            // 恢复到之前的值
+            tower_typeComboBox->blockSignals(true);
+            QJsonObject oldData = currentSlot->data(Qt::UserRole).toJsonObject();
+            QString oldType = oldData.value("type").toString("None");
+            int oldIndex = tower_typeComboBox->findData(oldType); // 查找旧 'type' 的索引
+            tower_typeComboBox->setCurrentIndex(oldIndex != -1 ? oldIndex : 0); // 设置为旧索引
+            tower_typeComboBox->blockSignals(false);
+            return;
+        }
+    }
+
+    // 唯一性检查通过
+    tower_warningLabel->setVisible(false);
+
+    // 更新槽位的数据和文本
+    QJsonObject newData;
+    if (type != "None") {
+        newData["type"] = type;
+        // 我们需要 'name' 来显示
+        QString name = m_towerPrototypes.value(type).value("name").toString(type);
+        currentSlot->setText(QString("Slot %1: %2").arg(QString::number(availableTowersListWidget->row(currentSlot) + 1)).arg(name));
+    } else {
+        // newData 保持为空
+        currentSlot->setText(QString("Tower Slot %1").arg(QString::number(availableTowersListWidget->row(currentSlot) + 1)));
+    }
+    currentSlot->setData(Qt::UserRole, newData);
+
+
+    // 更新缩略图
+    QString pixmapPath = getPixmapPath(m_towerPrototypes, type);
+    if (!pixmapPath.isEmpty()) {
+        tower_thumbnailLabel->setPixmap(QPixmap(":/towers/" + pixmapPath));
+    } else {
+        tower_thumbnailLabel->setText("[Tower N/A]");
+    }
+
+    // 更新所有下拉框的可用性
+    updateTowerTypeComboBox();
+}
+
+/**
+ * @brief (辅助) 更新塔类型下拉框，禁用已被其他槽位选择的项
+ */
+void LevelEditorWidget::updateTowerTypeComboBox() {
+    // 1. 获取所有已被占用的塔类型
+    QStringList usedTypes;
+    for (int i = 0; i < availableTowersListWidget->count(); ++i) {
+        QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
+        QString type = data.value("type").toString();
+        if (!type.isEmpty() && type != "None") {
+            usedTypes.append(type);
+        }
+    }
+
+    // 2. 获取当前槽位正在选择的类型
+    QString currentSlotType = "None";
+    if (availableTowersListWidget->currentItem()) {
+        QJsonObject data = availableTowersListWidget->currentItem()->data(Qt::UserRole).toJsonObject();
+        currentSlotType = data.value("type").toString("None");
+    }
+
+    // 3. 遍历下拉框，设置可用性
+    tower_typeComboBox->blockSignals(true);
+    for (int i = 0; i < tower_typeComboBox->count(); ++i) {
+        QString itemType = tower_typeComboBox->itemData(i).toString();
+        if (itemType == "None") {
+            continue; // "None" 选项总是可用
+        }
+
+        bool usedByOthers = usedTypes.contains(itemType) && (itemType != currentSlotType);
+
+        // Qt 6/5 兼容方式设置 item 可用性
+        QStandardItemModel* model = qobject_cast<QStandardItemModel*>(tower_typeComboBox->model());
+        if(model) {
+            model->item(i)->setEnabled(!usedByOthers);
+        }
+    }
+    tower_typeComboBox->blockSignals(false);
+}
+
+
+// --- Save / Load ---
+
+/**
+ * @brief (辅助) 从原型数据中安全获取 pixmap 路径
+ */
+QString LevelEditorWidget::getPixmapPath(const QMap<QString, QJsonObject>& prototypes, const QString& type) {
+    if (prototypes.contains(type)) {
+        // --- 在此填充从原型对象中获取 pixmap 路径的 Key ---
+        // 示例： "pixmap", "icon", "thumbnail"
+        // 我将使用在 enemy_data.json 和 tower_data.json 中都存在的 "pixmap"
+        return prototypes[type]["pixmap"].toString();
+        // ------------------------------------------------
+    }
+    return QString();
 }
 
 
@@ -358,41 +702,45 @@ void LevelEditorWidget::saveLevel() {
     QJsonObject rootObj;
     rootObj["level_name"] = levelNameEdit->text();
 
-    // 1. 保存波次 (Waves) - (从Wave Tab)
+    // 1. 保存波次 (Waves)
     QJsonArray wavesArray;
     for (int i = 0; i < waveListWidget->count(); ++i) {
-        QListWidgetItem* waveItem = waveListWidget->item(i);
         QJsonObject waveObj;
-        waveObj["enemies"] = waveItem->data(Qt::UserRole).toJsonArray();
+        waveObj["enemies"] = waveListWidget->item(i)->data(Qt::UserRole).toJsonArray();
         wavesArray.append(waveObj);
     }
     rootObj["waves"] = wavesArray;
 
-    // 2. 保存可用防御塔 (Available Towers) - (从Config Tab)
+    // 2. 保存可用防御塔 (Available Towers) - 只保存选中的类型
     QJsonArray towersArray;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
-        towersArray.append(availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject());
+        QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
+        QString type = data.value("type").toString();
+        if (!type.isEmpty() && type != "None") {
+            towersArray.append(type); // 只保存类型字符串
+        }
     }
     rootObj["available_towers"] = towersArray;
 
-    // 3. 保存可用敌人 (Available Enemies) - (从Config Tab)
+    // 3. 保存可用敌人 (Available Enemies) - 保存所有原型
     QJsonArray enemiesArray;
-    for (int i = 0; i < availableEnemiesListWidget->count(); ++i) {
-        enemiesArray.append(availableEnemiesListWidget->item(i)->data(Qt::UserRole).toJsonObject());
+    for (const QJsonObject& obj : m_enemyPrototypes.values()) {
+        enemiesArray.append(obj);
     }
     rootObj["available_enemies"] = enemiesArray;
 
 
-    // 4. (待办) 保存地图和玩家信息 - 暂时还是占位符
+    // 4. (占位符) 保存地图和玩家信息
+    // 注意: 在实际项目中，你还需要一个方法来编辑这些
     QJsonObject mapObj;
     mapObj["background"] = "path/to/your/background.png";
-    mapObj["path"] = QJsonArray(); // Placeholder
-    mapObj["tower_positions"] = QJsonArray(); // Placeholder
+    mapObj["path"] = QJsonArray();
+    mapObj["tower_positions"] = QJsonArray();
     rootObj["map"] = mapObj;
 
     QJsonObject playerObj;
-    playerObj["initial_stability"] = 20; // Placeholder
-    playerObj["initial_resource"] = 100; // Placeholder
+    playerObj["initial_stability"] = 20;
+    playerObj["initial_resource"] = 150;
     rootObj["player"] = playerObj;
 
 
@@ -407,191 +755,56 @@ void LevelEditorWidget::saveLevel() {
 
 void LevelEditorWidget::loadLevel() {
     QString filePath = QFileDialog::getOpenFileName(this, "Load Level", "", "JSON Files (*.json)");
-    if (filePath.isEmpty()) {
-        return;
-    }
-
+    if (filePath.isEmpty()) return;
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::critical(this, "Error", "Could not open file.");
         return;
     }
-
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject rootObj = doc.object();
     file.close();
 
     levelNameEdit->setText(rootObj["level_name"].toString("Custom Level"));
 
-    // 1. 加载波次 (Waves) - (到 Wave Tab)
+    // 1. 加载波次 (Waves)
     waveListWidget->clear();
     QJsonArray wavesArray = rootObj["waves"].toArray();
     for (int i = 0; i < wavesArray.size(); ++i) {
         QJsonObject waveObj = wavesArray[i].toObject();
         QJsonArray enemiesArray = waveObj["enemies"].toArray();
-
         auto* item = new QListWidgetItem(QString("Wave %1").arg(QString::number(i + 1)));
         item->setData(Qt::UserRole, enemiesArray);
         waveListWidget->addItem(item);
     }
+
+    // 2. 加载可用防御塔 (Available Towers)
+    for (int i = 0; i < 4; ++i) {
+        QListWidgetItem* slotItem = availableTowersListWidget->item(i);
+        slotItem->setText(QString("Tower Slot %1").arg(QString::number(i + 1)));
+        slotItem->setData(Qt::UserRole, QJsonObject());
+    }
+    QJsonArray towersArray = rootObj["available_towers"].toArray();
+    for(int i=0; i < towersArray.size() && i < 4; ++i) {
+        QString type = towersArray[i].toString();
+        if (m_towerPrototypes.contains(type)) {
+            QListWidgetItem* slotItem = availableTowersListWidget->item(i);
+            QJsonObject data;
+            data["type"] = type;
+            slotItem->setData(Qt::UserRole, data);
+
+            // === UI 文本更新 ===
+            QString name = m_towerPrototypes.value(type).value("name").toString(type);
+            slotItem->setText(QString("Slot %1: %2").arg(QString::number(i + 1)).arg(name));
+            // =================
+        }
+    }
+
+    // 3. (忽略) `available_enemies` (不变)
+
+    // 4. 刷新UI (不变)
     if (waveListWidget->count() > 0) waveListWidget->setCurrentRow(0);
     onWaveSelectionChanged();
-
-    // 2. 加载可用防御塔 (Available Towers) - (到 Config Tab)
-    availableTowersListWidget->clear();
-    QJsonArray towersArray = rootObj["available_towers"].toArray();
-    for(const QJsonValue& val : towersArray) {
-        QJsonObject obj = val.toObject();
-        auto* item = new QListWidgetItem(obj["type"].toString());
-        item->setData(Qt::UserRole, obj);
-        availableTowersListWidget->addItem(item);
-    }
     if (availableTowersListWidget->count() > 0) availableTowersListWidget->setCurrentRow(0);
-    onAvailableTowerChanged();
-
-    // 3. 加载可用敌人 (Available Enemies) - (到 Config Tab)
-    availableEnemiesListWidget->clear();
-    QJsonArray enemiesArray = rootObj["available_enemies"].toArray();
-    for(const QJsonValue& val : enemiesArray) {
-        QJsonObject obj = val.toObject();
-        auto* item = new QListWidgetItem(obj["type"].toString());
-        item->setData(Qt::UserRole, obj);
-        availableEnemiesListWidget->addItem(item);
-    }
-    if (availableEnemiesListWidget->count() > 0) availableEnemiesListWidget->setCurrentRow(0);
-    onAvailableEnemyChanged();
-}
-
-
-// --- Config Tab: Tower Slots ---
-
-void LevelEditorWidget::addAvailableTower() {
-    QJsonObject newTower;
-    newTower["type"] = "NewTower";
-    newTower["name"] = "New Tower";
-    newTower["cost"] = 100;
-
-    auto* item = new QListWidgetItem(newTower["type"].toString());
-    item->setData(Qt::UserRole, newTower);
-    availableTowersListWidget->addItem(item);
-    availableTowersListWidget->setCurrentItem(item);
-}
-
-void LevelEditorWidget::removeAvailableTower() {
-    delete availableTowersListWidget->takeItem(availableTowersListWidget->currentRow());
-}
-
-void LevelEditorWidget::onAvailableTowerChanged() {
-    QListWidgetItem* item = availableTowersListWidget->currentItem();
-    if (!item) {
-        clearTowerDetails();
-        return;
-    }
-
-    QJsonObject obj = item->data(Qt::UserRole).toJsonObject();
-
-    // 暂停信号
-    for(QWidget* w : towerPropertyWidgets) w->blockSignals(true);
-
-    qobject_cast<QLineEdit*>(towerPropertyWidgets["type"])->setText(obj["type"].toString());
-    qobject_cast<QLineEdit*>(towerPropertyWidgets["name"])->setText(obj["name"].toString());
-    qobject_cast<QSpinBox*>(towerPropertyWidgets["cost"])->setValue(obj["cost"].toInt());
-    qobject_cast<QLineEdit*>(towerPropertyWidgets["pixmap"])->setText(obj["pixmap"].toString());
-    qobject_cast<QLineEdit*>(towerPropertyWidgets["bullet_pixmap"])->setText(obj["bullet_pixmap"].toString());
-    qobject_cast<QSpinBox*>(towerPropertyWidgets["damage"])->setValue(obj["damage"].toInt());
-    qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets["range"])->setValue(obj["range"].toDouble());
-    qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets["fire_rate"])->setValue(obj["fire_rate"].toDouble());
-
-    // 恢复信号
-    for(QWidget* w : towerPropertyWidgets) w->blockSignals(false);
-}
-
-void LevelEditorWidget::updateSelectedTower() {
-    QListWidgetItem* item = availableTowersListWidget->currentItem();
-    if (!item) return;
-
-    QJsonObject obj;
-    obj["type"] = qobject_cast<QLineEdit*>(towerPropertyWidgets["type"])->text();
-    obj["name"] = qobject_cast<QLineEdit*>(towerPropertyWidgets["name"])->text();
-    obj["cost"] = qobject_cast<QSpinBox*>(towerPropertyWidgets["cost"])->value();
-    obj["pixmap"] = qobject_cast<QLineEdit*>(towerPropertyWidgets["pixmap"])->text();
-    obj["bullet_pixmap"] = qobject_cast<QLineEdit*>(towerPropertyWidgets["bullet_pixmap"])->text();
-    obj["damage"] = qobject_cast<QSpinBox*>(towerPropertyWidgets["damage"])->value();
-    obj["range"] = qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets["range"])->value();
-    obj["fire_rate"] = qobject_cast<QDoubleSpinBox*>(towerPropertyWidgets["fire_rate"])->value();
-
-    item->setText(obj["type"].toString());
-    item->setData(Qt::UserRole, obj);
-}
-
-void LevelEditorWidget::clearTowerDetails() {
-    for(QWidget* w : towerPropertyWidgets) {
-        if(auto* le = qobject_cast<QLineEdit*>(w)) le->clear();
-        if(auto* sb = qobject_cast<QSpinBox*>(w)) sb->setValue(0);
-        if(auto* dsb = qobject_cast<QDoubleSpinBox*>(w)) dsb->setValue(0.0);
-    }
-}
-
-
-// --- Config Tab: Enemy Slots ---
-
-void LevelEditorWidget::addAvailableEnemy() {
-    QJsonObject newEnemy;
-    newEnemy["type"] = "NewEnemy";
-    newEnemy["name"] = "New Enemy";
-    newEnemy["health"] = 100;
-
-    auto* item = new QListWidgetItem(newEnemy["type"].toString());
-    item->setData(Qt::UserRole, newEnemy);
-    availableEnemiesListWidget->addItem(item);
-    availableEnemiesListWidget->setCurrentItem(item);
-}
-
-void LevelEditorWidget::removeAvailableEnemy() {
-    delete availableEnemiesListWidget->takeItem(availableEnemiesListWidget->currentRow());
-}
-
-void LevelEditorWidget::onAvailableEnemyChanged() {
-    QListWidgetItem* item = availableEnemiesListWidget->currentItem();
-    if (!item) {
-        clearEnemyDetails();
-        return;
-    }
-
-    QJsonObject obj = item->data(Qt::UserRole).toJsonObject();
-
-    for(QWidget* w : enemyPropertyWidgets) w->blockSignals(true);
-
-    qobject_cast<QLineEdit*>(enemyPropertyWidgets["type"])->setText(obj["type"].toString());
-    qobject_cast<QLineEdit*>(enemyPropertyWidgets["name"])->setText(obj["name"].toString());
-    qobject_cast<QLineEdit*>(enemyPropertyWidgets["pixmap"])->setText(obj["pixmap"].toString());
-    qobject_cast<QSpinBox*>(enemyPropertyWidgets["health"])->setValue(obj["health"].toInt());
-    qobject_cast<QDoubleSpinBox*>(enemyPropertyWidgets["speed"])->setValue(obj["speed"].toDouble());
-    qobject_cast<QSpinBox*>(enemyPropertyWidgets["damage"])->setValue(obj["damage"].toInt());
-
-    for(QWidget* w : enemyPropertyWidgets) w->blockSignals(false);
-}
-
-void LevelEditorWidget::updateSelectedEnemy() {
-    QListWidgetItem* item = availableEnemiesListWidget->currentItem();
-    if (!item) return;
-
-    QJsonObject obj;
-    obj["type"] = qobject_cast<QLineEdit*>(enemyPropertyWidgets["type"])->text();
-    obj["name"] = qobject_cast<QLineEdit*>(enemyPropertyWidgets["name"])->text();
-    obj["pixmap"] = qobject_cast<QLineEdit*>(enemyPropertyWidgets["pixmap"])->text();
-    obj["health"] = qobject_cast<QSpinBox*>(enemyPropertyWidgets["health"])->value();
-    obj["speed"] = qobject_cast<QDoubleSpinBox*>(enemyPropertyWidgets["speed"])->value();
-    obj["damage"] = qobject_cast<QSpinBox*>(enemyPropertyWidgets["damage"])->value();
-
-    item->setText(obj["type"].toString());
-    item->setData(Qt::UserRole, obj);
-}
-
-void LevelEditorWidget::clearEnemyDetails() {
-     for(QWidget* w : enemyPropertyWidgets) {
-        if(auto* le = qobject_cast<QLineEdit*>(w)) le->clear();
-        if(auto* sb = qobject_cast<QSpinBox*>(w)) sb->setValue(0);
-        if(auto* dsb = qobject_cast<QDoubleSpinBox*>(w)) dsb->setValue(0.0);
-    }
+    onTowerSlotSelectionChanged();
 }

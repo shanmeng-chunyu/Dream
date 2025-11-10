@@ -1,7 +1,7 @@
 {
-  "level_name": "µÚÒ»¹Ø£ºÑ§ÒµµÄ·³ÄÕ",
+  "level_name": "ç¬¬ä¸€å…³ï¼šå­¦ä¸šçš„çƒ¦æ¼",
   "map": {
-    "background": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/»­Ãæ±³¾°/µÚÒ»¹Ø£¨½öµØÍ¼·½¿é£©.png",
+    "background": "./ç¾æœ¯ç´ æï¼ˆé€æ˜ï¼‰/ç”»é¢èƒŒæ™¯/ç¬¬ä¸€å…³ï¼ˆä»…åœ°å›¾æ–¹å—ï¼‰.png",
     "path": [
       { "x": 0.779296875, "y": 0.725260416666 },
       { "x": 0.779296875, "y": 0.625 },
@@ -106,70 +106,70 @@
     "obstacles": [
       {
         "type": "Scratchpaper",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/²İ¸åÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/scratchpaper.png",
         "position": { "x": 0.1982421875, "y": 0.052083333333 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Scratchpaper",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/²İ¸åÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/scratchpaper.png",
         "position": { "x": 0.6494140625, "y": 0.052083333333 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Scratchpaper",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/²İ¸åÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/scratchpaper.png",
         "position": { "x": 0, "y": 0.55078125 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Cable",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/Êı¾İÏßÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/cable.png",
         "position": { "x": 0.423828125, "y": 0.264322916666 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Cable",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/Êı¾İÏßÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/cable.png",
         "position": { "x": 0.1982421875, "y": 0.826822916666 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/ÎÄ¾ßÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/stationery.png",
         "position": { "x": 0.1982421875, "y": 0.352864583333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/ÎÄ¾ßÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/stationery.png",
         "position": { "x": 0.6494140625, "y": 0.352864583333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/ÎÄ¾ßÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/stationery.png",
         "position": { "x": 0.5751953125, "y": 0.826822916667},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Book",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/Êé±¾ÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/book.png",
         "position": { "x": 0.349609375, "y": 0.565104166666 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Book",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚÒ»¹Ø/Êé±¾ÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/first/book.png",
         "position": { "x": 0.58203125, "y": 0.565104166666 },
         "health": 300,
         "resource": 100

@@ -2,7 +2,7 @@
   "master_towers": [
     {
       "type": "InspirationBulb",
-      "name": "Áé¸ĞµÆÅİ",
+      "name": "çµæ„Ÿç¯æ³¡",
       "cost": 100,
       "pixmap": "resources/towers/level1/InspirationBulb.png",
       "bullet_pixmap": "resources/bullet/level1/InspirationBulb.png",
@@ -12,7 +12,7 @@
     },
     {
       "type": "KnowledgeTree",
-      "name": "ÖªÊ¶¹ÅÊ÷",
+      "name": "çŸ¥è¯†å¤æ ‘",
       "cost": 200,
       "pixmap": "resources/towers/level1/KnowledgeTree.png",
       "bullet_pixmap": "resources/bullet/level1/KnowledgeTree.png",
@@ -22,7 +22,7 @@
     },
     {
       "type": "FishingCatPillow",
-      "name": "ÃşÓãÃ¨Ã¨Õí",
+      "name": "æ‘¸é±¼çŒ«çŒ«æ•",
       "cost": 120,
       "pixmap": "resources/towers/level1/FishingCatPillow.png",
       "bullet_pixmap": "",
@@ -32,7 +32,7 @@
     },
     {
       "type": "LiveCoffee",
-      "name": "ĞøÃü¿§·È",
+      "name": "ç»­å‘½å’–å•¡",
       "cost": 80,
       "pixmap": "resources/towers/level1/LiveCoffee.png",
       "bullet_pixmap": "resources/bullet/level1/LiveCoffee.png",
@@ -42,9 +42,9 @@
     },
     {
       "type": "WarmMemories",
-      "name": "ÎÂÅ¯µÄ¼ÇÒä",
+      "name": "æ¸©æš–çš„è®°å¿†",
       "cost": 120,
-      "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/·ÀÓùËş/µÚ¶ş¹Ø/ÎÂÅ¯µÄ¼ÇÒä.png",
+      "pixmap": "./ç¾æœ¯ç´ æï¼ˆé€æ˜ï¼‰/é˜²å¾¡å¡”/ç¬¬äºŒå…³/æ¸©æš–çš„è®°å¿†.png",
       "bullet_pixmap": "",
       "damage": 200,
       "range": 2.5,
@@ -52,7 +52,7 @@
     },
     {
       "type": "NightRadio",
-      "name": "ÉîÒ¹µçÌ¨",
+      "name": "æ·±å¤œç”µå°",
       "cost": 150,
       "pixmap": "resources/towers/level2/NightRadio.png",
       "bullet_pixmap": "resources/bullet/level2/NightRadio.png",
@@ -62,7 +62,7 @@
     },
     {
       "type": "PettingCatTime",
-      "name": "ß£Ã¨Ê±¼ä",
+      "name": "æ’¸çŒ«æ—¶é—´",
       "cost": 180,
       "pixmap": "resources/towers/level2/PettingCatTime.png",
       "bullet_pixmap": "",
@@ -72,7 +72,7 @@
     },
     {
       "type": "Companionship",
-      "name": "ÅóÓÑµÄÅã°é",
+      "name": "æœ‹å‹çš„é™ªä¼´",
       "cost": 100,
       "pixmap": "resources/towers/level2/Companionship.png",
       "bullet_pixmap": "resources/bullet/level2/Companionship.png",

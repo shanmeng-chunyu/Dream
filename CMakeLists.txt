@@ -45,6 +45,8 @@ add_executable(Dream
         GameMap.h
         GameMap.cpp
         resources.qrc
+        enemy_data.json
+        tower_data.json
         widget_menu.h widget_menu.cpp widget_menu.ui
         widget_choose_level.h widget_choose_level.cpp widget_choose_level.ui
         widget_level_loading.h widget_level_loading.cpp widget_level_loading.ui

@@ -38,7 +38,7 @@
     },
     {
       "type": "thesis",
-      "name": "ÂÛÎÄ",
+      "name": "è®ºæ–‡",
       "pixmap": "resources/enemies/level1/thesis.png",
       "health": 8000,
       "speed": 1.0,
@@ -47,7 +47,7 @@
     },
     {
       "type": "coldwords",
-      "name": "±ùÀäµÄÑÔÓï",
+      "name": "å†°å†·çš„è¨€è¯­",
       "pixmap": "resources/enemies/level2/coldwords.png",
       "health": 100,
       "speed": 1,
@@ -56,7 +56,7 @@
     },
     {
       "type": "lonelyness",
-      "name": "ÎÞ¾¡µÄ¹Â¶À",
+      "name": "æ— å°½çš„å­¤ç‹¬",
       "pixmap": "resources/enemies/level2/lonelyness.png",
       "health": 200,
       "speed": 1,
@@ -65,7 +65,7 @@
     },
     {
       "type": "recall",
-      "name": "±¯ÉËµÄ»ØÒä",
+      "name": "æ‚²ä¼¤çš„å›žå¿†",
       "pixmap": "resources/enemies/level2/recall.png",
       "health": 400,
       "speed": 1,
@@ -74,7 +74,7 @@
     },
     {
       "type": "tears",
-      "name": "ÉËÐÄµÄÀáË®",
+      "name": "ä¼¤å¿ƒçš„æ³ªæ°´",
       "pixmap": "resources/enemies/level2/tears.png",
       "health": 600,
       "speed": 1,
@@ -83,7 +83,7 @@
     },
     {
       "type": "thephantomofthepast",
-      "name": "ÎôÈÕ»ÃÓ°",
+      "name": "æ˜”æ—¥å¹»å½±",
       "pixmap": "resources/enemies/level2/thephantomofthepast.png",
       "health": 10000,
       "speed": 1,
@@ -92,7 +92,7 @@
     },
     {
       "type": "nightmare",
-      "name": "Ø¬ÃÎ",
+      "name": "å™©æ¢¦",
       "pixmap": "resources/enemies/level3/nightmare.png",
       "health": 10000,
       "speed": 1,

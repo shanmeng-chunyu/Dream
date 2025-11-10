@@ -1,7 +1,7 @@
 {
-  "level_name": "µÚ¶ş¹Ø£ºÊ§ÁµµÄ±¯ÉË",
+  "level_name": "ç¬¬äºŒå…³ï¼šå¤±æ‹çš„æ‚²ä¼¤",
   "map": {
-    "background": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/»­Ãæ±³¾°/µÚ¶ş¹Ø£¨½öµØÍ¼·½¿é£©.png",
+    "background": "./ç¾æœ¯ç´ æï¼ˆé€æ˜ï¼‰/ç”»é¢èƒŒæ™¯/ç¬¬äºŒå…³ï¼ˆä»…åœ°å›¾æ–¹å—ï¼‰.png",
     "path": [
       { "x": 0.7451171875, "y": 0.821614583333 },
       { "x": 0.7451171875, "y": 0.721354166667 },
@@ -126,56 +126,56 @@
     "obstacles": [
       {
         "type": "MemoryBox",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/³¾·â¼ÇÒäÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/memory_box.png",
         "position": { "x":0.2451171875, "y":0.360677083333},
         "health": 400,
         "resource": 120
       },
       {
         "type": "MemoryBox",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/³¾·â¼ÇÒäÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/memory_box.png",
         "position": { "x":0.6943359375, "y":0.08203125},
         "health": 400,
         "resource": 120
       },
       {
         "type": "MemoryBox",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/³¾·â¼ÇÒäÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/memory_box.png",
         "position": { "x":0.8349609375, "y":0.26171875},
         "health": 400,
         "resource": 120
       },
       {
         "type": "MemoryBox",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/³¾·â¼ÇÒäÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/memory_box.png",
         "position": { "x":0.8427734375, "y":0.7578125},
         "health": 400,
         "resource": 120
       },
       {
         "type": "WitheredFlowers",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/µòÂäµÄ»¨ÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/withered_flowers.png",
         "position": { "x":0.01953125, "y":0.7578125},
         "health": 400,
         "resource": 120
       },
       {
         "type": "WitheredFlowers",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/µòÂäµÄ»¨ÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/withered_flowers.png",
         "position": { "x":0.3955078125, "y":0.08203125},
         "health": 400,
         "resource": 120
       },
       {
         "type": "BrokenRing",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/ÆÆËé½äÖ¸ÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/broken_ring.png",
         "position": { "x":0.3203125, "y":0.7578125},
         "health": 400,
         "resource": 120
       },
       {
         "type": "BrokenFriendship",
-        "pixmap": "./ÃÀÊõËØ²Ä£¨Í¸Ã÷£©/µØÍ¼·½¿é/µÚ¶ş¹Ø/ÆÆËéÓÑÒêÕÏ°­·½¿é.png",
+        "pixmap": "resources/map_items/second/broken_friendship.png",
         "position": { "x":0.5458984375, "y":0.360677083333},
         "health": 400,
         "resource": 120

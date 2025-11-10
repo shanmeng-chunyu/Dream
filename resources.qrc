@@ -115,4 +115,8 @@
         <file>resources/towers/level2/WarmMemories_upgrade.png</file>
         <file>resources/towers/level2/WarmMemories_upgrade_charge.png</file>
     </qresource>
+    <qresource prefix="/data">
+        <file>enemy_data.json</file>
+        <file>tower_data.json</file>
+    </qresource>
 </RCC>
