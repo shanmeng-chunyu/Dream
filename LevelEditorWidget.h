@@ -31,6 +31,10 @@ public:
     explicit LevelEditorWidget(QWidget* parent = nullptr);
     ~LevelEditorWidget() override = default;
 
+protected:
+    // 重写 paintEvent 以绘制自定义背景
+    void paintEvent(QPaintEvent* event) override;
+
 private slots:
     // --- 通用 ---
     void saveLevel();
@@ -101,6 +105,11 @@ private:
     QMap<QString, QJsonObject> m_enemyPrototypes;
     QMap<QString, QJsonObject> m_towerPrototypes;
     QString m_firstEnemyType; // 用于"添加敌人"时的默认值
+    QList<QString> m_enemyTypeOrder;
+    QList<QString> m_towerTypeOrder;
+
+    QPixmap m_backgroundPixmap; // 存储背景图片
+    QString m_fontFamily;//存储自定义字体名称
 };
 
 #endif // LEVELEDITORWIDGET_H

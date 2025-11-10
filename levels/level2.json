@@ -199,14 +199,12 @@
       "enemies": [
         { "type": "coldwords", "count": 15, "interval": 0.8 },
         { "type": "lonelyness", "count": 6, "interval": 2.0 }，
-        { "type": "thephantomofthepast", "count": 1, "interval": 0.0 }
       ]
     },
     {
       "enemies": [
         { "type": "coldwords", "count": 10, "interval": 0.5 },
         { "type": "lonelyness", "count": 6, "interval": 1.5 },
-        { "type": "thephantomofthepast", "count": 1, "interval": 0.0 },
         { "type": "recall", "count": 5, "interval": 3.0 }
       ]
     },
@@ -223,7 +221,6 @@
         { "type": "lonelyness", "count": 5, "interval": 1.5 },
         { "type": "recall", "count": 5, "interval": 3.0 },
         { "type": "tears", "count": 5, "interval": 3.0 },
-        { "type": "thephantomofthepast", "count": 1, "interval": 0.0 }
       ]
     },
     {
@@ -231,10 +228,13 @@
         { "type": "coldwords", "count": 10, "interval": 0.5 },
         { "type": "lonelyness", "count": 5, "interval": 1.5 },
         { "type": "recall", "count": 5, "interval": 3.0 },
-        { "type": "thephantomofthepast", "count": 1, "interval": 0.0 },
         { "type": "tears", "count": 5, "interval": 3.0 },
-        { "type": "thephantomofthepast", "count": 1, "interval": 0.0 }
       ]
+    }
+    {
+        "enemies": [
+            { "type": "thephantomofthepast", "count": 1, "interval": 0.0 }
+        ]
     }
   ]
 }

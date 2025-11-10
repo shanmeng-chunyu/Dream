@@ -122,4 +122,7 @@
     <qresource prefix="/levels">
         <file>levels/level3.json</file>
     </qresource>
+    <qresource prefix="/font">
+        <file>resources/font/font.ttf</file>
+    </qresource>
 </RCC>

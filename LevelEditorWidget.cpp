@@ -1,4 +1,8 @@
 #include "LevelEditorWidget.h"
+#include <QIcon>
+#include <QFontDatabase>
+#include <QPainter>
+#include <QPaintEvent>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -35,6 +39,23 @@ LevelEditorWidget::LevelEditorWidget(QWidget* parent)
       tower_warningLabel(nullptr),
       m_firstEnemyType("bug") // 默认值，会被 loadPrototypes 覆盖
 {
+
+    this->setWindowIcon(QIcon(":/background/resources/background/title.png"));// 设置窗口图标
+
+    if (!m_backgroundPixmap.load(":/background/resources/background/third.png")) {
+        qWarning() << "LevelEditorWidget: 未能加载背景图片!";
+    } //加载背景图片
+
+    int fontId = QFontDatabase::addApplicationFont(":/font/resources/font/font.ttf");
+    if (fontId != -1) {
+        QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
+        if (!fontFamilies.isEmpty()) {
+            m_fontFamily = fontFamilies.at(0); // 1. 存储字体族名
+        }
+    } else {
+        qWarning() << "LevelEditorWidget: 未能加载字体 ':/font/resource/font/font.ttf'";
+    }
+
     // 1. 加载所有敌人和塔的原型数据
     loadPrototypes();
 
@@ -74,6 +95,8 @@ LevelEditorWidget::LevelEditorWidget(QWidget* parent)
 void LevelEditorWidget::loadPrototypes() {
     m_enemyPrototypes.clear();
     m_towerPrototypes.clear();
+    m_enemyTypeOrder.clear();
+    m_towerTypeOrder.clear();   // <--- 清空顺序列表
 
     // --- 在此填充你的 enemy_data.json 和 tower_data.json 的实际路径 ---
     // 提示: 最好使用 Qt 资源文件 (qrc) 路径，例如 ":/data/enemy_data.json"
@@ -90,7 +113,10 @@ void LevelEditorWidget::loadPrototypes() {
         QJsonArray enemies = doc.object()["master_enemies"].toArray();
         for (const QJsonValue& val : enemies) {
             QJsonObject obj = val.toObject();
-            m_enemyPrototypes[obj["type"].toString()] = obj;
+            QString type = obj["type"].toString();
+            if (type.isEmpty()) continue;
+            m_enemyPrototypes[type] = obj;        // 1. 填充 Map (用于查找)
+            m_enemyTypeOrder.append(type);    // 2. 填充 List (用于排序)
         }
         enemyFile.close();
 
@@ -98,8 +124,8 @@ void LevelEditorWidget::loadPrototypes() {
         qWarning() << "LevelEditorWidget: Failed to load" << enemyDataPath;
     }
 
-    if (!m_enemyPrototypes.isEmpty()) {
-        m_firstEnemyType = m_enemyPrototypes.keys().first();
+    if (!m_enemyTypeOrder.isEmpty()) {
+        m_firstEnemyType = m_enemyTypeOrder.first();
     }
 
     // 加载防御塔
@@ -109,7 +135,10 @@ void LevelEditorWidget::loadPrototypes() {
         QJsonArray towers = doc.object()["master_towers"].toArray();
         for (const QJsonValue& val : towers) {
             QJsonObject obj = val.toObject();
-            m_towerPrototypes[obj["type"].toString()] = obj;
+            QString type = obj["type"].toString();
+            if (type.isEmpty()) continue;
+            m_towerPrototypes[type] = obj;      // 1. 填充 Map
+            m_towerTypeOrder.append(type);  // 2. 填充 List
         }
         towerFile.close();
     } else {
@@ -122,6 +151,47 @@ void LevelEditorWidget::loadPrototypes() {
  */
 void LevelEditorWidget::setupUI() {
     auto* mainLayout = new QVBoxLayout(this);
+
+    QString baseStyle = QString(
+            "QWidget {"
+            "    font-family: '%1';"
+            "    font-size: 14px;"
+            "    color: #333333;"
+            "}"
+        ).arg(m_fontFamily);
+
+    this->setStyleSheet(baseStyle +
+        "QGroupBox {"
+        "    background-color: rgba(255, 255, 255, 0.15);" // 15% 不透明度的白色背景
+        "    border-radius: 5px;" // (可选) 圆角
+        "}"
+        "QListWidget {"
+        "    background-color: rgba(255, 255, 255, 0.1);" // 列表背景更透明一些
+        "}"
+        "QSplitter::handle {"
+        "    background-color: rgba(128, 128, 128, 0.3);" // 半透明的手柄
+        "}"
+        "QScrollBar:vertical {"
+        "    background: rgba(0, 0, 0, 0.3); /* 滚动条底槽: 半透明黑色 */"
+        "    width: 10px;"
+        "    margin: 0px 0px 0px 0px;"
+        "}"
+        "QScrollBar::handle:vertical {"
+        "    background: rgba(128, 128, 128, 0.7); /* 滑块: 半透明灰色 */"
+        "    min-height: 20px;"
+        "    border-radius: 5px; /* 圆角 */"
+        "}"
+        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+        "    /* 隐藏上下箭头 */"
+        "    height: 0px;"
+        "    background: none;"
+        "}"
+        "QListWidget::item:selected {"
+        "background-color: rgba(0, 150, 200, 0.5); /* 半透明的蓝色高亮 */"
+        "border: 1px solid #00aaff;"
+        "color: white;" /* 选中时文字变白 */
+        "}"
+    );
 
     // 顶部：关卡名
     // auto* levelNameLayout = new QHBoxLayout();
@@ -189,7 +259,9 @@ QGroupBox* LevelEditorWidget::createWaveEditorGroup() {
     auto* detailsLayout = new QFormLayout();
     wave_enemyTypeComboBox = new QComboBox();
     // 填充敌人种类
-    for (const QJsonObject& obj : m_enemyPrototypes.values()) {
+    for (const QString& type : m_enemyTypeOrder) {
+        // 从 Map 中按 type 取出 Object
+        const QJsonObject& obj = m_enemyPrototypes.value(type);
         wave_enemyTypeComboBox->addItem(obj["name"].toString(), obj["type"].toString());
     }
 
@@ -239,8 +311,10 @@ QGroupBox* LevelEditorWidget::createTowerSelectionGroup() {
     auto* towerSelectLayout = new QFormLayout();
     tower_typeComboBox = new QComboBox();
     tower_typeComboBox->addItem("None", "None");
-    // 迭代 m_towerPrototypes
-    for (const QJsonObject& obj : m_towerPrototypes.values()) {
+    // 迭代
+    for (const QString& type : m_towerTypeOrder) {
+        // 从 Map 中按 type 取出 Object
+        const QJsonObject& obj = m_towerPrototypes.value(type);
         tower_typeComboBox->addItem(obj["name"].toString(), obj["type"].toString());
     }
 
@@ -816,4 +890,25 @@ void LevelEditorWidget::loadLevel() {
     onWaveSelectionChanged();
     if (availableTowersListWidget->count() > 0) availableTowersListWidget->setCurrentRow(0);
     onTowerSlotSelectionChanged();
+}
+
+void LevelEditorWidget::paintEvent(QPaintEvent* event) {
+    // 首先调用基类的 paintEvent (如果需要，但这里我们完全覆盖)
+    // QWidget::paintEvent(event);
+
+    QPainter painter(this);
+
+    if (!m_backgroundPixmap.isNull()) {
+
+        // 1. 设置透明度 (例如 20%)
+        //    这 *只* 影响 painter 之后的操作，*不会* 影响子控件
+        painter.setOpacity(0.2);
+
+        // 2. 绘制背景图片
+        //    我们将图片强制拉伸以填满整个窗口
+        //    (m_backgroundPixmap.rect() 是源, this->rect() 是目标)
+        painter.drawPixmap(this->rect(), m_backgroundPixmap);
+
+        // 当 'painter' 在函数结束时被销毁，透明度等设置会自动重置
+    }
 }
