@@ -8,9 +8,9 @@
 
 class Bullet;
 
-class Tower : public QObject, public QGraphicsPixmapItem {
+class Tower : public QObject, public QGraphicsPixmapItem
+{
     Q_OBJECT
-
 public:
     explicit Tower(int damage, double range, double fireRate,int cost,int upgradeCost, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
     virtual ~Tower()=default;
@@ -19,32 +19,40 @@ public:
     double getRange()const{return range;}
     double getFireRate()const {return fireRate;}
     int getCost()const{return cost;}
+    int getUpgradeCost()const{return upgradeCost;}
     Enemy* getCurrentTarget()const{return currentTarget;}
+    bool IfUpgraded()const{return upgraded;}
+
     //基本功能
     virtual void attack();
-    bool targetIsInRange() const;
+    bool targetIsInRange() const;//检查敌人是否在攻击范围内
     void setTarget(Enemy* target);
+
     //升级
-    virtual void upgrade();
-    bool IfUpgrade()const{return upgraded;}
-    int getUpgradeCost()const{return upgradeCost;}
+    virtual void upgrade()=0;
 
-    public slots:
-        void findAndAttackTarget();
+public slots:
+    void findAndAttackTarget();
+    //应对enemy功能
+    void slowAttack(double slowFactor);//降低攻速
+    void destroy();//摧毁tower，接收到信号直接删除对象
 
-    signals:
-        void newBullet(Tower* tower, Enemy* target);
+signals:
+    void newBullet(Tower* tower, Enemy* target);
 
 protected:
+    //属性
     int damage;
     double range;
     double fireRate;//攻击间隔
     int cost;
-    Enemy* currentTarget;
-    bool upgraded;//升级标志
     int upgradeCost;
+    bool upgraded;//升级标志
+
+    //状态属性
+    Enemy* currentTarget;
     QTimer* fireTimer;
+
     friend class GameManager;
 };
-
 #endif // TOWER_H
