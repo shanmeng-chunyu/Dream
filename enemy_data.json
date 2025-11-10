@@ -3,7 +3,7 @@
     {
       "type": "bug",
       "name": "BUG",
-      "pixmap": "resources/enemies/level1/bug.png",
+      "pixmap": ":/enemies/resources/enemies/level1/bug.png",
       "health": 150,
       "speed": 1,
       "drops": 10,
@@ -12,7 +12,7 @@
     {
       "type": "gpa",
       "name": "GPA",
-      "pixmap": "resources/enemies/level1/gpa.png",
+      "pixmap": ":/enemies/resources/enemies/level1/gpa.png",
       "health": 300,
       "speed": 1.0,
       "drops": 15,
@@ -21,7 +21,7 @@
     {
       "type": "ddl",
       "name": "DDL",
-      "pixmap": "resources/enemies/level1/ddl.png",
+      "pixmap": ":/enemies/resources/enemies/level1/ddl.png",
       "health": 80,
       "speed": 1.5,
       "drops": 8,
@@ -30,7 +30,7 @@
     {
       "type": "pre",
       "name": "PRE",
-      "pixmap": "resources/enemies/level1/pre.png",
+      "pixmap": ":/enemies/resources/enemies/level1/pre.png",
       "health": 500,
       "speed": 1.0,
       "drops": 50,
@@ -39,7 +39,7 @@
     {
       "type": "thesis",
       "name": "论文",
-      "pixmap": "resources/enemies/level1/thesis.png",
+      "pixmap": ":/enemies/resources/enemies/level1/thesis.png",
       "health": 8000,
       "speed": 1.0,
       "drops": 500,
@@ -48,7 +48,7 @@
     {
       "type": "coldwords",
       "name": "冰冷的言语",
-      "pixmap": "resources/enemies/level2/coldwords.png",
+      "pixmap": ":/enemies/resources/enemies/level2/coldwords.png",
       "health": 100,
       "speed": 1,
       "drops": 10,
@@ -57,7 +57,7 @@
     {
       "type": "lonelyness",
       "name": "无尽的孤独",
-      "pixmap": "resources/enemies/level2/lonelyness.png",
+      "pixmap": ":/enemies/resources/enemies/level2/lonelyness.png",
       "health": 200,
       "speed": 1,
       "drops": 20,
@@ -66,7 +66,7 @@
     {
       "type": "recall",
       "name": "悲伤的回忆",
-      "pixmap": "resources/enemies/level2/recall.png",
+      "pixmap": ":/enemies/resources/enemies/level2/recall.png",
       "health": 400,
       "speed": 1,
       "drops": 25,
@@ -75,7 +75,7 @@
     {
       "type": "tears",
       "name": "伤心的泪水",
-      "pixmap": "resources/enemies/level2/tears.png",
+      "pixmap": ":/enemies/resources/enemies/level2/tears.png",
       "health": 600,
       "speed": 1,
       "drops": 60,
@@ -84,7 +84,7 @@
     {
       "type": "thephantomofthepast",
       "name": "昔日幻影",
-      "pixmap": "resources/enemies/level2/thephantomofthepast.png",
+      "pixmap": ":/enemies/resources/enemies/level2/thephantomofthepast.png",
       "health": 10000,
       "speed": 1,
       "drops": 600,
@@ -93,7 +93,7 @@
     {
       "type": "nightmare",
       "name": "噩梦",
-      "pixmap": "resources/enemies/level3/nightmare.png",
+      "pixmap": ":/enemies/resources/enemies/level3/nightmare.png",
       "health": 10000,
       "speed": 1,
       "drops": 800,

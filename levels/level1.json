@@ -106,70 +106,70 @@
     "obstacles": [
       {
         "type": "Scratchpaper",
-        "pixmap": "resources/map_items/first/scratchpaper.png",
-        "position": { "x": 0.1982421875, "y": 0.052083333333 },
+        "pixmap": ":/map_items/resources/map_items/first/scratchpaper.png",
+        "position": { "x":0.197265625, "y":0.0520833333333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Scratchpaper",
-        "pixmap": "resources/map_items/first/scratchpaper.png",
+        "pixmap": ":/map_items/resources/map_items/first/scratchpaper.png",
         "position": { "x": 0.6494140625, "y": 0.052083333333 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Scratchpaper",
-        "pixmap": "resources/map_items/first/scratchpaper.png",
+        "pixmap": ":/map_items/resources/map_items/first/scratchpaper.png",
         "position": { "x": 0, "y": 0.55078125 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Cable",
-        "pixmap": "resources/map_items/first/cable.png",
+        "pixmap": ":/map_items/resources/map_items/first/cable.png",
         "position": { "x": 0.423828125, "y": 0.264322916666 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Cable",
-        "pixmap": "resources/map_items/first/cable.png",
+        "pixmap": ":/map_items/resources/map_items/first/cable.png",
         "position": { "x": 0.1982421875, "y": 0.826822916666 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "resources/map_items/first/stationery.png",
+        "pixmap": ":/map_items/resources/map_items/first/stationery.png",
         "position": { "x": 0.1982421875, "y": 0.352864583333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "resources/map_items/first/stationery.png",
+        "pixmap": ":/map_items/resources/map_items/first/stationery.png",
         "position": { "x": 0.6494140625, "y": 0.352864583333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "resources/map_items/first/stationery.png",
+        "pixmap": ":/map_items/resources/map_items/first/stationery.png",
         "position": { "x": 0.5751953125, "y": 0.826822916667},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Book",
-        "pixmap": "resources/map_items/first/book.png",
+        "pixmap": ":/map_items/resources/map_items/first/book.png",
         "position": { "x": 0.349609375, "y": 0.565104166666 },
         "health": 300,
         "resource": 100
       },
       {
         "type": "Book",
-        "pixmap": "resources/map_items/first/book.png",
+        "pixmap": ":/map_items/resources/map_items/first/book.png",
         "position": { "x": 0.58203125, "y": 0.565104166666 },
         "health": 300,
         "resource": 100

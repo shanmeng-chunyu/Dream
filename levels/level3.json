@@ -1,7 +1,7 @@
 {
-  "level_name": "第二关：失恋的悲伤",
+  "level_name": "第三关：梦你所梦",
   "map": {
-    "background": "./美术素材（透明）/画面背景/第二关（仅地图方块）.png",
+    "background": "./美术素材（透明）/画面背景/第三关（仅地图方块）.png",
     "path": [
       { "x": 0.7802734375, "y": 0.763020833333},
       { "x": 0.7802734375, "y": 0.662760416667},
@@ -105,63 +105,63 @@
     "obstacles": [
       {
         "type": "Scratchpaper",
-        "pixmap": "resources/map_items/first/scratchpaper.png",
+        "pixmap": ":/map_items/resources/map_items/first/scratchpaper.png",
         "position": { "x":0.27734375, "y":0},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Cable",
-        "pixmap": "resources/map_items/first/cable.png",
+        "pixmap": ":/map_items/resources/map_items/first/cable.png",
         "position": { "x":0.42578125, "y":0},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "resources/map_items/first/stationery.png",
+        "pixmap": ":/map_items/resources/map_items/first/stationery.png",
         "position": { "x":0.6552734375, "y":0.19921875},
         "health": 300,
         "resource": 100
       },
       {
         "type": "BrokenFreindship",
-        "pixmap": "resources/map_items/second/broken_friendship.png",
+        "pixmap": ":/map_items/resources/map_items/second/broken_friendship.png",
         "position": { "x":0.8037109375, "y":0.19921875},
         "health": 400,
         "resource": 120
       },
       {
         "type": "Book",
-        "pixmap": "resources/map_items/first/book.png",
+        "pixmap": ":/map_items/resources/map_items/first/book.png",
         "position": { "x":0.0537109375, "y":0.302083333333},
         "health": 300,
         "resource": 100
       },
       {
         "type": "Stationery",
-        "pixmap": "resources/map_items/first/stationery.png",
+        "pixmap": ":/map_items/resources/map_items/first/stationery.png",
         "position": { "x":0.0537109375, "y":0.5},
         "health": 300,
         "resource": 100
       },
       {
         "type": "BrokenRing",
-        "pixmap": "resources/map_items/second/broken_ring.png",
+        "pixmap": ":/map_items/resources/map_items/second/broken_ring.png",
         "position": { "x":0.6552734375, "y":0.5},
         "health": 400,
         "resource": 120
       },
       {
         "type": "MemoryBox",
-        "pixmap": "resources/map_items/second/memory_box.png",
+        "pixmap": ":/map_items/resources/map_items/second/memory_box.png",
         "position": { "x":0.203125, "y":0.701822916667},
         "health": 400,
         "resource": 120
       },
       {
         "type": "WitheredFlowers",
-        "pixmap": "resources/map_items/second/withered_flowers.png",
+        "pixmap": ":/map_items/resources/map_items/second/withered_flowers.png",
         "position": { "x":0.517578125, "y":0.701822916667},
         "health": 400,
         "resource": 120
@@ -175,48 +175,5 @@
   "available_towers": [],
   "available_enemies": ["nightmare"],
   "waves": [
-    {
-      "enemies": [
-        { "type": "", "count": 10, "interval": 1.0 }
-        { "type": "", "count": 3, "interval": 2.0 }
-      ]
-    },
-    {
-      "enemies": [
-        { "type": "", "count": 15, "interval": 0.8 },
-        { "type": "", "count": 6, "interval": 2.0 }
-      ]
-    },
-    {
-      "enemies": [
-        { "type": "", "count": 10, "interval": 0.5 },
-        { "type": "", "count": 6, "interval": 1.5 },
-        { "type": "", "count": 5, "interval": 3.0 }
-      ]
-    },
-    {
-      "enemies": [
-        { "type": "", "count": 15, "interval": 0.5 },
-        { "type": "", "count": 10, "interval": 1.5 },
-        { "type": "", "count": 5, "interval": 3.0 }
-      ]
-    },
-    {
-      "enemies": [
-        { "type": "", "count": 10, "interval": 0.5 },
-        { "type": "", "count": 5, "interval": 1.5 },
-        { "type": "", "count": 5, "interval": 3.0 },
-        { "type": "", "count": 5, "interval": 3.0 }
-      ]
-    },
-    {
-      "enemies": [
-        { "type": "", "count": 10, "interval": 0.5 },
-        { "type": "", "count": 5, "interval": 1.5 },
-        { "type": "", "count": 5, "interval": 3.0 },
-        { "type": "", "count": 5, "interval": 3.0 },
-        { "type": "", "count": 1, "interval": 0.0 }
-      ]
-    }
   ]
 }

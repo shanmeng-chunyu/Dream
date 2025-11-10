@@ -33,19 +33,19 @@ LevelEditorWidget::LevelEditorWidget(QWidget* parent)
       availableTowersListWidget(nullptr),
       tower_typeComboBox(nullptr), tower_thumbnailLabel(nullptr),
       tower_warningLabel(nullptr),
-      m_firstEnemyType("bug") // Ä¬ÈÏÖµ£¬»á±» loadPrototypes ¸²¸Ç
+      m_firstEnemyType("bug") // é»˜è®¤å€¼ï¼Œä¼šè¢« loadPrototypes è¦†ç›–
 {
-    // 1. ¼ÓÔØËùÓĞµĞÈËºÍËşµÄÔ­ĞÍÊı¾İ
+    // 1. åŠ è½½æ‰€æœ‰æ•Œäººå’Œå¡”çš„åŸå‹æ•°æ®
     loadPrototypes();
 
-    // 2. ¹¹½¨UI
+    // 2. æ„å»ºUI
     setupUI();
 
-    // 3. --- Á¬½ÓÍ¨ÓÃĞÅºÅ ---
+    // 3. --- è¿æ¥é€šç”¨ä¿¡å· ---
     connect(saveButton, &QPushButton::clicked, this, &LevelEditorWidget::saveLevel);
     connect(loadButton, &QPushButton::clicked, this, &LevelEditorWidget::loadLevel);
 
-    // 4. --- Á¬½Ó²¨´Î±à¼­Æ÷ĞÅºÅ ---
+    // 4. --- è¿æ¥æ³¢æ¬¡ç¼–è¾‘å™¨ä¿¡å· ---
     connect(addWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::addWave);
     connect(removeWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::removeWave);
     connect(waveListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onWaveSelectionChanged);
@@ -54,186 +54,102 @@ LevelEditorWidget::LevelEditorWidget(QWidget* parent)
     connect(removeEnemyFromWaveButton, &QPushButton::clicked, this, &LevelEditorWidget::removeEnemyFromWave);
     connect(enemyInWaveListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onEnemyInWaveSelectionChanged);
 
-    // Á¬½ÓµĞÈËÏêÇé±à¼­¿Ø¼ş
+    // è¿æ¥æ•Œäººè¯¦æƒ…ç¼–è¾‘æ§ä»¶
     connect(wave_enemyTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LevelEditorWidget::onWaveEnemyTypeChanged);
     connect(wave_enemyCountSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &LevelEditorWidget::onWaveEnemyCountChanged);
 
-    // 5. --- Á¬½Ó·ÀÓùËşÑ¡ÔñÆ÷ĞÅºÅ ---
+    // 5. --- è¿æ¥é˜²å¾¡å¡”é€‰æ‹©å™¨ä¿¡å· ---
     connect(availableTowersListWidget, &QListWidget::currentItemChanged, this, &LevelEditorWidget::onTowerSlotSelectionChanged);
     connect(tower_typeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LevelEditorWidget::onTowerTypeChanged);
 
 
-    // 6. --- ³õÊ¼»¯UI×´Ì¬ ---
+    // 6. --- åˆå§‹åŒ–UIçŠ¶æ€ ---
     onWaveSelectionChanged();
     onTowerSlotSelectionChanged();
 }
 
 /**
- * @brief ´Ó master JSON ÎÄ¼ş¼ÓÔØµĞÈËºÍËşµÄÔ­ĞÍÊı¾İ
+ * @brief ä» master JSON æ–‡ä»¶åŠ è½½æ•Œäººå’Œå¡”çš„åŸå‹æ•°æ®
  */
 void LevelEditorWidget::loadPrototypes() {
     m_enemyPrototypes.clear();
     m_towerPrototypes.clear();
 
-    // --- ÔÚ´ËÌî³äÄãµÄ enemy_data.json ºÍ tower_data.json µÄÊµ¼ÊÂ·¾¶ ---
-    // ÌáÊ¾: ×îºÃÊ¹ÓÃ Qt ×ÊÔ´ÎÄ¼ş (qrc) Â·¾¶£¬ÀıÈç ":/data/enemy_data.json"
-    // ÎªÁË·½±ã²âÊÔ£¬ÕâÀïÔİÊ±Ê¹ÓÃÄãÉÏ´«µÄÎÄ¼şÃû¡£
+    // --- åœ¨æ­¤å¡«å……ä½ çš„ enemy_data.json å’Œ tower_data.json çš„å®é™…è·¯å¾„ ---
+    // æç¤º: æœ€å¥½ä½¿ç”¨ Qt èµ„æºæ–‡ä»¶ (qrc) è·¯å¾„ï¼Œä¾‹å¦‚ ":/data/enemy_data.json"
+    // ä¸ºäº†æ–¹ä¾¿æµ‹è¯•ï¼Œè¿™é‡Œæš‚æ—¶ä½¿ç”¨ä½ ä¸Šä¼ çš„æ–‡ä»¶åã€‚
     QString enemyDataPath = ":/data/enemy_data.json";
     QString towerDataPath = ":/data/tower_data.json";
     // -------------------------------------------------------------
 
-    // ¼ÓÔØµĞÈË
+    // åŠ è½½æ•Œäºº
+    // --- åŠ è½½é˜²å¾¡å¡” ---
     QFile enemyFile(enemyDataPath);
-if (enemyFile.open(QIODevice::ReadOnly)) {
-    // 1. ¶ÁÈ¡ËùÓĞÊı¾İ
-    QByteArray fileData = enemyFile.readAll();
-    qDebug() << "Loaded enemy_data.json, size:" << fileData.size();
-
-    // 2. ×¼±¸Ò»¸ö´íÎó²¶»ñÆ÷
-    QJsonParseError jsonError;
-    QJsonDocument doc = QJsonDocument::fromJson(fileData, &jsonError);
-
-    // 3. ¼ì²é½âÎöÊÇ·ñ³ö´í
-    if (jsonError.error != QJsonParseError::NoError) {
-        qWarning() << "[P8] JSON Parse Error in enemy_data.json:" << jsonError.errorString() << "at offset" << jsonError.offset;
+    if (enemyFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(enemyFile.readAll());
+        QJsonArray enemies = doc.object()["master_enemies"].toArray();
+        for (const QJsonValue& val : enemies) {
+            QJsonObject obj = val.toObject();
+            m_enemyPrototypes[obj["type"].toString()] = obj;
+        }
         enemyFile.close();
-        return; // ÌáÇ°ÍË³ö
+
+    } else {
+        qWarning() << "LevelEditorWidget: Failed to load" << enemyDataPath;
     }
 
-    // 4. ¼ì²é¸ùÊÇ·ñÎª¶ÔÏó
-    if (!doc.isObject()) {
-        qWarning() << "[P8] JSON document is not an object (enemy_data.json)";
-        enemyFile.close();
-        return; // ÌáÇ°ÍË³ö
+    if (!m_enemyPrototypes.isEmpty()) {
+        m_firstEnemyType = m_enemyPrototypes.keys().first();
     }
 
-    // 5. ¼ì²é 'master_enemies' ¼üÊÇ·ñ´æÔÚ
-    QJsonObject rootObj = doc.object();
-    if (!rootObj.contains("master_enemies")) {
-        qWarning() << "[P8] JSON object does not contain 'master_enemies' key.";
-        enemyFile.close();
-        return; // ÌáÇ°ÍË³ö
-    }
-
-    // 6. Ò»ÇĞÕı³££¬¿ªÊ¼Ìî³ä
-    QJsonArray enemies = rootObj["master_enemies"].toArray();
-    qDebug() << "[P8] Found" << enemies.size() << "master enemies.";
-
-    for (const QJsonValue& val : enemies) {
-        QJsonObject obj = val.toObject();
-        m_enemyPrototypes[obj["type"].toString()] = obj;
-    }
-    enemyFile.close();
-
-} else {
-    qWarning() << "LevelEditorWidget: Failed to load" << enemyDataPath;
-}
-
-// --- ¼ÓÔØ·ÀÓùËş ---
-QFile towerFile(towerDataPath);
-if (towerFile.open(QIODevice::ReadOnly)) {
-    QByteArray fileData = towerFile.readAll();
-    qDebug() << "Loaded tower_data.json, size:" << fileData.size();
-
-    QJsonParseError jsonError;
-    QJsonDocument doc = QJsonDocument::fromJson(fileData, &jsonError);
-
-    if (jsonError.error != QJsonParseError::NoError) {
-        qWarning() << "[P8] JSON Parse Error in tower_data.json:" << jsonError.errorString();
+    // åŠ è½½é˜²å¾¡å¡”
+    QFile towerFile(towerDataPath);
+    if (towerFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(towerFile.readAll());
+        QJsonArray towers = doc.object()["master_towers"].toArray();
+        for (const QJsonValue& val : towers) {
+            QJsonObject obj = val.toObject();
+            m_towerPrototypes[obj["type"].toString()] = obj;
+        }
         towerFile.close();
-        return;
+    } else {
+        qWarning() << "LevelEditorWidget: Failed to load" << towerDataPath;
     }
-    if (!doc.isObject()) {
-        qWarning() << "[P8] JSON document is not an object (tower_data.json)";
-        towerFile.close();
-        return;
-    }
-
-    QJsonObject rootObj = doc.object();
-    // ¼ì²é tower_data.json ÖĞµÄ "master_towers" ¼ü
-    if (!rootObj.contains("master_towers")) {
-        qWarning() << "[P8] JSON object does not contain 'master_towers' key.";
-        towerFile.close();
-        return;
-    }
-
-    QJsonArray towers = rootObj["master_towers"].toArray();
-    qDebug() << "[P8] Found" << towers.size() << "master towers.";
-
-    for (const QJsonValue& val : towers) {
-        QJsonObject obj = val.toObject();
-        m_towerPrototypes[obj["type"].toString()] = obj;
-    }
-    towerFile.close();
-} else {
-    qWarning() << "LevelEditorWidget: Failed to load" << towerDataPath;
-}
-    // QFile enemyFile(enemyDataPath);
-    // if (enemyFile.open(QIODevice::ReadOnly)) {
-    //     QJsonDocument doc = QJsonDocument::fromJson(enemyFile.readAll());
-    //     QJsonArray enemies = doc.object()["master_enemies"].toArray();
-    //     for (const QJsonValue& val : enemies) {
-    //         QJsonObject obj = val.toObject();
-    //         m_enemyPrototypes[obj["type"].toString()] = obj;
-    //     }
-    //     enemyFile.close();
-    //
-    // } else {
-    //     qWarning() << "LevelEditorWidget: Failed to load" << enemyDataPath;
-    // }
-    //
-    // if (!m_enemyPrototypes.isEmpty()) {
-    //     m_firstEnemyType = m_enemyPrototypes.keys().first();
-    // }
-    //
-    // // ¼ÓÔØ·ÀÓùËş
-    // QFile towerFile(towerDataPath);
-    // if (towerFile.open(QIODevice::ReadOnly)) {
-    //     QJsonDocument doc = QJsonDocument::fromJson(towerFile.readAll());
-    //     QJsonArray towers = doc.object()["master_towers"].toArray();
-    //     for (const QJsonValue& val : towers) {
-    //         QJsonObject obj = val.toObject();
-    //         m_towerPrototypes[obj["type"].toString()] = obj;
-    //     }
-    //     towerFile.close();
-    // } else {
-    //     qWarning() << "LevelEditorWidget: Failed to load" << towerDataPath;
-    // }
 }
 
 /**
- * @brief ¹¹½¨±à¼­Æ÷µÄÖ÷UI²¼¾Ö
+ * @brief æ„å»ºç¼–è¾‘å™¨çš„ä¸»UIå¸ƒå±€
  */
 void LevelEditorWidget::setupUI() {
     auto* mainLayout = new QVBoxLayout(this);
 
-    // ¶¥²¿£º¹Ø¿¨Ãû
+    // é¡¶éƒ¨ï¼šå…³å¡å
     // auto* levelNameLayout = new QHBoxLayout();
     // levelNameLayout->addWidget(new QLabel("Level Name:"));
     // levelNameEdit = new QLineEdit("Custom Level");
     // levelNameLayout->addWidget(levelNameEdit);
     // mainLayout->addLayout(levelNameLayout);
 
-    // ÖĞ¼ä£ºÖ÷·Ö¸îÆ÷ (²¨´Î vs Ëş)
+    // ä¸­é—´ï¼šä¸»åˆ†å‰²å™¨ (æ³¢æ¬¡ vs å¡”)
     mainSplitter = new QSplitter(Qt::Vertical, this);
 
-    // ÉÏ°ë²¿·Ö£º²¨´Î±à¼­Æ÷
+    // ä¸ŠåŠéƒ¨åˆ†ï¼šæ³¢æ¬¡ç¼–è¾‘å™¨
     mainSplitter->addWidget(createWaveEditorGroup());
 
-    // ÏÂ°ë²¿·Ö£º·ÀÓùËşÑ¡ÔñÆ÷
+    // ä¸‹åŠéƒ¨åˆ†ï¼šé˜²å¾¡å¡”é€‰æ‹©å™¨
     mainSplitter->addWidget(createTowerSelectionGroup());
 
-    // ÉèÖÃ·Ö¸î±ÈÀı (3/4 vs 1/4)
-    mainSplitter->setSizes({600, 200}); // ³õÊ¼´óĞ¡
-    mainSplitter->setStretchFactor(0, 3); // ²¨´Î±à¼­Æ÷Õ¼ 3 ·İ
-    mainSplitter->setStretchFactor(1, 1); // ËşÑ¡ÔñÆ÷Õ¼ 1 ·İ
+    // è®¾ç½®åˆ†å‰²æ¯”ä¾‹ (3/4 vs 1/4)
+    mainSplitter->setSizes({600, 200}); // åˆå§‹å¤§å°
+    mainSplitter->setStretchFactor(0, 2); // æ³¢æ¬¡ç¼–è¾‘å™¨å  3 ä»½
+    mainSplitter->setStretchFactor(1, 2); // å¡”é€‰æ‹©å™¨å  1 ä»½
 
-    mainLayout->addWidget(mainSplitter, 1); // ÔÊĞí·Ö¸îÆ÷ÉìÕ¹
+    mainLayout->addWidget(mainSplitter, 1); // å…è®¸åˆ†å‰²å™¨ä¼¸å±•
 
-    // µ×²¿£º±£´æ/¼ÓÔØ°´Å¥
+    // åº•éƒ¨ï¼šä¿å­˜/åŠ è½½æŒ‰é’®
     auto* bottomButtonLayout = new QHBoxLayout();
-    saveButton = new QPushButton("Save Level to File...");
-    loadButton = new QPushButton("Load Level from File...");
+    saveButton = new QPushButton("ä¿å­˜å…³å¡é…ç½®");
+    loadButton = new QPushButton("åŠ è½½å…³å¡é…ç½®");
     bottomButtonLayout->addStretch();
     bottomButtonLayout->addWidget(loadButton);
     bottomButtonLayout->addWidget(saveButton);
@@ -241,38 +157,38 @@ void LevelEditorWidget::setupUI() {
 }
 
 /**
- * @brief ´´½¨²¨´Î±à¼­Æ÷ (ÉÏ°ë²¿·Ö)
+ * @brief åˆ›å»ºæ³¢æ¬¡ç¼–è¾‘å™¨ (ä¸ŠåŠéƒ¨åˆ†)
  */
 QGroupBox* LevelEditorWidget::createWaveEditorGroup() {
-    auto* waveGroup = new QGroupBox("Wave Editor");
+    auto* waveGroup = new QGroupBox("æ³¢æ¬¡ç¼–è¾‘");
     auto* waveTabLayout = new QHBoxLayout(waveGroup);
 
-    // ×ó²à£º²¨´ÎÁĞ±í
+    // å·¦ä¾§ï¼šæ³¢æ¬¡åˆ—è¡¨
     auto* waveListLayout = new QVBoxLayout();
     waveListWidget = new QListWidget();
     auto* waveButtonLayout = new QHBoxLayout();
-    addWaveButton = new QPushButton("Add Wave");
-    removeWaveButton = new QPushButton("Remove Wave");
+    addWaveButton = new QPushButton("æ·»åŠ æ³¢æ¬¡");
+    removeWaveButton = new QPushButton("åˆ é™¤æ³¢æ¬¡");
     waveButtonLayout->addWidget(addWaveButton);
     waveButtonLayout->addWidget(removeWaveButton);
     waveListLayout->addWidget(waveListWidget);
     waveListLayout->addLayout(waveButtonLayout);
 
-    // ÖĞ¼ä£ºµ±Ç°²¨´ÎµÄµĞÈËÁĞ±í
+    // ä¸­é—´ï¼šå½“å‰æ³¢æ¬¡çš„æ•Œäººåˆ—è¡¨
     auto* enemyListLayout = new QVBoxLayout();
     enemyInWaveListWidget = new QListWidget();
     auto* enemyButtonLayout = new QHBoxLayout();
-    addEnemyToWaveButton = new QPushButton("Add Enemy");
-    removeEnemyFromWaveButton = new QPushButton("Remove Enemy");
+    addEnemyToWaveButton = new QPushButton("æ–°å¢æ•Œäºº");
+    removeEnemyFromWaveButton = new QPushButton("åˆ é™¤æ•Œäºº");
     enemyButtonLayout->addWidget(addEnemyToWaveButton);
     enemyButtonLayout->addWidget(removeEnemyFromWaveButton);
     enemyListLayout->addWidget(enemyInWaveListWidget);
     enemyListLayout->addLayout(enemyButtonLayout);
 
-    // ÓÒ²à£ºÑ¡¶¨µĞÈËµÄÏêÏ¸ĞÅÏ¢
+    // å³ä¾§ï¼šé€‰å®šæ•Œäººçš„è¯¦ç»†ä¿¡æ¯
     auto* detailsLayout = new QFormLayout();
     wave_enemyTypeComboBox = new QComboBox();
-    // Ìî³äµĞÈËÖÖÀà
+    // å¡«å……æ•Œäººç§ç±»
     for (const QJsonObject& obj : m_enemyPrototypes.values()) {
         wave_enemyTypeComboBox->addItem(obj["name"].toString(), obj["type"].toString());
     }
@@ -282,16 +198,16 @@ QGroupBox* LevelEditorWidget::createWaveEditorGroup() {
     wave_enemyCountSpinBox->setValue(10);
 
     wave_enemyThumbnailLabel = new QLabel("[Enemy Thumbnail]");
-    wave_enemyThumbnailLabel->setFixedSize(100, 100);
+    wave_enemyThumbnailLabel->setFixedSize(200, 200);
     wave_enemyThumbnailLabel->setScaledContents(true);
     wave_enemyThumbnailLabel->setAlignment(Qt::AlignCenter);
     wave_enemyThumbnailLabel->setFrameShape(QFrame::Box);
 
-    detailsLayout->addRow("Type:", wave_enemyTypeComboBox);
-    detailsLayout->addRow("Count:", wave_enemyCountSpinBox);
-    detailsLayout->addRow("Thumbnail:", wave_enemyThumbnailLabel);
+    detailsLayout->addRow("æ€ªç‰©ç±»å‹:", wave_enemyTypeComboBox);
+    detailsLayout->addRow("æ€ªç‰©æ•°é‡:", wave_enemyCountSpinBox);
+    detailsLayout->addRow("", wave_enemyThumbnailLabel);
 
-    // ×éºÏÈıÀ¸
+    // ç»„åˆä¸‰æ 
     waveTabLayout->addLayout(waveListLayout, 1);
     waveTabLayout->addLayout(enemyListLayout, 2);
     waveTabLayout->addLayout(detailsLayout, 1);
@@ -300,26 +216,26 @@ QGroupBox* LevelEditorWidget::createWaveEditorGroup() {
 }
 
 /**
- * @brief ´´½¨·ÀÓùËşÑ¡ÔñÆ÷ (ÏÂ°ë²¿·Ö)
+ * @brief åˆ›å»ºé˜²å¾¡å¡”é€‰æ‹©å™¨ (ä¸‹åŠéƒ¨åˆ†)
  */
 QGroupBox* LevelEditorWidget::createTowerSelectionGroup() {
-    auto* towerGroup = new QGroupBox("Available Towers (Choose 4)");
+    auto* towerGroup = new QGroupBox("é€‰æ‹©é˜²å¾¡å¡”");
     auto* towerGroupLayout = new QHBoxLayout(towerGroup);
 
-    // ×ó²à£º¹Ì¶¨µÄ4¸ö²ÛÎ»
+    // å·¦ä¾§ï¼šå›ºå®šçš„4ä¸ªæ§½ä½
     availableTowersListWidget = new QListWidget();
     for (int i = 1; i <= 4; ++i) {
-        auto* item = new QListWidgetItem(QString("Tower Slot %1").arg(QString::number(i)));
-        item->setData(Qt::UserRole, QJsonObject()); // ´æ´¢ QJsonObject { "type": "..." }
+        auto* item = new QListWidgetItem(QString("é˜²å¾¡å¡”%1").arg(QString::number(i)));
+        item->setData(Qt::UserRole, QJsonObject()); // å­˜å‚¨ QJsonObject { "type": "..." }
         availableTowersListWidget->addItem(item);
     }
     availableTowersListWidget->setFixedWidth(150);
 
-    // ÖĞ¼ä£ºÑ¡ÔñÀ¸
+    // ä¸­é—´ï¼šé€‰æ‹©æ 
     auto* towerSelectLayout = new QFormLayout();
     tower_typeComboBox = new QComboBox();
     tower_typeComboBox->addItem("None", "None");
-    // µü´ú m_towerPrototypes
+    // è¿­ä»£ m_towerPrototypes
     for (const QJsonObject& obj : m_towerPrototypes.values()) {
         tower_typeComboBox->addItem(obj["name"].toString(), obj["type"].toString());
     }
@@ -329,17 +245,17 @@ QGroupBox* LevelEditorWidget::createTowerSelectionGroup() {
     tower_warningLabel->setVisible(false);
     tower_warningLabel->setWordWrap(true);
 
-    towerSelectLayout->addRow("Select Type:", tower_typeComboBox);
+    towerSelectLayout->addRow("é˜²å¾¡å¡”ç±»å‹:", tower_typeComboBox);
     towerSelectLayout->addRow(tower_warningLabel);
 
-    // ÓÒ²à£ºËõÂÔÍ¼
+    // å³ä¾§ï¼šç¼©ç•¥å›¾
     tower_thumbnailLabel = new QLabel("[Tower Thumbnail]");
     tower_thumbnailLabel->setFixedSize(100, 100);
     tower_thumbnailLabel->setScaledContents(true);
     tower_thumbnailLabel->setAlignment(Qt::AlignCenter);
     tower_thumbnailLabel->setFrameShape(QFrame::Box);
 
-    // ×éºÏÈıÀ¸
+    // ç»„åˆä¸‰æ 
     towerGroupLayout->addWidget(availableTowersListWidget, 1);
     towerGroupLayout->addLayout(towerSelectLayout, 2);
     towerGroupLayout->addWidget(tower_thumbnailLabel, 1);
@@ -352,8 +268,8 @@ QGroupBox* LevelEditorWidget::createTowerSelectionGroup() {
 
 void LevelEditorWidget::addWave() {
     int waveCount = waveListWidget->count();
-    auto* item = new QListWidgetItem(QString("Wave %1").arg(QString::number(waveCount + 1)));
-    item->setData(Qt::UserRole, QJsonArray()); // ²¨´ÎÊı¾İ´æ´¢ÎªµĞÈËÊı×é
+    auto* item = new QListWidgetItem(QString("æ³¢æ¬¡%1").arg(QString::number(waveCount + 1)));
+    item->setData(Qt::UserRole, QJsonArray()); // æ³¢æ¬¡æ•°æ®å­˜å‚¨ä¸ºæ•Œäººæ•°ç»„
     waveListWidget->addItem(item);
     waveListWidget->setCurrentItem(item);
 }
@@ -364,7 +280,7 @@ void LevelEditorWidget::removeWave() {
 
 void LevelEditorWidget::onWaveSelectionChanged() {
     enemyInWaveListWidget->clear();
-    updateWaveEnemyDetailsUI(nullptr); // Çå¿Õ²¢½ûÓÃÏêÇé
+    updateWaveEnemyDetailsUI(nullptr); // æ¸…ç©ºå¹¶ç¦ç”¨è¯¦æƒ…
 
     QListWidgetItem* currentWave = waveListWidget->currentItem();
     if (!currentWave) {
@@ -375,13 +291,14 @@ void LevelEditorWidget::onWaveSelectionChanged() {
 
     addEnemyToWaveButton->setEnabled(true);
 
-    // ¼ÓÔØ¸Ã²¨´ÎµÄµĞÈËÁĞ±í
+    // åŠ è½½è¯¥æ³¢æ¬¡çš„æ•Œäººåˆ—è¡¨
     QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
     for (const QJsonValue& enemyValue : enemies) {
         QJsonObject enemyObj = enemyValue.toObject();
         QString type = enemyObj["type"].toString(m_firstEnemyType);
-        int count = enemyObj["count"].toInt(10);
-        auto* item = new QListWidgetItem(QString("%1 x%2").arg(type).arg(QString::number(count)));
+        int count = enemyObj["count"].toInt(1);
+        QString name = m_enemyPrototypes.value(type).value("name").toString(type);
+        auto* item = new QListWidgetItem(QString("%1 x%2").arg(name).arg(QString::number(count)));
         item->setData(Qt::UserRole, enemyObj);
         enemyInWaveListWidget->addItem(item);
     }
@@ -393,17 +310,18 @@ void LevelEditorWidget::addEnemyToWave() {
     QListWidgetItem* currentWave = waveListWidget->currentItem();
     if (!currentWave) return;
 
-    // ĞèÇó£ºĞÂÔöÄ¬ÈÏÎª ÖÖÀà1 (m_firstEnemyType)£¬ÊıÁ¿10
+    // éœ€æ±‚ï¼šæ–°å¢é»˜è®¤ä¸º ç§ç±»1 (m_firstEnemyType)ï¼Œæ•°é‡1
     QJsonObject newEnemy;
     newEnemy["type"] = m_firstEnemyType;
-    newEnemy["count"] = 10;
-    newEnemy["interval"] = 1.0; // ĞèÇó£º¼ä¸ô¹Ì¶¨£¬ÎÒÃÇÔÚ´ËÓ²±àÂë
+    newEnemy["count"] = 1;
+    newEnemy["interval"] = 1.0; // éœ€æ±‚ï¼šé—´éš”å›ºå®šï¼Œæˆ‘ä»¬åœ¨æ­¤ç¡¬ç¼–ç 
 
-    auto* item = new QListWidgetItem(QString("%1 x%2").arg(m_firstEnemyType).arg(QString::number(10)));
+    QString name = m_enemyPrototypes.value(m_firstEnemyType).value("name").toString(m_firstEnemyType);
+    auto* item = new QListWidgetItem(QString("%1 x%2").arg(name).arg(QString::number(1)));
     item->setData(Qt::UserRole, newEnemy);
     enemyInWaveListWidget->addItem(item);
 
-    // ¸üĞÂ wave item µÄÊı¾İ
+    // æ›´æ–° wave item çš„æ•°æ®
     QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
     enemies.append(newEnemy);
     currentWave->setData(Qt::UserRole, enemies);
@@ -419,7 +337,7 @@ void LevelEditorWidget::removeEnemyFromWave() {
     int row = enemyInWaveListWidget->currentRow();
     delete enemyInWaveListWidget->takeItem(row);
 
-    // ¸üĞÂ wave item µÄÊı¾İ
+    // æ›´æ–° wave item çš„æ•°æ®
     QJsonArray enemies = currentWave->data(Qt::UserRole).toJsonArray();
     enemies.removeAt(row);
     currentWave->setData(Qt::UserRole, enemies);
@@ -430,7 +348,7 @@ void LevelEditorWidget::onEnemyInWaveSelectionChanged() {
 }
 
 /**
- * @brief (¸¨Öú) ¸üĞÂµĞÈËÏêÇéUI
+ * @brief (è¾…åŠ©) æ›´æ–°æ•Œäººè¯¦æƒ…UI
  */
 void LevelEditorWidget::updateWaveEnemyDetailsUI(QListWidgetItem* item) {
     if (!item) {
@@ -450,24 +368,24 @@ void LevelEditorWidget::updateWaveEnemyDetailsUI(QListWidgetItem* item) {
     QJsonObject enemyObj = item->data(Qt::UserRole).toJsonObject();
     QString type = enemyObj["type"].toString(m_firstEnemyType);
 
-    // ÔİÍ£ĞÅºÅ£¬·ÀÖ¹´¥·¢²Ûº¯Êı
+    // æš‚åœä¿¡å·ï¼Œé˜²æ­¢è§¦å‘æ§½å‡½æ•°
     wave_enemyTypeComboBox->blockSignals(true);
     wave_enemyCountSpinBox->blockSignals(true);
 
-    // 1. ²éÕÒ ComboBox ÖĞ 'type' ¶ÔÓ¦µÄË÷Òı
+    // 1. æŸ¥æ‰¾ ComboBox ä¸­ 'type' å¯¹åº”çš„ç´¢å¼•
     int index = wave_enemyTypeComboBox->findData(type);
-    // 2. ÉèÖÃ ComboBox µÄµ±Ç°Ë÷Òı
+    // 2. è®¾ç½® ComboBox çš„å½“å‰ç´¢å¼•
     wave_enemyTypeComboBox->setCurrentIndex(index != -1 ? index : 0);
 
-    // ¸üĞÂËõÂÔÍ¼
+    // æ›´æ–°ç¼©ç•¥å›¾
     QString pixmapPath = getPixmapPath(m_enemyPrototypes, enemyObj["type"].toString());
     if (!pixmapPath.isEmpty()) {
         wave_enemyThumbnailLabel->setPixmap(QPixmap(":/enemies/" + pixmapPath));
     } else {
-        wave_enemyThumbnailLabel->setText("[Image N/A]");
+        wave_enemyThumbnailLabel->setText("");
     }
 
-    // »Ö¸´ĞÅºÅ
+    // æ¢å¤ä¿¡å·
     wave_enemyTypeComboBox->blockSignals(false);
     wave_enemyCountSpinBox->blockSignals(false);
 }
@@ -477,7 +395,7 @@ void LevelEditorWidget::onWaveEnemyTypeChanged(int index) {
     QListWidgetItem* waveItem = waveListWidget->currentItem();
     if (!enemyItem || !waveItem || index == -1) return;
 
-    // 1. ´Ó ComboBox µÄ 'index' »ñÈ¡ 'type'
+    // 1. ä» ComboBox çš„ 'index' è·å– 'type'
     QString type = wave_enemyTypeComboBox->itemData(index).toString();
 
     QJsonObject enemyData = enemyItem->data(Qt::UserRole).toJsonObject();
@@ -486,12 +404,12 @@ void LevelEditorWidget::onWaveEnemyTypeChanged(int index) {
     int row = enemyInWaveListWidget->row(enemyItem);
     updateWaveItemData(waveItem, row, enemyData);
 
-    // ¸üĞÂËõÂÔÍ¼
+    // æ›´æ–°ç¼©ç•¥å›¾
     QString pixmapPath = getPixmapPath(m_enemyPrototypes, type);
     if (!pixmapPath.isEmpty()) {
         wave_enemyThumbnailLabel->setPixmap(QPixmap(":/enemies/" + pixmapPath));
     } else {
-        wave_enemyThumbnailLabel->setText("[Image N/A]");
+        wave_enemyThumbnailLabel->setText("");
     }
 }
 
@@ -508,20 +426,20 @@ void LevelEditorWidget::onWaveEnemyCountChanged(int count) {
 }
 
 /**
- * @brief (¸¨Öú) ¸üĞÂÁĞ±íÏîºÍ¸¸²¨´ÎµÄÊı¾İ
+ * @brief (è¾…åŠ©) æ›´æ–°åˆ—è¡¨é¡¹å’Œçˆ¶æ³¢æ¬¡çš„æ•°æ®
  */
 void LevelEditorWidget::updateWaveItemData(QListWidgetItem* waveItem, int enemyRow, const QJsonObject& enemyData) {
     QListWidgetItem* enemyItem = enemyInWaveListWidget->item(enemyRow);
     if (!enemyItem) return;
-    // ÎÒÃÇĞèÒª 'name' À´ÏÔÊ¾
+    // æˆ‘ä»¬éœ€è¦ 'name' æ¥æ˜¾ç¤º
     QString type = enemyData["type"].toString();
-    QString name = m_enemyPrototypes.value(type).value("name").toString(type); // ÕÒ²»µ½ 'name' Ê±»ØÍËµ½ 'type'
+    QString name = m_enemyPrototypes.value(type).value("name").toString(type); // æ‰¾ä¸åˆ° 'name' æ—¶å›é€€åˆ° 'type'
 
-    // 1. ¸üĞÂµĞÈËÁĞ±íÏî (enemyInWaveListWidget)
+    // 1. æ›´æ–°æ•Œäººåˆ—è¡¨é¡¹ (enemyInWaveListWidget)
     enemyItem->setText(QString("%1 x%2").arg(name).arg(QString::number(enemyData["count"].toInt())));
     enemyItem->setData(Qt::UserRole, enemyData);
 
-    // 2. ¸üĞÂ²¨´ÎÁĞ±íÏî (waveListWidget)
+    // 2. æ›´æ–°æ³¢æ¬¡åˆ—è¡¨é¡¹ (waveListWidget)
     QJsonArray enemies = waveItem->data(Qt::UserRole).toJsonArray();
     if (enemyRow >= 0 && enemyRow < enemies.size()) {
         enemies[enemyRow] = enemyData;
@@ -537,7 +455,7 @@ void LevelEditorWidget::onTowerSlotSelectionChanged() {
 }
 
 /**
- * @brief (¸¨Öú) ¸üĞÂËşÏêÇéUI
+ * @brief (è¾…åŠ©) æ›´æ–°å¡”è¯¦æƒ…UI
  */
 void LevelEditorWidget::updateTowerDetailsUI(QListWidgetItem* item) {
     tower_warningLabel->setVisible(false);
@@ -550,30 +468,30 @@ void LevelEditorWidget::updateTowerDetailsUI(QListWidgetItem* item) {
 
     tower_typeComboBox->setEnabled(true);
 
-    // ÔİÍ£ĞÅºÅ
+    // æš‚åœä¿¡å·
     tower_typeComboBox->blockSignals(true);
 
-    // ´Ó²ÛÎ»Êı¾İÖĞ»ñÈ¡ËşÀàĞÍ
+    // ä»æ§½ä½æ•°æ®ä¸­è·å–å¡”ç±»å‹
     QJsonObject towerData = item->data(Qt::UserRole).toJsonObject();
     QString type = towerData.value("type").toString("None");
 
-    // 1. ²éÕÒ 'type' ¶ÔÓ¦µÄË÷Òı
+    // 1. æŸ¥æ‰¾ 'type' å¯¹åº”çš„ç´¢å¼•
     int index = tower_typeComboBox->findData(type);
-    // 2. ÉèÖÃ ComboBox µÄµ±Ç°Ë÷Òı
+    // 2. è®¾ç½® ComboBox çš„å½“å‰ç´¢å¼•
     tower_typeComboBox->setCurrentIndex(index != -1 ? index : 0);
 
-    // ¸üĞÂËõÂÔÍ¼
+    // æ›´æ–°ç¼©ç•¥å›¾
     QString pixmapPath = getPixmapPath(m_towerPrototypes, type);
     if (!pixmapPath.isEmpty()) {
         tower_thumbnailLabel->setPixmap(QPixmap(":/towers/" + pixmapPath));
     } else {
-        tower_thumbnailLabel->setText("[Tower N/A]");
+        tower_thumbnailLabel->setText("");
     }
 
-    // ¸üĞÂÏÂÀ­ÁĞ±íµÄ¿ÉÓÃĞÔ
+    // æ›´æ–°ä¸‹æ‹‰åˆ—è¡¨çš„å¯ç”¨æ€§
     updateTowerTypeComboBox();
 
-    // »Ö¸´ĞÅºÅ
+    // æ¢å¤ä¿¡å·
     tower_typeComboBox->blockSignals(false);
 }
 
@@ -584,62 +502,62 @@ void LevelEditorWidget::onTowerTypeChanged(int index) {
 
     QString type = tower_typeComboBox->itemData(index).toString();
 
-    // ¼ì²éÎ¨Ò»ĞÔ
+    // æ£€æŸ¥å”¯ä¸€æ€§
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QListWidgetItem* item = availableTowersListWidget->item(i);
-        if (item == currentSlot) continue; // Ìø¹ı×Ô¼º
+        if (item == currentSlot) continue; // è·³è¿‡è‡ªå·±
 
         QJsonObject data = item->data(Qt::UserRole).toJsonObject();
         QString itemType = data.value("type").toString();
 
         if (!type.isEmpty() && type != "None" && itemType == type) {
-            // ³åÍ»£¡
+            // å†²çªï¼
             tower_warningLabel->setVisible(true);
-            // »Ö¸´µ½Ö®Ç°µÄÖµ
+            // æ¢å¤åˆ°ä¹‹å‰çš„å€¼
             tower_typeComboBox->blockSignals(true);
             QJsonObject oldData = currentSlot->data(Qt::UserRole).toJsonObject();
             QString oldType = oldData.value("type").toString("None");
-            int oldIndex = tower_typeComboBox->findData(oldType); // ²éÕÒ¾É 'type' µÄË÷Òı
-            tower_typeComboBox->setCurrentIndex(oldIndex != -1 ? oldIndex : 0); // ÉèÖÃÎª¾ÉË÷Òı
+            int oldIndex = tower_typeComboBox->findData(oldType); // æŸ¥æ‰¾æ—§ 'type' çš„ç´¢å¼•
+            tower_typeComboBox->setCurrentIndex(oldIndex != -1 ? oldIndex : 0); // è®¾ç½®ä¸ºæ—§ç´¢å¼•
             tower_typeComboBox->blockSignals(false);
             return;
         }
     }
 
-    // Î¨Ò»ĞÔ¼ì²éÍ¨¹ı
+    // å”¯ä¸€æ€§æ£€æŸ¥é€šè¿‡
     tower_warningLabel->setVisible(false);
 
-    // ¸üĞÂ²ÛÎ»µÄÊı¾İºÍÎÄ±¾
+    // æ›´æ–°æ§½ä½çš„æ•°æ®å’Œæ–‡æœ¬
     QJsonObject newData;
     if (type != "None") {
         newData["type"] = type;
-        // ÎÒÃÇĞèÒª 'name' À´ÏÔÊ¾
+        // æˆ‘ä»¬éœ€è¦ 'name' æ¥æ˜¾ç¤º
         QString name = m_towerPrototypes.value(type).value("name").toString(type);
-        currentSlot->setText(QString("Slot %1: %2").arg(QString::number(availableTowersListWidget->row(currentSlot) + 1)).arg(name));
+        currentSlot->setText(QString("é˜²å¾¡å¡”%1: %2").arg(QString::number(availableTowersListWidget->row(currentSlot) + 1)).arg(name));
     } else {
-        // newData ±£³ÖÎª¿Õ
-        currentSlot->setText(QString("Tower Slot %1").arg(QString::number(availableTowersListWidget->row(currentSlot) + 1)));
+        // newData ä¿æŒä¸ºç©º
+        currentSlot->setText(QString("é˜²å¾¡å¡”%1").arg(QString::number(availableTowersListWidget->row(currentSlot) + 1)));
     }
     currentSlot->setData(Qt::UserRole, newData);
 
 
-    // ¸üĞÂËõÂÔÍ¼
+    // æ›´æ–°ç¼©ç•¥å›¾
     QString pixmapPath = getPixmapPath(m_towerPrototypes, type);
     if (!pixmapPath.isEmpty()) {
         tower_thumbnailLabel->setPixmap(QPixmap(":/towers/" + pixmapPath));
     } else {
-        tower_thumbnailLabel->setText("[Tower N/A]");
+        tower_thumbnailLabel->setText("");
     }
 
-    // ¸üĞÂËùÓĞÏÂÀ­¿òµÄ¿ÉÓÃĞÔ
+    // æ›´æ–°æ‰€æœ‰ä¸‹æ‹‰æ¡†çš„å¯ç”¨æ€§
     updateTowerTypeComboBox();
 }
 
 /**
- * @brief (¸¨Öú) ¸üĞÂËşÀàĞÍÏÂÀ­¿ò£¬½ûÓÃÒÑ±»ÆäËû²ÛÎ»Ñ¡ÔñµÄÏî
+ * @brief (è¾…åŠ©) æ›´æ–°å¡”ç±»å‹ä¸‹æ‹‰æ¡†ï¼Œç¦ç”¨å·²è¢«å…¶ä»–æ§½ä½é€‰æ‹©çš„é¡¹
  */
 void LevelEditorWidget::updateTowerTypeComboBox() {
-    // 1. »ñÈ¡ËùÓĞÒÑ±»Õ¼ÓÃµÄËşÀàĞÍ
+    // 1. è·å–æ‰€æœ‰å·²è¢«å ç”¨çš„å¡”ç±»å‹
     QStringList usedTypes;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
@@ -649,24 +567,24 @@ void LevelEditorWidget::updateTowerTypeComboBox() {
         }
     }
 
-    // 2. »ñÈ¡µ±Ç°²ÛÎ»ÕıÔÚÑ¡ÔñµÄÀàĞÍ
+    // 2. è·å–å½“å‰æ§½ä½æ­£åœ¨é€‰æ‹©çš„ç±»å‹
     QString currentSlotType = "None";
     if (availableTowersListWidget->currentItem()) {
         QJsonObject data = availableTowersListWidget->currentItem()->data(Qt::UserRole).toJsonObject();
         currentSlotType = data.value("type").toString("None");
     }
 
-    // 3. ±éÀúÏÂÀ­¿ò£¬ÉèÖÃ¿ÉÓÃĞÔ
+    // 3. éå†ä¸‹æ‹‰æ¡†ï¼Œè®¾ç½®å¯ç”¨æ€§
     tower_typeComboBox->blockSignals(true);
     for (int i = 0; i < tower_typeComboBox->count(); ++i) {
         QString itemType = tower_typeComboBox->itemData(i).toString();
         if (itemType == "None") {
-            continue; // "None" Ñ¡Ïî×ÜÊÇ¿ÉÓÃ
+            continue; // "None" é€‰é¡¹æ€»æ˜¯å¯ç”¨
         }
 
         bool usedByOthers = usedTypes.contains(itemType) && (itemType != currentSlotType);
 
-        // Qt 6/5 ¼æÈİ·½Ê½ÉèÖÃ item ¿ÉÓÃĞÔ
+        // Qt 6/5 å…¼å®¹æ–¹å¼è®¾ç½® item å¯ç”¨æ€§
         QStandardItemModel* model = qobject_cast<QStandardItemModel*>(tower_typeComboBox->model());
         if(model) {
             model->item(i)->setEnabled(!usedByOthers);
@@ -679,13 +597,13 @@ void LevelEditorWidget::updateTowerTypeComboBox() {
 // --- Save / Load ---
 
 /**
- * @brief (¸¨Öú) ´ÓÔ­ĞÍÊı¾İÖĞ°²È«»ñÈ¡ pixmap Â·¾¶
+ * @brief (è¾…åŠ©) ä»åŸå‹æ•°æ®ä¸­å®‰å…¨è·å– pixmap è·¯å¾„
  */
 QString LevelEditorWidget::getPixmapPath(const QMap<QString, QJsonObject>& prototypes, const QString& type) {
     if (prototypes.contains(type)) {
-        // --- ÔÚ´ËÌî³ä´ÓÔ­ĞÍ¶ÔÏóÖĞ»ñÈ¡ pixmap Â·¾¶µÄ Key ---
-        // Ê¾Àı£º "pixmap", "icon", "thumbnail"
-        // ÎÒ½«Ê¹ÓÃÔÚ enemy_data.json ºÍ tower_data.json ÖĞ¶¼´æÔÚµÄ "pixmap"
+        // --- åœ¨æ­¤å¡«å……ä»åŸå‹å¯¹è±¡ä¸­è·å– pixmap è·¯å¾„çš„ Key ---
+        // ç¤ºä¾‹ï¼š "pixmap", "icon", "thumbnail"
+        // æˆ‘å°†ä½¿ç”¨åœ¨ enemy_data.json å’Œ tower_data.json ä¸­éƒ½å­˜åœ¨çš„ "pixmap"
         return prototypes[type]["pixmap"].toString();
         // ------------------------------------------------
     }
@@ -694,62 +612,105 @@ QString LevelEditorWidget::getPixmapPath(const QMap<QString, QJsonObject>& proto
 
 
 void LevelEditorWidget::saveLevel() {
+    // 1. (ä¿ç•™) è·å–ç”¨æˆ·é€‰æ‹©çš„ *ç›®æ ‡* ä¿å­˜è·¯å¾„
     QString filePath = QFileDialog::getSaveFileName(this, "Save Level", "", "JSON Files (*.json)");
     if (filePath.isEmpty()) {
+        return; // ç”¨æˆ·å–æ¶ˆ
+    }
+
+    // 2. (æ–°å¢) å®šä¹‰å¹¶åŠ è½½ *æ¨¡æ¿* å…³å¡ (level3.json)
+    //
+    //    !!! é‡è¦æç¤º !!!
+    //    è¯·ç¡®ä¿ "level3.json" å·²ç»æ·»åŠ åˆ°äº†ä½ çš„ Qt èµ„æºæ–‡ä»¶ (.qrc) ä¸­ã€‚
+    //    ä½ éœ€è¦å°†ä¸‹é¢çš„è·¯å¾„ä¿®æ”¹ä¸ºå®ƒåœ¨ .qrc ä¸­çš„å®é™…è·¯å¾„ã€‚
+    //
+    //    ä¾‹å¦‚ï¼Œå¦‚æœå®ƒåœ¨ .qrc çš„æ ¹ç›®å½•ï¼Œè·¯å¾„å°±æ˜¯ ":/level3.json"
+    //    å¦‚æœå®ƒåœ¨ .qrc çš„ "levels" å‰ç¼€ä¸‹ï¼Œè·¯å¾„å°±æ˜¯ ":/levels/level3.json"
+    //
+    QString templateLevelPath = ":/levels/levels/level3.json";
+
+    QFile templateFile(templateLevelPath);
+    QJsonObject rootObj; // æˆ‘ä»¬å°†è¦ä¿®æ”¹çš„æ ¹å¯¹è±¡
+
+    if (templateFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(templateFile.readAll());
+        if (doc.isObject()) {
+            rootObj = doc.object();
+        } else {
+            QMessageBox::critical(this, "æ¨¡æ¿é”™è¯¯", QString("æ¨¡æ¿æ–‡ä»¶ %1 ä¸æ˜¯ä¸€ä¸ªæœ‰æ•ˆçš„ JSON å¯¹è±¡ã€‚").arg(templateLevelPath));
+            return;
+        }
+        templateFile.close();
+    } else {
+        // æ¨¡æ¿åŠ è½½å¤±è´¥
+        QMessageBox::critical(this, "æ¨¡æ¿é”™è¯¯",
+            QString("æ— æ³•åŠ è½½å…³å¡æ¨¡æ¿: %1\n\nè¯·ç¡®ä¿è¯¥æ–‡ä»¶å·²æ­£ç¡®æ·»åŠ åˆ° .qrc èµ„æºæ–‡ä»¶ä¸­ã€‚").arg(templateLevelPath));
         return;
     }
 
-    QJsonObject rootObj;
-    rootObj["level_name"] = levelNameEdit->text();
+    // 3. (ä¸å˜) "map", "player", "level_name" ç­‰å­—æ®µå·²ä»æ¨¡æ¿åŠ è½½ï¼Œæˆ‘ä»¬ä¸å†åŠ¨å®ƒä»¬ã€‚
 
-    // 1. ±£´æ²¨´Î (Waves)
+    // 4. (ä¿®æ”¹) ä» UI è¯»å– "waves" å¹¶è¦†ç›–
     QJsonArray wavesArray;
     for (int i = 0; i < waveListWidget->count(); ++i) {
         QJsonObject waveObj;
+        // item çš„ UserRole å­˜å‚¨çš„æ˜¯è¯¥æ³¢æ¬¡å®Œæ•´çš„æ•Œäººæ•°ç»„ (QJsonArray)
         waveObj["enemies"] = waveListWidget->item(i)->data(Qt::UserRole).toJsonArray();
         wavesArray.append(waveObj);
     }
+
+    // 5. (æ–°å¢) æŒ‰è¦æ±‚ï¼Œåœ¨æ³¢æ¬¡æœ«å°¾é™„åŠ æœ€ç»ˆçš„ "nightmare" boss æ³¢æ¬¡
+    QJsonObject bossWave;
+    QJsonArray bossEnemies;
+    QJsonObject nightmareEnemy;
+    nightmareEnemy["type"] = "nightmare";
+    nightmareEnemy["count"] = 1;
+
+    // ä½ çš„éœ€æ±‚æ˜¯ "åˆ·æ–°é—´éš”é»˜è®¤ä¸º1"ï¼Œä½†åœ¨ addEnemyToWave ä¸­å·²ç¡¬ç¼–ç ä¸º 1.0ã€‚
+    // å¯¹äºè¿™ä¸ª boss æ³¢æ¬¡ï¼Œä½ ç‰¹åˆ«è¦æ±‚é—´éš”ä¸º 0.0ã€‚
+    nightmareEnemy["interval"] = 0.0;
+
+    bossEnemies.append(nightmareEnemy);
+    bossWave["enemies"] = bossEnemies;
+
+    wavesArray.append(bossWave); // æ·»åŠ åˆ°æ‰€æœ‰ UI æ³¢æ¬¡ä¹‹å
+
+    // è¦†ç›– rootObj ä¸­çš„ "waves"
     rootObj["waves"] = wavesArray;
 
-    // 2. ±£´æ¿ÉÓÃ·ÀÓùËş (Available Towers) - Ö»±£´æÑ¡ÖĞµÄÀàĞÍ
+
+    // 6. (ä¿®æ”¹) ä» UI è¯»å– "available_towers" å¹¶è¦†ç›–
     QJsonArray towersArray;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
         QString type = data.value("type").toString();
         if (!type.isEmpty() && type != "None") {
-            towersArray.append(type); // Ö»±£´æÀàĞÍ×Ö·û´®
+            towersArray.append(type); // åªä¿å­˜ç±»å‹å­—ç¬¦ä¸²
         }
     }
+    // è¦†ç›– rootObj ä¸­çš„ "available_towers"
     rootObj["available_towers"] = towersArray;
 
-    // 3. ±£´æ¿ÉÓÃµĞÈË (Available Enemies) - ±£´æËùÓĞÔ­ĞÍ
+
+    // 7. (ä¿®æ”¹) ä» m_enemyPrototypes è¯»å– "available_enemies" å¹¶è¦†ç›–
     QJsonArray enemiesArray;
-    for (const QJsonObject& obj : m_enemyPrototypes.values()) {
-        enemiesArray.append(obj);
+    for (const QString& enemyType : m_enemyPrototypes.keys()) {
+        enemiesArray.append(enemyType); // é™„åŠ  "type" å­—ç¬¦ä¸²
     }
+    // è¦†ç›– rootObj ä¸­çš„ "available_enemies"
     rootObj["available_enemies"] = enemiesArray;
 
 
-    // 4. (Õ¼Î»·û) ±£´æµØÍ¼ºÍÍæ¼ÒĞÅÏ¢
-    // ×¢Òâ: ÔÚÊµ¼ÊÏîÄ¿ÖĞ£¬Äã»¹ĞèÒªÒ»¸ö·½·¨À´±à¼­ÕâĞ©
-    QJsonObject mapObj;
-    mapObj["background"] = "path/to/your/background.png";
-    mapObj["path"] = QJsonArray();
-    mapObj["tower_positions"] = QJsonArray();
-    rootObj["map"] = mapObj;
 
-    QJsonObject playerObj;
-    playerObj["initial_stability"] = 20;
-    playerObj["initial_resource"] = 150;
-    rootObj["player"] = playerObj;
-
-
-    QFile file(filePath);
+    // 9. (ä¿ç•™) å°†ä¿®æ”¹åçš„ rootObj å†™å…¥ç”¨æˆ·é€‰æ‹©çš„ *ç›®æ ‡* æ–‡ä»¶
+    QFile file(filePath); // 'filePath' æ˜¯æ¥è‡ª QFileDialog çš„æ–°è·¯å¾„
     if (file.open(QIODevice::WriteOnly)) {
         file.write(QJsonDocument(rootObj).toJson(QJsonDocument::Indented));
         file.close();
+
+        QMessageBox::information(this, "ä¿å­˜æˆåŠŸ", QString("å…³å¡å·²æˆåŠŸä¿å­˜åˆ°:\n%1").arg(filePath));
     } else {
-        QMessageBox::critical(this, "Error", "Could not save file.");
+        QMessageBox::critical(this, "ä¿å­˜å¤±è´¥", "æ— æ³•å†™å…¥ç›®æ ‡æ–‡ä»¶ã€‚");
     }
 }
 
@@ -764,24 +725,22 @@ void LevelEditorWidget::loadLevel() {
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject rootObj = doc.object();
     file.close();
-
-    levelNameEdit->setText(rootObj["level_name"].toString("Custom Level"));
-
-    // 1. ¼ÓÔØ²¨´Î (Waves)
+    
+    // 1. åŠ è½½æ³¢æ¬¡ (Waves)
     waveListWidget->clear();
     QJsonArray wavesArray = rootObj["waves"].toArray();
     for (int i = 0; i < wavesArray.size(); ++i) {
         QJsonObject waveObj = wavesArray[i].toObject();
         QJsonArray enemiesArray = waveObj["enemies"].toArray();
-        auto* item = new QListWidgetItem(QString("Wave %1").arg(QString::number(i + 1)));
+        auto* item = new QListWidgetItem(QString("æ³¢æ¬¡%1").arg(QString::number(i + 1)));
         item->setData(Qt::UserRole, enemiesArray);
         waveListWidget->addItem(item);
     }
 
-    // 2. ¼ÓÔØ¿ÉÓÃ·ÀÓùËş (Available Towers)
+    // 2. åŠ è½½å¯ç”¨é˜²å¾¡å¡” (Available Towers)
     for (int i = 0; i < 4; ++i) {
         QListWidgetItem* slotItem = availableTowersListWidget->item(i);
-        slotItem->setText(QString("Tower Slot %1").arg(QString::number(i + 1)));
+        slotItem->setText(QString("é˜²å¾¡å¡”%1").arg(QString::number(i + 1)));
         slotItem->setData(Qt::UserRole, QJsonObject());
     }
     QJsonArray towersArray = rootObj["available_towers"].toArray();
@@ -793,16 +752,16 @@ void LevelEditorWidget::loadLevel() {
             data["type"] = type;
             slotItem->setData(Qt::UserRole, data);
 
-            // === UI ÎÄ±¾¸üĞÂ ===
+            // === UI æ–‡æœ¬æ›´æ–° ===
             QString name = m_towerPrototypes.value(type).value("name").toString(type);
-            slotItem->setText(QString("Slot %1: %2").arg(QString::number(i + 1)).arg(name));
+            slotItem->setText(QString("é˜²å¾¡å¡”%1: %2").arg(QString::number(i + 1)).arg(name));
             // =================
         }
     }
 
-    // 3. (ºöÂÔ) `available_enemies` (²»±ä)
+    // 3. (å¿½ç•¥) `available_enemies` (ä¸å˜)
 
-    // 4. Ë¢ĞÂUI (²»±ä)
+    // 4. åˆ·æ–°UI (ä¸å˜)
     if (waveListWidget->count() > 0) waveListWidget->setCurrentRow(0);
     onWaveSelectionChanged();
     if (availableTowersListWidget->count() > 0) availableTowersListWidget->setCurrentRow(0);
