@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QVector>
+#include <QDebug>
 
 #include "GameMap.h"
 
