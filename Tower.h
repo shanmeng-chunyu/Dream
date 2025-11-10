@@ -21,7 +21,7 @@ public:
     int getCost()const{return cost;}
     int getUpgradeCost()const{return upgradeCost;}
     Enemy* getCurrentTarget()const{return currentTarget;}
-    bool IfUpgraded()const{return upgraded;}
+    bool IsUpgraded()const{return upgraded;}
 
     //基本功能
     virtual void attack();
@@ -39,6 +39,7 @@ public slots:
 
 signals:
     void newBullet(Tower* tower, Enemy* target);
+    void towerDestroyed(Tower* tower);  //由GameManager处理实际删除
 
 protected:
     //属性
