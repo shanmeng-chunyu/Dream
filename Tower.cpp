@@ -47,3 +47,9 @@ void Tower::attack() {
         emit newBullet(this, currentTarget);
     }
 }
+
+void Tower::upgrade() {
+    if (upgraded) {
+        return; // 已经升级过，不能再次升级
+    }
+}

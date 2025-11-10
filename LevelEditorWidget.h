@@ -87,12 +87,15 @@ private:
     QComboBox* wave_enemyTypeComboBox;
     QSpinBox* wave_enemyCountSpinBox;
     QLabel* wave_enemyThumbnailLabel;
+    QLabel* wave_enemyDescriptionLabel;
 
     // --- 防御塔选择器控件 ---
     QListWidget* availableTowersListWidget; // 固定4个槽位
     QComboBox* tower_typeComboBox;
     QLabel* tower_thumbnailLabel;
     QLabel* tower_warningLabel;
+    QLabel* tower_statsLabel;
+    QLabel* tower_descriptionLabel;
 
     // --- 原型数据 (从 enemy_data.json 和 tower_data.json 加载) ---
     QMap<QString, QJsonObject> m_enemyPrototypes;

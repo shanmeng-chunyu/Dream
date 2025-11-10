@@ -202,10 +202,14 @@ QGroupBox* LevelEditorWidget::createWaveEditorGroup() {
     wave_enemyThumbnailLabel->setScaledContents(true);
     wave_enemyThumbnailLabel->setAlignment(Qt::AlignCenter);
     wave_enemyThumbnailLabel->setFrameShape(QFrame::Box);
+    wave_enemyDescriptionLabel = new QLabel("[Enemy Description]");
+    wave_enemyDescriptionLabel->setWordWrap(true); // 允许自动换行
+    wave_enemyDescriptionLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
     detailsLayout->addRow("怪物类型:", wave_enemyTypeComboBox);
     detailsLayout->addRow("怪物数量:", wave_enemyCountSpinBox);
     detailsLayout->addRow("", wave_enemyThumbnailLabel);
+    detailsLayout->addRow("描述:", wave_enemyDescriptionLabel);
 
     // 组合三栏
     waveTabLayout->addLayout(waveListLayout, 1);
@@ -244,9 +248,15 @@ QGroupBox* LevelEditorWidget::createTowerSelectionGroup() {
     tower_warningLabel->setStyleSheet("color: red;");
     tower_warningLabel->setVisible(false);
     tower_warningLabel->setWordWrap(true);
+    tower_statsLabel = new QLabel("[Cost / Range]");
+    tower_descriptionLabel = new QLabel("[Tower Description]");
+    tower_descriptionLabel->setWordWrap(true); // 允许自动换行
+    tower_descriptionLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
     towerSelectLayout->addRow("防御塔类型:", tower_typeComboBox);
     towerSelectLayout->addRow(tower_warningLabel);
+    towerSelectLayout->addRow(tower_statsLabel);
+    towerSelectLayout->addRow(tower_descriptionLabel);
 
     // 右侧：缩略图
     tower_thumbnailLabel = new QLabel("[Tower Thumbnail]");
@@ -358,6 +368,7 @@ void LevelEditorWidget::updateWaveEnemyDetailsUI(QListWidgetItem* item) {
         wave_enemyTypeComboBox->setCurrentIndex(0);
         wave_enemyCountSpinBox->setValue(0);
         wave_enemyThumbnailLabel->clear();
+        wave_enemyDescriptionLabel->clear();
         return;
     }
 
@@ -380,10 +391,15 @@ void LevelEditorWidget::updateWaveEnemyDetailsUI(QListWidgetItem* item) {
     // 更新缩略图
     QString pixmapPath = getPixmapPath(m_enemyPrototypes, enemyObj["type"].toString());
     if (!pixmapPath.isEmpty()) {
-        wave_enemyThumbnailLabel->setPixmap(QPixmap(":/enemies/" + pixmapPath));
+        wave_enemyThumbnailLabel->setPixmap(QPixmap(pixmapPath));
     } else {
         wave_enemyThumbnailLabel->setText("");
     }
+
+    // 更新描述
+    // (我们从 m_enemyPrototypes 中获取完整的原型, 而不是 item 的数据, 因为 item 的数据可能不全)
+    QJsonObject proto = m_enemyPrototypes.value(type);
+    wave_enemyDescriptionLabel->setText(proto.value("description").toString());
 
     // 恢复信号
     wave_enemyTypeComboBox->blockSignals(false);
@@ -407,10 +423,14 @@ void LevelEditorWidget::onWaveEnemyTypeChanged(int index) {
     // 更新缩略图
     QString pixmapPath = getPixmapPath(m_enemyPrototypes, type);
     if (!pixmapPath.isEmpty()) {
-        wave_enemyThumbnailLabel->setPixmap(QPixmap(":/enemies/" + pixmapPath));
+        wave_enemyThumbnailLabel->setPixmap(QPixmap(pixmapPath));
     } else {
         wave_enemyThumbnailLabel->setText("");
     }
+
+    QJsonObject proto = m_enemyPrototypes.value(type);
+    wave_enemyDescriptionLabel->setText(proto.value("description").toString());
+
 }
 
 void LevelEditorWidget::onWaveEnemyCountChanged(int count) {
@@ -463,6 +483,8 @@ void LevelEditorWidget::updateTowerDetailsUI(QListWidgetItem* item) {
     if (!item) {
         tower_typeComboBox->setEnabled(false);
         tower_thumbnailLabel->clear();
+        tower_statsLabel->clear();
+        tower_descriptionLabel->clear();
         return;
     }
 
@@ -483,9 +505,23 @@ void LevelEditorWidget::updateTowerDetailsUI(QListWidgetItem* item) {
     // 更新缩略图
     QString pixmapPath = getPixmapPath(m_towerPrototypes, type);
     if (!pixmapPath.isEmpty()) {
-        tower_thumbnailLabel->setPixmap(QPixmap(":/towers/" + pixmapPath));
+        tower_thumbnailLabel->setPixmap(QPixmap(pixmapPath));
     } else {
         tower_thumbnailLabel->setText("");
+    }
+
+    // 更新属性和描述
+    if (type == "None" || !m_towerPrototypes.contains(type)) {
+        tower_statsLabel->clear();
+        tower_descriptionLabel->clear();
+    } else {
+        QJsonObject proto = m_towerPrototypes.value(type);
+        int cost = proto.value("cost").toInt();
+        double range = proto.value("range").toDouble();
+        QString desc = proto.value("description").toString();
+
+        tower_statsLabel->setText(QString("消耗资源: %1 | 攻击范围: %2").arg(QString::number(cost)).arg(QString::number(range)));
+        tower_descriptionLabel->setText(desc);
     }
 
     // 更新下拉列表的可用性
@@ -544,9 +580,23 @@ void LevelEditorWidget::onTowerTypeChanged(int index) {
     // 更新缩略图
     QString pixmapPath = getPixmapPath(m_towerPrototypes, type);
     if (!pixmapPath.isEmpty()) {
-        tower_thumbnailLabel->setPixmap(QPixmap(":/towers/" + pixmapPath));
+        tower_thumbnailLabel->setPixmap(QPixmap(pixmapPath));
     } else {
         tower_thumbnailLabel->setText("");
+    }
+
+    // 更新属性和描述
+    if (type == "None" || !m_towerPrototypes.contains(type)) {
+        tower_statsLabel->clear();
+        tower_descriptionLabel->clear();
+    } else {
+        QJsonObject proto = m_towerPrototypes.value(type);
+        int cost = proto.value("cost").toInt();
+        double range = proto.value("range").toDouble();
+        QString desc = proto.value("description").toString();
+
+        tower_statsLabel->setText(QString("消耗资源: %1 | 攻击范围: %2").arg(QString::number(cost)).arg(QString::number(range)));
+        tower_descriptionLabel->setText(desc);
     }
 
     // 更新所有下拉框的可用性
@@ -725,7 +775,7 @@ void LevelEditorWidget::loadLevel() {
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject rootObj = doc.object();
     file.close();
-    
+
     // 1. 加载波次 (Waves)
     waveListWidget->clear();
     QJsonArray wavesArray = rootObj["waves"].toArray();

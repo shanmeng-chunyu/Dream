@@ -153,6 +153,8 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
             proto["damage"].toInt(),
             proto["range"].toDouble() * m_screenSize.width(), // 范围也要转换为绝对值
             proto["fire_rate"].toInt(),
+            proto["cost"].toInt(),
+            proto["upgradeCost"].toInt(),
             pixmap
         );
 

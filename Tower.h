@@ -25,7 +25,7 @@ public:
     bool targetIsInRange() const;
     void setTarget(Enemy* target);
     //升级
-    virtual void upgrade()=0;
+    virtual void upgrade();
     bool IfUpgrade()const{return upgraded;}
     int getUpgradeCost()const{return upgradeCost;}
 
