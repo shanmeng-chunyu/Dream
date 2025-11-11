@@ -6,8 +6,10 @@
 #include <QGraphicsView>
 #include <QVector>
 #include <QDebug>
+#include <QPointer>
 
 #include "GameMap.h"
+#include "widget_post_game.h"
 
 class QGraphicsPixmapItem;
 class QGraphicsItem;
@@ -37,6 +39,7 @@ protected:
 
 private slots:
     void onTowerBaseClicked(int baseIndex, const QPointF &scenePos);
+    void handleGameFinished(bool win, int stability, int killCount);
 
 private:
     void initializeScene();
@@ -66,6 +69,7 @@ private:
     QString prepareRuntimeLevelFile(const QString &levelPath);
     QString absoluteAssetPath(const QString &path, const QString &projectRoot) const;
     QString locateProjectRootPath(const QString &levelPath) const;
+    void showPostGameWidget(bool win, int stability, int killCount);
 
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
@@ -75,10 +79,10 @@ private:
     QVector<QGraphicsItem *> m_pathItems;
     QVector<QRectF> m_pathTileRects;
     QVector<TowerBaseVisual> m_towerBases;
-    QVector<QGraphicsPixmapItem *> m_obstacleItems;
     QVector<QRectF> m_obstacleRects;
     qreal m_baseRadius;
     QSizeF m_sceneDesignSize;
+    QPointer<widget_post_game> m_postGameWidget;
 };
 
 #endif
