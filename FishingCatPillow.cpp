@@ -36,5 +36,5 @@ void FishingCatPillow::upgrade()
         }
     }
 }
-void Tower::slowAttack(double slowFactor){return;}//摸鱼猫猫枕不受敌人debuff影响
+
 
