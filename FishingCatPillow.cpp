@@ -3,7 +3,7 @@
 #include <QLineF>
 #include <QGraphicsScene>
 
-FishingCatPillow::FishingCatPillow(QGraphicsItem* parent):Tower(0,2.5,0,120,180,QPixmap( "resources/towers/level1/FishingCatPillow.png"),parent)
+FishingCatPillow::FishingCatPillow(QGraphicsItem* parent):Tower(0,2.5,0,120,180,QPixmap( ":/towers/resources/towers/level1/FishingCatPillow.png"),parent)
 {
     controlDuration=1.5;
     controlInterval=5.0;
@@ -48,7 +48,7 @@ void FishingCatPillow::upgrade()
         controlDuration=2.0;
         controlInterval=4.0;
         upgraded=true;
-        setPixmap(QPixmap("resources/towers/level1/FishingCatPillow_upgrade.png"));
+        setPixmap(QPixmap(":/towers/resources/towers/level1/FishingCatPillow_upgrade.png"));
         if(controlTimer)
         {
             controlTimer->stop();
@@ -56,3 +56,4 @@ void FishingCatPillow::upgrade()
         }
     }
 }
+void Tower::slowAttack(double slowFactor){return;}//摸鱼猫猫枕不受敌人debuff影响
