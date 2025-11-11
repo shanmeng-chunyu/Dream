@@ -234,10 +234,46 @@ void MainWindow::initializeScene()
     synchronizeLogicScreenSize();
     recalculateBaseRadius();
 
-    const QStringList levelSearchOrder = {
-        QStringLiteral("levels/level1.json"),
-        QStringLiteral("level.json"),
-        QStringLiteral("levels/stage1.json")};
+    const auto commandLineLevelCandidate = []() -> QString
+    {
+        const QStringList args = QCoreApplication::arguments();
+        for (int i = 1; i < args.size(); ++i)
+        {
+            const QString &arg = args.at(i);
+            if (arg.startsWith(QStringLiteral("--level="), Qt::CaseInsensitive))
+            {
+                return arg.section('=', 1);
+            }
+            if (arg.compare(QStringLiteral("--level"), Qt::CaseInsensitive) == 0 && i + 1 < args.size())
+            {
+                return args.at(i + 1);
+            }
+        }
+        return {};
+    }();
+
+    const QString envLevelCandidate = QString::fromLocal8Bit(qgetenv("DREAM_LEVEL_PATH"));
+
+    QStringList levelSearchOrder;
+    QSet<QString> seenCandidates;
+    auto appendCandidate = [&](const QString &candidate)
+    {
+        const QString trimmed = QDir::fromNativeSeparators(candidate.trimmed());
+        if (trimmed.isEmpty() || seenCandidates.contains(trimmed))
+        {
+            return;
+        }
+        levelSearchOrder.append(trimmed);
+        seenCandidates.insert(trimmed);
+    };
+
+    appendCandidate(commandLineLevelCandidate);
+    appendCandidate(envLevelCandidate);
+    appendCandidate(QStringLiteral("levels/level3.json"));
+    appendCandidate(QStringLiteral("levels/level1.json"));
+    appendCandidate(QStringLiteral("level.json"));
+    appendCandidate(QStringLiteral("levels/stage1.json"));
+    appendCandidate(QStringLiteral("levels/level2.json"));
 
     QString preparedLevelPath;
     for (const QString &candidate : levelSearchOrder)
@@ -794,9 +830,15 @@ void MainWindow::drawPathLayer()
     const qreal scaleFactor = referenceScaleFactor(sceneSize);
     const qreal desiredTile = kReferenceTileSize * scaleFactor;
     const qreal spacingReference = std::max<qreal>(4.0, std::min(pixelStepX, pixelStepY));
-    const qreal lowerBound = spacingReference * 0.7;
+    const qreal lowerBound = spacingReference * 1.05;
     const qreal upperBound = spacingReference * 1.8;
-    qreal tileSide = desiredTile;
+
+    qreal tileSide = sceneSize.width() * std::max<qreal>(m_visualMap.getPathWidthRatio(), 1e-4);
+    if (!(tileSide > 0.0))
+    {
+        tileSide = desiredTile;
+    }
+
     if (tileSide < lowerBound)
     {
         tileSide = lowerBound;

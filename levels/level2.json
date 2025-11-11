@@ -1,7 +1,8 @@
 {
   "level_name": "第二关：失恋的悲伤",
   "map": {
-    "background": "./美术素材（透明）/画面背景/第二关（仅地图方块）.png",
+    "background": "./美术素材（透明）/画面背景/第二关背景.png",
+    "path_width": 0.1259765625,
     "path": [
       { "x": 0.7451171875, "y": 0.821614583333 },
       { "x": 0.7451171875, "y": 0.721354166667 },
@@ -26,8 +27,7 @@
       { "x": 0.1435546875, "y": 0.420572916667 },
       { "x": 0.1435546875, "y": 0.3203125 },
       { "x": 0.1435546875, "y": 0.220052083333 },
-      { "x": 0.068359375, "y": 0.220052083333 },
-      { "x": -0.0068359375 , "y": 0.220052083333}
+      { "x": 0.068359375, "y": 0.220052083333 }
     ],
     "tower_positions": [
       { "x": 0.0185546875, "y": 0.0520833333333},
@@ -191,14 +191,14 @@
   "waves": [
     {
       "enemies": [
-        { "type": "coldwords", "count": 10, "interval": 1.0 }
+        { "type": "coldwords", "count": 10, "interval": 1.0 },
         { "type": "lonelyness", "count": 3, "interval": 2.0 }
       ]
     },
     {
       "enemies": [
         { "type": "coldwords", "count": 15, "interval": 0.8 },
-        { "type": "lonelyness", "count": 6, "interval": 2.0 }，
+        { "type": "lonelyness", "count": 6, "interval": 2.0 }
       ]
     },
     {
@@ -220,7 +220,7 @@
         { "type": "coldwords", "count": 10, "interval": 0.5 },
         { "type": "lonelyness", "count": 5, "interval": 1.5 },
         { "type": "recall", "count": 5, "interval": 3.0 },
-        { "type": "tears", "count": 5, "interval": 3.0 },
+        { "type": "tears", "count": 5, "interval": 3.0 }
       ]
     },
     {
@@ -228,9 +228,9 @@
         { "type": "coldwords", "count": 10, "interval": 0.5 },
         { "type": "lonelyness", "count": 5, "interval": 1.5 },
         { "type": "recall", "count": 5, "interval": 3.0 },
-        { "type": "tears", "count": 5, "interval": 3.0 },
+        { "type": "tears", "count": 5, "interval": 3.0 }
       ]
-    }
+    },
     {
         "enemies": [
             { "type": "thephantomofthepast", "count": 1, "interval": 0.0 }
