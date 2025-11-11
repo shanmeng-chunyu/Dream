@@ -14,101 +14,97 @@
 
 namespace
 {
-struct StageAssetRow
-{
-    const char *type;
-    const char *stage1;
-    const char *stage2;
-    const char *stage3;
-};
-
-template <size_t N>
-QString lookupStageAsset(const StageAssetRow (&table)[N], const QString &type, int stageIndex)
-{
-    if (stageIndex < 1 || stageIndex > 3 || type.isEmpty())
+    struct StageAssetRow
     {
+        const char *type;
+        const char *stage1;
+        const char *stage2;
+        const char *stage3;
+    };
+
+    template <size_t N>
+    QString lookupStageAsset(const StageAssetRow (&table)[N], const QString &type, int stageIndex)
+    {
+        if (stageIndex < 1 || stageIndex > 3 || type.isEmpty())
+        {
+            return {};
+        }
+
+        for (const StageAssetRow &row : table)
+        {
+            if (QString::compare(type, QString::fromUtf8(row.type), Qt::CaseInsensitive) == 0)
+            {
+                const char *candidate = nullptr;
+                switch (stageIndex)
+                {
+                case 1:
+                    candidate = row.stage1;
+                    break;
+                case 2:
+                    candidate = row.stage2;
+                    break;
+                case 3:
+                    candidate = row.stage3;
+                    break;
+                default:
+                    break;
+                }
+
+                if (candidate && *candidate)
+                {
+                    return QString::fromUtf8(candidate);
+                }
+                break;
+            }
+        }
+
         return {};
     }
 
-    for (const StageAssetRow &row : table)
-    {
-        if (QString::compare(type, QString::fromUtf8(row.type), Qt::CaseInsensitive) == 0)
-        {
-            const char *candidate = nullptr;
-            switch (stageIndex)
-            {
-            case 1:
-                candidate = row.stage1;
-                break;
-            case 2:
-                candidate = row.stage2;
-                break;
-            case 3:
-                candidate = row.stage3;
-                break;
-            default:
-                break;
-            }
+    const StageAssetRow kTowerSpriteTable[] = {
+        {"KnowledgeTree", u8"美术素材（透明）/防御塔/第一关/知识古树.png", "", ""},
+        {"InspirationBulb", u8"美术素材（透明）/防御塔/第一关/灵感灯泡.png", "", ""},
+        {"LiveCoffee", u8"美术素材（透明）/防御塔/第一关/续命咖啡.png", "", ""},
+        {"FishingCatPillow", u8"美术素材（透明）/防御塔/第一关/摸鱼猫抱枕.png", "", ""},
+        {"WarmMemories", "", u8"美术素材（透明）/防御塔/第二关/温暖的记忆.png", ""},
+        {"NightRadio", "", u8"美术素材（透明）/防御塔/第二关/深夜电台.png", ""},
+        {"PettingCatTime", "", u8"美术素材（透明）/防御塔/第二关/撸猫时间.png", ""},
+        {"Companionship", "", u8"美术素材（透明）/防御塔/第二关/朋友陪伴.png", ""}};
 
-            if (candidate && *candidate)
-            {
-                return QString::fromUtf8(candidate);
-            }
-            break;
-        }
-    }
+    const StageAssetRow kTowerBulletTable[] = {
+        {"KnowledgeTree", u8"美术素材（透明）/防御塔子弹/第一关/知识古树子弹.png", "", ""},
+        {"InspirationBulb", u8"美术素材（透明）/防御塔子弹/第一关/灵感灯泡子弹.png", "", ""},
+        {"LiveCoffee", u8"美术素材（透明）/防御塔子弹/第一关/续命咖啡（光环特效）.png", "", ""},
+        {"NightRadio", "", u8"美术素材（透明）/防御塔子弹/第二关/深夜电台子弹.png", ""},
+        {"Companionship", "", u8"美术素材（透明）/防御塔子弹/第二关/朋友陪伴光环.png", ""}};
 
-    return {};
-}
+    const StageAssetRow kEnemySpriteTable[] = {
+        {"bug", u8"美术素材（透明）/敌人/第一关/bug怪物.png", "", ""},
+        {"ddl", u8"美术素材（透明）/敌人/第一关/ddl怪物.png", "", ""},
+        {"gpa", u8"美术素材（透明）/敌人/第一关/gpa怪物.png", "", ""},
+        {"pre", u8"美术素材（透明）/敌人/第一关/pre怪物.png", "", ""},
+        {"thesis", u8"美术素材（透明）/敌人/第一关/论文boss.png", "", ""},
+        {"coldwords", "", u8"美术素材（透明）/敌人/第二关/冰冷的言语.png", ""},
+        {"loneliness", "", u8"美术素材（透明）/敌人/第二关/孤独怪物.png", ""},
+        {"lonelyness", "", u8"美术素材（透明）/敌人/第二关/孤独怪物.png", ""},
+        {"regret", "", u8"美术素材（透明）/敌人/第二关/回忆怪物.png", ""},
+        {"recall", "", u8"美术素材（透明）/敌人/第二关/回忆怪物.png", ""},
+        {"tears", "", u8"美术素材（透明）/敌人/第二关/泪水怪物.png", ""},
+        {"past", "", u8"美术素材（透明）/敌人/第二关/昔日幻影boss.png", ""},
+        {"thephantomofthepast", "", u8"美术素材（透明）/敌人/第二关/昔日幻影boss.png", ""},
+        {"nightmare", "", "", u8"美术素材（透明）/敌人/第三关/梦魇boss.png"}};
 
-const StageAssetRow kTowerSpriteTable[] = {
-    {"KnowledgeTree", u8"美术素材（透明）/防御塔/第一关/知识古树.png", "", ""},
-    {"InspirationBulb", u8"美术素材（透明）/防御塔/第一关/灵感灯泡.png", "", ""},
-    {"LiveCoffee", u8"美术素材（透明）/防御塔/第一关/续命咖啡.png", "", ""},
-    {"FishingCatPillow", u8"美术素材（透明）/防御塔/第一关/摸鱼猫抱枕.png", "", ""},
-    {"WarmMemories", "", u8"美术素材（透明）/防御塔/第二关/温暖的记忆.png", ""},
-    {"NightRadio", "", u8"美术素材（透明）/防御塔/第二关/深夜电台.png", ""},
-    {"PettingCatTime", "", u8"美术素材（透明）/防御塔/第二关/撸猫时间.png", ""},
-    {"Companionship", "", u8"美术素材（透明）/防御塔/第二关/朋友陪伴.png", ""}
-};
-
-const StageAssetRow kTowerBulletTable[] = {
-    {"KnowledgeTree", u8"美术素材（透明）/防御塔子弹/第一关/知识古树子弹.png", "", ""},
-    {"InspirationBulb", u8"美术素材（透明）/防御塔子弹/第一关/灵感灯泡子弹.png", "", ""},
-    {"LiveCoffee", u8"美术素材（透明）/防御塔子弹/第一关/续命咖啡（光环特效）.png", "", ""},
-    {"NightRadio", "", u8"美术素材（透明）/防御塔子弹/第二关/深夜电台子弹.png", ""},
-    {"Companionship", "", u8"美术素材（透明）/防御塔子弹/第二关/朋友陪伴光环.png", ""}
-};
-
-const StageAssetRow kEnemySpriteTable[] = {
-    {"bug", u8"美术素材（透明）/敌人/第一关/bug怪物.png", "", ""},
-    {"ddl", u8"美术素材（透明）/敌人/第一关/ddl怪物.png", "", ""},
-    {"gpa", u8"美术素材（透明）/敌人/第一关/gpa怪物.png", "", ""},
-    {"pre", u8"美术素材（透明）/敌人/第一关/pre怪物.png", "", ""},
-    {"thesis", u8"美术素材（透明）/敌人/第一关/论文boss.png", "", ""},
-    {"coldwords", "", u8"美术素材（透明）/敌人/第二关/冰冷的言语.png", ""},
-    {"loneliness", "", u8"美术素材（透明）/敌人/第二关/孤独怪物.png", ""},
-    {"lonelyness", "", u8"美术素材（透明）/敌人/第二关/孤独怪物.png", ""},
-    {"regret", "", u8"美术素材（透明）/敌人/第二关/回忆怪物.png", ""},
-    {"recall", "", u8"美术素材（透明）/敌人/第二关/回忆怪物.png", ""},
-    {"tears", "", u8"美术素材（透明）/敌人/第二关/泪水怪物.png", ""},
-    {"past", "", u8"美术素材（透明）/敌人/第二关/昔日幻影boss.png", ""},
-    {"thephantomofthepast", "", u8"美术素材（透明）/敌人/第二关/昔日幻影boss.png", ""},
-    {"nightmare", "", "", u8"美术素材（透明）/敌人/第三关/梦魇boss.png"}
-};
-
-const StageAssetRow kObstacleSpriteTable[] = {
-    {"BookStack", u8"美术素材（透明）/地图方块/第一关/书本障碍方块.png", "", ""},
-    {"Book", u8"美术素材（透明）/地图方块/第一关/书本障碍方块.png", "", ""},
-    {"Scratchpaper", u8"美术素材（透明）/地图方块/第一关/草稿障碍方块.png", "", ""},
-    {"Cable", u8"美术素材（透明）/地图方块/第一关/数据线障碍方块.png", "", ""},
-    {"Stationery", u8"美术素材（透明）/地图方块/第一关/文具障碍方块.png", "", ""},
-    {"MemoryBox", "", u8"美术素材（透明）/地图方块/第二关/尘封记忆障碍物.png", ""},
-    {"WitheredFlowers", "", u8"美术素材（透明）/地图方块/第二关/凋落的花障碍物.png", ""},
-    {"BrokenRing", "", u8"美术素材（透明）/地图方块/第二关/破碎戒指障碍物.png", ""},
-    {"BrokenFreindship", "", u8"美术素材（透明）/地图方块/第二关/破碎友谊障碍物.png", ""},
-    {"BrokenFriendship", "", u8"美术素材（透明）/地图方块/第二关/破碎友谊障碍物.png", ""}
-};
+    const StageAssetRow kObstacleSpriteTable[] = {
+        {"BookStack", u8"美术素材（透明）/地图方块/第一关/书本障碍方块.png", "", ""},
+        {"Book", u8"美术素材（透明）/地图方块/第一关/书本障碍方块.png", "", ""},
+        {"Scratchpaper", u8"美术素材（透明）/地图方块/第一关/草稿障碍方块.png", "", ""},
+        {"Cable", u8"美术素材（透明）/地图方块/第一关/数据线障碍方块.png", "", ""},
+        {"Stationery", u8"美术素材（透明）/地图方块/第一关/文具障碍方块.png", "", ""},
+        {"MemoryBox", "", u8"美术素材（透明）/地图方块/第二关/尘封记忆障碍物.png", ""},
+        {"WitheredFlowers", "", u8"美术素材（透明）/地图方块/第二关/凋落的花障碍物.png", ""},
+        {"BrokenRing", "", u8"美术素材（透明）/地图方块/第二关/破碎戒指障碍物.png", ""},
+        {"BrokenFreindship", "", u8"美术素材（透明）/地图方块/第二关/破碎友谊障碍物.png", ""},
+        {"BrokenFriendship", "", u8"美术素材（透明）/地图方块/第二关/破碎友谊障碍物.png", ""}};
 
 }
 
@@ -215,7 +211,6 @@ bool GameMap::loadFromFile(const QString &filePath)
         const QString obstacleSpriteFallback = fallbackObstaclePixmap(data.type, stageIndex);
         data.pixmapPath = normalizeAssetPath(obsObj.value("pixmap").toString(), {obstacleSpriteFallback});
 
-
         double posX = posObj.value("x").toDouble();
         double posY = posObj.value("y").toDouble();
         data.relativePosition = QPointF(posX, posY);
@@ -226,7 +221,7 @@ bool GameMap::loadFromFile(const QString &filePath)
         obstacles.push_back(data);
     }
 
-    if (stageIndex == 3)
+    if (stageIndex >= 2)
     {
         const double offset = computeHorizontalCenterOffset(path);
         if (std::abs(offset) > 1e-6)
@@ -234,6 +229,8 @@ bool GameMap::loadFromFile(const QString &filePath)
             applyHorizontalOffset(path, offset);
             applyHorizontalOffset(towerPos, offset);
             applyHorizontalOffset(obstacles, offset);
+            setPath(path);
+            setTowerPositions(towerPos);
         }
     }
 
@@ -302,6 +299,11 @@ const QString &GameMap::getBackgroundPixmap() const
 double GameMap::getPathWidthRatio() const
 {
     return pathWidthRatio;
+}
+
+bool GameMap::isPathWidthExplicit() const
+{
+    return pathWidthExplicit;
 }
 
 const std::vector<TowerPrototypeInfo> &GameMap::getAvailableTowers() const
@@ -403,7 +405,6 @@ QJsonDocument GameMap::parseJsonWithEncodingFallback(const QString &filePath, co
             return retryDoc;
         }
     }
-
 
     const char *const encodingNames[] = {"GB18030", "GBK", "GB2312"};
 
