@@ -71,6 +71,9 @@ private:
     static QString stageSpecificPathTexture(int stageIndex);
     static QString defaultTowerBaseFrame();
     static int detectStageFromName(const QString &name);
+    static double computeHorizontalCenterOffset(const std::vector<QPointF> &points);
+    static void applyHorizontalOffset(std::vector<QPointF> &points, double offset);
+    static void applyHorizontalOffset(std::vector<ObstacleData> &obstacles, double offset);
 
     std::vector<QPointF> enemyPath;
     std::vector<QPointF> towerPositions;
