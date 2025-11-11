@@ -152,15 +152,15 @@ void GameManager::setScreenSize(const QSizeF& size) {
         rescaleItemPos(enemy);
 
         // 关键：必须同时更新敌人未走完的路径点
-        // std::vector<QPointF> newPath;
-        // const auto& oldPath = enemy->getAbsolutePath(); // (我们将在 Enemy.h 中添加这个函数)
-        // newPath.reserve(oldPath.size());
-        //
-        // for(const QPointF& pt : oldPath) {
-        //     newPath.emplace_back(pt.x() * scaleX, pt.y() * scaleY);
-        // }
-        // // setAbsolutePath 已经存在
-        // enemy->setAbsolutePath(newPath);
+        std::vector<QPointF> newPath;
+        const auto& oldPath = enemy->getAbsolutePath(); // (我们将在 Enemy.h 中添加这个函数)
+        newPath.reserve(oldPath.size());
+
+        for(const QPointF& pt : oldPath) {
+            newPath.emplace_back(pt.x() * scaleX, pt.y() * scaleY);
+        }
+        // setAbsolutePath 已经存在
+        enemy->setAbsolutePath(newPath);
     }
 
     // 更新防御塔

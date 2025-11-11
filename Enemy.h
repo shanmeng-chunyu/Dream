@@ -17,6 +17,7 @@ public:
     int getDamage() const;
     void setAbsolutePath(const std::vector<QPointF>& path);
     QString getType() const{return type;};
+    std::vector<QPointF> getAbsolutePath();
 
     public slots:
         void move();

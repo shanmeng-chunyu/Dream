@@ -8,6 +8,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     // MainWindow w;
+    // w.resize(1024,768);
     // w.show();
 
     //用于调试主菜单的代码

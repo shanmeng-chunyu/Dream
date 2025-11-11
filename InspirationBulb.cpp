@@ -3,7 +3,7 @@
 
 InspirationBulb::InspirationBulb(int range,QGraphicsItem* parent):Tower(40,range,0.8,100,150,QPixmap("resources/towers/level1/InspirationBulb.png"),parent)
 {
-    upgradedPixmapPath = "resources/towers/level1/InspirationBulb_upgrade.png";
+    //upgradedPixmapPath = ":/towers/resources/towers/level1/InspirationBulb_upgrade.png";
 }
 void InspirationBulb::upgrade()
 {
@@ -14,7 +14,7 @@ void InspirationBulb::upgrade()
         range=4.0;
         fireRate=0.6;
         upgraded=true;
-        setPixmap(QPixmap(upgradedPixmapPath));
+        //setPixmap(QPixmap(upgradedPixmapPath));
         if(fireTimer)
         {
             fireTimer->stop();

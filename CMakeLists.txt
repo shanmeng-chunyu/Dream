@@ -53,6 +53,8 @@ add_executable(Dream
         IconButton.h IconButton.cpp
         widget_post_game.h widget_post_game.cpp widget_post_game.ui
         InspirationBulb.cpp
+        KnowledgeTree.cpp
+        FishingCatPillow.cpp
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

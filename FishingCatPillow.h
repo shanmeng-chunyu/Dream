@@ -6,6 +6,7 @@
 
 class FishingCatPillow:public Tower
 {
+    Q_OBJECT
 public:
     explicit FishingCatPillow(QGraphicsItem* parent = nullptr);
     void upgrade()override;
