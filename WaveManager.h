@@ -30,6 +30,7 @@ public:
     void startNextWave();
     bool isFinished() const;
     void setScreenSize(const QSizeF& size);
+    int getTotalEnemiesKilled() const { return totalEnemiesKilled; }
 
     signals:
         void spawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath);
@@ -45,6 +46,7 @@ private:
     QTimer* spawnTimer;
     GameMap* gameMap;
     QSizeF screenSize;
+    int totalEnemiesKilled = 0;
 };
 
 #endif // WAVEMANAGER_H

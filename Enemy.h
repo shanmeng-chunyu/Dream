@@ -16,6 +16,7 @@ public:
     void takeDamage(int damageAmount);
     int getDamage() const;
     void setAbsolutePath(const std::vector<QPointF>& path);
+    QString getType() const{return type;};
 
     public slots:
         void move();
@@ -30,6 +31,7 @@ private:
     int damage;
     std::vector<QPointF> absolutePath;
     int currentPathIndex;
+    QString type;
 };
 
 #endif // ENEMY_H

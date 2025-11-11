@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     // QWidget menu_widget;
     // menu_ui.setupUi(&menu_widget);
     // menu_widget.setWindowTitle("Level3 Main Menu (Menu Debug)");
-    // menu_widget.resize(1024, 768); // 调整为你认为合适的大小
+    // menu_widget.resize(800, 600); // 调整为你认为合适的大小
     // menu_widget.show();
 
     //用于调试关卡选择界面的代码

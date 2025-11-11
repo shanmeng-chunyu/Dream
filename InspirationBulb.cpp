@@ -1,7 +1,7 @@
 #include "InspirationBulb.h"
 #include<QPixmap>
 
-InspirationBulb::InspirationBulb(QGraphicsItem* parent):Tower(40,2.5,0.8,100,150,QPixmap("resources/towers/level1/InspirationBulb.png"),parent)
+InspirationBulb::InspirationBulb(int range,QGraphicsItem* parent):Tower(40,range,0.8,100,150,QPixmap("resources/towers/level1/InspirationBulb.png"),parent)
 {
     upgradedPixmapPath = "resources/towers/level1/InspirationBulb_upgrade.png";
 }

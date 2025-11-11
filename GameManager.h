@@ -51,11 +51,18 @@ public slots:
     void onBulletHitTarget(Bullet* bullet);
     // 响应Obstacle信号
     void onObstacleDestroyed(Obstacle* obstacle, int resourceValue);
+    //相应用户请求升级或出售防御塔
+    void onTowerUpgradeRequested(const QPointF& relativePosition);
+    void onTowerSellRequested(const QPointF& relativePosition);
+    void pauseGame();
+    void resumeGame();
 
 private slots:
     // 游戏主循环
     void updateGame();
-
+signals:
+    void gameWon(int finalStability, int enemiesKilled);
+    void gameLost(int finalStability, int enemiesKilled);
 private:
     GameManager(QObject* parent = nullptr);
     ~GameManager() override;
