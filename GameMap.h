@@ -43,6 +43,7 @@ public:
 
     const QString &getBackgroundPixmap() const;
     double getPathWidthRatio() const;
+    bool isPathWidthExplicit() const;
     const std::vector<TowerPrototypeInfo> &getAvailableTowers() const;
     const QString &getLevelName() const;
     const QString &getLevelFilePath() const;
