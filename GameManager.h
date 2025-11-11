@@ -62,7 +62,7 @@ private:
     GameManager(const GameManager&) = delete;
     GameManager& operator=(const GameManager&) = delete;
 
-    void loadPrototypes(const QJsonObject& rootObj);
+    void loadPrototypes();
     void cleanupEntities();
     void updateTowerTargets();
     void checkWinLossConditions();

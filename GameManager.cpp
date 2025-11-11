@@ -60,7 +60,7 @@ void GameManager::loadLevel(const QString& levelPath) {
 
     // 使用LevelLoader加载核心数据
     LevelLoader::loadLevel(levelPath, *m_gameMap, *m_waveManager, *m_player);
-    loadPrototypes(rootObj);
+    loadPrototypes();
 
     // 根据地图数据创建障碍物
     for (const auto& obsData : m_gameMap->getObstacles()) {
@@ -77,19 +77,35 @@ void GameManager::loadLevel(const QString& levelPath) {
     }
 }
 
-void GameManager::loadPrototypes(const QJsonObject& rootObj) {
+void GameManager::loadPrototypes() {
     m_enemyPrototypes.clear();
-    QJsonArray enemyArray = rootObj["available_enemies"].toArray();
-    for (const QJsonValue& val : enemyArray) {
-        QJsonObject obj = val.toObject();
-        m_enemyPrototypes[obj["type"].toString()] = obj;
+    m_towerPrototypes.clear();
+
+    // --- 加载敌人主数据 ---
+    // (注意：这些路径是 .qrc 文件中定义的路径)
+    QFile enemyFile(":/data/enemy_data.json");
+    if (enemyFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument enemyDoc = QJsonDocument::fromJson(enemyFile.readAll());
+        // (根据 enemy_data.json 的结构)
+        QJsonArray enemyArray = enemyDoc.object()["master_enemies"].toArray();
+        for (const QJsonValue& val : enemyArray) {
+            QJsonObject obj = val.toObject();
+            m_enemyPrototypes[obj["type"].toString()] = obj;
+        }
+        enemyFile.close();
     }
 
-    m_towerPrototypes.clear();
-    QJsonArray towerArray = rootObj["available_towers"].toArray();
-    for (const QJsonValue& val : towerArray) {
-        QJsonObject obj = val.toObject();
-        m_towerPrototypes[obj["type"].toString()] = obj;
+    // --- 加载防御塔主数据 ---
+    QFile towerFile(":/data/tower_data.json");
+    if (towerFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument towerDoc = QJsonDocument::fromJson(towerFile.readAll());
+        // (根据 tower_data.json 的结构)
+        QJsonArray towerArray = towerDoc.object()["master_towers"].toArray();
+        for (const QJsonValue& val : towerArray) {
+            QJsonObject obj = val.toObject();
+            m_towerPrototypes[obj["type"].toString()] = obj;
+        }
+        towerFile.close();
     }
 }
 
@@ -154,7 +170,7 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
             proto["range"].toDouble() * m_screenSize.width(), // 范围也要转换为绝对值
             proto["fire_rate"].toInt(),
             proto["cost"].toInt(),
-            proto["upgradeCost"].toInt(),
+            proto["upgrade_cost"].toInt(),
             pixmap
         );
 

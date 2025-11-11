@@ -29,7 +29,7 @@ public:
     void setTarget(Enemy* target);
 
     //升级
-    virtual void upgrade()=0;
+    virtual void upgrade();
 
 public slots:
     void findAndAttackTarget();

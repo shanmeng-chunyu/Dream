@@ -65,4 +65,9 @@ void Tower::slowAttack(double slowFactor){
     }
 }
 
+void Tower::upgrade(){
+    if (upgraded) {
+
+    }
+}
 

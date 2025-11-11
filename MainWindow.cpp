@@ -1144,7 +1144,7 @@ void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
     for (const auto &proto : towerChoices)
     {
         QString label = proto.name.isEmpty() ? proto.type : proto.name;
-        label.append(QStringLiteral(" (%1)").arg(proto.cost));
+        label.append(QStringLiteral(" (%1)").arg(QString::number(proto.cost)));
         QAction *action = menu.addAction(label);
         action->setData(proto.type);
     }
