@@ -8,16 +8,15 @@ class FishingCatPillow:public Tower
 {
 public:
     explicit FishingCatPillow(QGraphicsItem* parent = nullptr);
-    void attack()override;
     void upgrade()override;
 private slots:
-    void applyControl();//控制效果函数
+    void controlTarget();//索敌--控制逻辑
+signals:
+    void applyControl(Enemy *enemy,double duration);//给enemy发出的控制enemy效果信号
 private:
     QTimer *controlTimer;//控制效果定时器
     double controlDuration;//控制时长
     double controlInterval;//冷却时间
-    QString upgradedPixmapPath;
-
 };
 
 #endif // FISHINGCATPILLOW_H
