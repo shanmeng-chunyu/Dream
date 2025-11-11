@@ -2,6 +2,9 @@
 #include "Bullet.h"
 #include "Enemy.h"
 #include <QLineF>
+#include <QGraphicsScene>
+#include "LiveCoffee.h"
+#include "FriendCompanion.h"
 
 Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
@@ -12,16 +15,10 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     cost(cost),
     upgradeCost(upgradeCost),
     upgraded(false),
-    currentTarget(nullptr),fireTimer(nullptr)
-{
-    setPixmap(pixmap);
-    if(fireRate>0)//为了后续不需要fireTimer的情况方便传入fireRate数据
-    {
-        fireTimer = new QTimer(this);
-        connect(fireTimer, &QTimer::timeout, this, &Tower::findAndAttackTarget);
-        fireTimer->start(1000 * fireRate);
-    }
-}
+    currentTarget(nullptr),
+    fireInterval(static_cast<int>(fireRate * 60)),fireCount(fireInterval),
+    originalFireInterval(fireInterval),originalDamage(damage)
+{setPixmap(pixmap);}
 
 void Tower::setTarget(Enemy* target) {
     currentTarget = target;
@@ -36,8 +33,16 @@ bool Tower::targetIsInRange() const {
 }
 
 void Tower::findAndAttackTarget() {
-    if (currentTarget && targetIsInRange()) {
-        attack();
+    fireCount--;
+    if(fireCount<=0)
+    {
+        if (currentTarget && targetIsInRange())
+        {
+            coffeeEffect();
+            friendEffect();
+            attack();
+        }
+        fireCount=fireInterval;
     }
     //如果没有目标或者目标超出范围，GameManager会负责为其寻找新目标
 }
@@ -49,19 +54,72 @@ void Tower::attack() {
 }
 
 void Tower::destroy(){
-    if(fireTimer!=nullptr)
-        fireTimer->stop();
      emit towerDestroyed(this);
 }
 
-void Tower::slowAttack(double slowFactor){
+void Tower::slowAttack(double slowFactor){//传入的slowFactor应该是一个大于1的数字
     //GameManager会负责检测周围是否有回忆怪物
-    if(fireTimer!=nullptr){
-        fireTimer->stop();
-        if(fireRate>0)
+    fireInterval= static_cast<int>(fireInterval * slowFactor);
+}
+
+void Tower::slowAttackStop()
+{
+    fireInterval=originalFireInterval;
+}
+
+QList<LiveCoffee*> Tower::findCoffeeInRange()
+{
+    QList<LiveCoffee*>coffeeTowers;
+    QList<QGraphicsItem*> items = scene()->items();
+    for(auto& item :items)
+    {
+        LiveCoffee* tower=dynamic_cast<LiveCoffee*>(item);
+        if(tower&&tower!=this)
         {
-            fireTimer->start(1000/(fireRate*slowFactor));
+            QLineF line(pos(),tower->pos());
+            if(line.length()<=tower->getRange())
+                coffeeTowers.append(tower);
         }
+    }
+    return coffeeTowers;
+}
+QList<FriendCompanion*>Tower:: findFriendInRange()
+{
+    QList<FriendCompanion*>friendTowers;
+    QList<QGraphicsItem*> items = scene()->items();
+    for(auto& item :items)
+    {
+       FriendCompanion* tower=dynamic_cast<FriendCompanion*>(item);
+        if(tower&&tower!=this)
+        {
+            QLineF line(pos(),tower->pos());
+            if(line.length()<=tower->getRange())
+                friendTowers.append(tower);
+        }
+    }
+    return friendTowers;
+}
+
+void Tower::coffeeEffect()
+{
+    fireInterval=originalFireInterval;
+    QList<LiveCoffee*>auraTowers=findCoffeeInRange();
+    for(auto& tower:auraTowers)
+    {
+        fireInterval = static_cast<int>(fireInterval * tower->getFactor());
+    }
+    if (fireCount > fireInterval) {
+        fireCount = fireInterval;
+    }
+}
+
+void Tower::friendEffect()
+{
+    damage=originalDamage;
+    QList<FriendCompanion*>auraTowers=findFriendInRange();
+    for(auto& tower:auraTowers)
+    {
+        damage*=tower->getFactor();
     }
 }
 
