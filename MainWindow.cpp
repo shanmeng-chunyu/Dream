@@ -31,90 +31,90 @@
 
 namespace
 {
-struct TowerBalanceRow
-{
-    const char *type;
-    const char *displayName;
-    int cost;
-    double damage;
-    double range;
-    double fireRate;
-};
-
-struct EnemyBalanceRow
-{
-    const char *type;
-    const char *displayName;
-    int health;
-    double speed;
-    int drops;
-    int damage;
-};
-
-const TowerBalanceRow kTowerBalanceTable[] = {
-    {"InspirationBulb", u8"灵感灯泡", 100, 40.0, 2.5, 0.8},
-    {"KnowledgeTree", u8"知识古树", 200, 160.0, 3.5, 2.0},
-    {"FishingCatPillow", u8"摸鱼猫抱枕", 120, 0.0, 2.5, 1.0},
-    {"LiveCoffee", u8"续命咖啡", 80, 0.0, 2.5, 1.0},
-    {"WarmMemories", u8"温暖的记忆", 150, 70.0, 2.8, 1.1},
-    {"NightRadio", u8"深夜电台", 220, 130.0, 3.3, 1.6},
-    {"PettingCatTime", u8"撸猫时间", 140, 0.0, 2.6, 1.0},
-    {"Companionship", u8"朋友陪伴", 160, 0.0, 3.0, 1.2}};
-
-const EnemyBalanceRow kEnemyBalanceTable[] = {
-    {"bug", u8"BUG", 150, 1.0, 10, 1},
-    {"ddl", u8"DDL", 80, 1.5, 8, 1},
-    {"gpa", u8"GPA", 300, 1.0, 15, 2},
-    {"pre", u8"PRE", 500, 1.0, 30, 5},
-    {"thesis", u8"Thesis", 8000, 0.8, 200, 20},
-    {"coldwords", u8"冰冷的言语", 220, 1.1, 18, 2},
-    {"loneliness", u8"孤独怪物", 320, 1.0, 20, 3},
-    {"regret", u8"回忆怪物", 450, 0.9, 25, 4},
-    {"tears", u8"泪水怪物", 380, 1.2, 22, 3},
-    {"past", u8"昔日幻影", 1800, 0.8, 120, 10},
-    {"nightmare", u8"梦魇", 12000, 0.7, 300, 25}};
-
-const TowerBalanceRow *lookupTowerBalance(const QString &type)
-{
-    for (const TowerBalanceRow &row : kTowerBalanceTable)
+    struct TowerBalanceRow
     {
-        if (QString::compare(type, QString::fromUtf8(row.type), Qt::CaseInsensitive) == 0)
+        const char *type;
+        const char *displayName;
+        int cost;
+        double damage;
+        double range;
+        double fireRate;
+    };
+
+    struct EnemyBalanceRow
+    {
+        const char *type;
+        const char *displayName;
+        int health;
+        double speed;
+        int drops;
+        int damage;
+    };
+
+    const TowerBalanceRow kTowerBalanceTable[] = {
+        {"InspirationBulb", u8"灵感灯泡", 100, 40.0, 2.5, 0.8},
+        {"KnowledgeTree", u8"知识古树", 200, 160.0, 3.5, 2.0},
+        {"FishingCatPillow", u8"摸鱼猫抱枕", 120, 0.0, 2.5, 1.0},
+        {"LiveCoffee", u8"续命咖啡", 80, 0.0, 2.5, 1.0},
+        {"WarmMemories", u8"温暖的记忆", 150, 70.0, 2.8, 1.1},
+        {"NightRadio", u8"深夜电台", 220, 130.0, 3.3, 1.6},
+        {"PettingCatTime", u8"撸猫时间", 140, 0.0, 2.6, 1.0},
+        {"Companionship", u8"朋友陪伴", 160, 0.0, 3.0, 1.2}};
+
+    const EnemyBalanceRow kEnemyBalanceTable[] = {
+        {"bug", u8"BUG", 150, 1.0, 10, 1},
+        {"ddl", u8"DDL", 80, 1.5, 8, 1},
+        {"gpa", u8"GPA", 300, 1.0, 15, 2},
+        {"pre", u8"PRE", 500, 1.0, 30, 5},
+        {"thesis", u8"Thesis", 8000, 0.8, 200, 20},
+        {"coldwords", u8"冰冷的言语", 220, 1.1, 18, 2},
+        {"loneliness", u8"孤独怪物", 320, 1.0, 20, 3},
+        {"regret", u8"回忆怪物", 450, 0.9, 25, 4},
+        {"tears", u8"泪水怪物", 380, 1.2, 22, 3},
+        {"past", u8"昔日幻影", 1800, 0.8, 120, 10},
+        {"nightmare", u8"梦魇", 12000, 0.7, 300, 25}};
+
+    const TowerBalanceRow *lookupTowerBalance(const QString &type)
+    {
+        for (const TowerBalanceRow &row : kTowerBalanceTable)
         {
-            return &row;
+            if (QString::compare(type, QString::fromUtf8(row.type), Qt::CaseInsensitive) == 0)
+            {
+                return &row;
+            }
         }
+        return nullptr;
     }
-    return nullptr;
-}
 
-const EnemyBalanceRow *lookupEnemyBalance(const QString &type)
-{
-    for (const EnemyBalanceRow &row : kEnemyBalanceTable)
+    const EnemyBalanceRow *lookupEnemyBalance(const QString &type)
     {
-        if (QString::compare(type, QString::fromUtf8(row.type), Qt::CaseInsensitive) == 0)
+        for (const EnemyBalanceRow &row : kEnemyBalanceTable)
         {
-            return &row;
+            if (QString::compare(type, QString::fromUtf8(row.type), Qt::CaseInsensitive) == 0)
+            {
+                return &row;
+            }
         }
+        return nullptr;
     }
-    return nullptr;
-}
 
-QString canonicalEnemyTypeName(const QString &type)
-{
-    const QString lower = type.trimmed().toLower();
-    if (lower == QStringLiteral("lonelyness"))
+    QString canonicalEnemyTypeName(const QString &type)
     {
-        return QStringLiteral("loneliness");
+        const QString lower = type.trimmed().toLower();
+        if (lower == QStringLiteral("lonelyness"))
+        {
+            return QStringLiteral("loneliness");
+        }
+        if (lower == QStringLiteral("recall"))
+        {
+            return QStringLiteral("regret");
+        }
+        if (lower == QStringLiteral("thephantomofthepast"))
+        {
+            return QStringLiteral("past");
+        }
+        return type.trimmed();
     }
-    if (lower == QStringLiteral("recall"))
-    {
-        return QStringLiteral("regret");
-    }
-    if (lower == QStringLiteral("thephantomofthepast"))
-    {
-        return QStringLiteral("past");
-    }
-    return type.trimmed();
-}
 }
 
 class TowerBaseItem : public QGraphicsEllipseItem
@@ -128,11 +128,11 @@ public:
                   ClickHandler handler,
                   QGraphicsItem *parent = nullptr)
         : QGraphicsEllipseItem(parent),
-        m_index(index),
-        m_radius(radius),
-        m_center(center),
-        m_clickHandler(std::move(handler)),
-        m_isOccupied(false)
+          m_index(index),
+          m_radius(radius),
+          m_center(center),
+          m_clickHandler(std::move(handler)),
+          m_isOccupied(false)
     {
         setZValue(25);
         setAcceptHoverEvents(false);
@@ -175,7 +175,6 @@ protected:
         Q_UNUSED(painter);
         Q_UNUSED(option);
         Q_UNUSED(widget);
-
     }
 
 private:
@@ -188,11 +187,11 @@ private:
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-    m_scene(new QGraphicsScene(this)),
-    m_view(new QGraphicsView(m_scene, this)),
-    m_backgroundItem(nullptr),
-    m_baseRadius(26.0),
-    m_sceneDesignSize(1024, 768)
+      m_scene(new QGraphicsScene(this)),
+      m_view(new QGraphicsView(m_scene, this)),
+      m_backgroundItem(nullptr),
+      m_baseRadius(26.0),
+      m_sceneDesignSize(1024, 768)
 {
 
     setWindowTitle("Dream Guardian");
@@ -206,19 +205,16 @@ MainWindow::MainWindow(QWidget *parent)
     m_view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     m_view->setAlignment(Qt::AlignCenter);
 
-
     m_view->resetTransform();
 
     setCentralWidget(m_view);
 
     initializeScene();
 
-
     QTimer::singleShot(0, this, [this]()
                        {
                            fitViewToScene();
                            m_view->update(); });
-
 }
 
 MainWindow::~MainWindow() = default;
@@ -227,13 +223,21 @@ void MainWindow::initializeScene()
 {
     GameManager *manager = GameManager::instance();
     manager->init(m_scene);
+    const bool connected = connect(manager,
+                                   SIGNAL(gameFinished(bool, int, int)),
+                                   this,
+                                   SLOT(handleGameFinished(bool, int, int)));
+    if (!connected)
+    {
+        qWarning() << "GameManager::gameFinished 信号尚未可用，无法自动弹出结算界面。";
+    }
     synchronizeLogicScreenSize();
     recalculateBaseRadius();
 
     const QStringList levelSearchOrder = {
-                                          QStringLiteral("level.json"),
-                                          QStringLiteral("levels/level1.json"),
-                                          QStringLiteral("levels/stage1.json")};
+        QStringLiteral("levels/level1.json"),
+        QStringLiteral("level.json"),
+        QStringLiteral("levels/stage1.json")};
 
     QString preparedLevelPath;
     for (const QString &candidate : levelSearchOrder)
@@ -283,8 +287,8 @@ QString MainWindow::resolveLevelPath(const QString &candidate) const
     }
 
     const QStringList baseDirs = {
-                                  QCoreApplication::applicationDirPath(),
-                                  QDir::currentPath()};
+        QCoreApplication::applicationDirPath(),
+        QDir::currentPath()};
 
     for (const QString &base : baseDirs)
     {
@@ -640,6 +644,23 @@ QString MainWindow::locateProjectRootPath(const QString &levelPath) const
     return info.absoluteDir().absolutePath();
 }
 
+void MainWindow::handleGameFinished(bool win, int stability, int killCount)
+{
+    showPostGameWidget(win, stability, killCount);
+}
+
+void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
+{
+    if (m_postGameWidget)
+    {
+        m_postGameWidget->close();
+        m_postGameWidget->deleteLater();
+    }
+    m_postGameWidget = new widget_post_game(win, stability, killCount, this);
+    m_postGameWidget->setAttribute(Qt::WA_DeleteOnClose);
+    m_postGameWidget->show();
+}
+
 bool MainWindow::loadVisualLevel(const QString &levelPath)
 {
     if (levelPath.isEmpty())
@@ -688,7 +709,6 @@ void MainWindow::drawBackgroundLayer()
         if (!pix.isNull())
         {
 
-
             if (pix.size() == rect.size().toSize())
             {
                 backgroundPixmap = pix;
@@ -716,7 +736,6 @@ void MainWindow::drawBackgroundLayer()
 
     m_backgroundItem->setPixmap(backgroundPixmap);
 
-
     qreal xOffset = (rect.width() - backgroundPixmap.width()) / 2.0;
     qreal yOffset = (rect.height() - backgroundPixmap.height()) / 2.0;
     m_backgroundItem->setPos(rect.left() + xOffset, rect.top() + yOffset);
@@ -724,22 +743,22 @@ void MainWindow::drawBackgroundLayer()
 
 namespace
 {
-constexpr qreal kReferenceSceneWidth = 1024.0;
-constexpr qreal kReferenceSceneHeight = 768.0;
-constexpr qreal kReferenceTileSize = 118.5;
-constexpr qreal kReferenceObstacleSize = 152.0;
-constexpr qreal kObstacleToTileRatio = kReferenceObstacleSize / kReferenceTileSize;
+    constexpr qreal kReferenceSceneWidth = 1024.0;
+    constexpr qreal kReferenceSceneHeight = 768.0;
+    constexpr qreal kReferenceTileSize = 118.5;
+    constexpr qreal kReferenceObstacleSize = 152.0;
+    constexpr qreal kObstacleToTileRatio = kReferenceObstacleSize / kReferenceTileSize;
 
-qreal referenceScaleFactor(const QSizeF &sceneSize)
-{
-    if (sceneSize.isEmpty())
+    qreal referenceScaleFactor(const QSizeF &sceneSize)
     {
-        return 1.0;
+        if (sceneSize.isEmpty())
+        {
+            return 1.0;
+        }
+        const qreal sx = sceneSize.width() / kReferenceSceneWidth;
+        const qreal sy = sceneSize.height() / kReferenceSceneHeight;
+        return std::min(sx, sy);
     }
-    const qreal sx = sceneSize.width() / kReferenceSceneWidth;
-    const qreal sy = sceneSize.height() / kReferenceSceneHeight;
-    return std::min(sx, sy);
-}
 }
 
 void MainWindow::drawPathLayer()
@@ -786,7 +805,6 @@ void MainWindow::drawPathLayer()
     {
         tileSide = upperBound;
     }
-
 
     QPixmap texture(m_visualMap.getPathTexturePixmap());
     const bool hasTexture = !texture.isNull();
@@ -870,20 +888,10 @@ void MainWindow::drawPathLayer()
         fillBetween(previous, current);
         previous = current;
     }
-
 }
 
 void MainWindow::drawObstacles()
 {
-    for (QGraphicsPixmapItem *item : m_obstacleItems)
-    {
-        if (item)
-        {
-            m_scene->removeItem(item);
-            delete item;
-        }
-    }
-    m_obstacleItems.clear();
     m_obstacleRects.clear();
 
     const auto &obstacles = m_visualMap.getObstacles();
@@ -898,8 +906,6 @@ void MainWindow::drawObstacles()
         return;
     }
 
-
-
     qreal tileVisualSize = kReferenceTileSize * referenceScaleFactor(sceneSize);
     if (!m_pathTileRects.isEmpty())
     {
@@ -908,8 +914,6 @@ void MainWindow::drawObstacles()
 
     const qreal targetObstacleSize = tileVisualSize * kObstacleToTileRatio;
 
-
-    int index = 1;
     for (const auto &obs : obstacles)
     {
         QPixmap pix(obs.pixmapPath);
@@ -919,12 +923,9 @@ void MainWindow::drawObstacles()
             continue;
         }
 
-
-        QPixmap scaled = pix.scaled(
-            QSize(qRound(targetObstacleSize), qRound(targetObstacleSize)),
-            Qt::KeepAspectRatio,
-            Qt::SmoothTransformation);
-
+        QPixmap scaled = pix.scaled(QSize(qRound(targetObstacleSize), qRound(targetObstacleSize)),
+                                    Qt::KeepAspectRatio,
+                                    Qt::SmoothTransformation);
 
         const QPointF center = toAbsolutePosition(obs.relativePosition);
         QRectF rect(center.x() - scaled.width() / 2.0,
@@ -932,18 +933,8 @@ void MainWindow::drawObstacles()
                     scaled.width(),
                     scaled.height());
 
-        auto *item = new QGraphicsPixmapItem(scaled);
-        item->setZValue(8);
-        item->setPos(center.x() - scaled.width() / 2.0,
-                     center.y() - scaled.height() / 2.0);
-        m_scene->addItem(item);
-
-        m_obstacleItems.append(item);
         m_obstacleRects.append(rect);
-
-
     }
-
 }
 
 bool MainWindow::isScenePointBlocked(const QPointF &scenePos) const
@@ -1002,7 +993,6 @@ void MainWindow::createTowerBaseItems()
         visual.graphicsItem = baseItem;
         m_towerBases.append(visual);
     }
-
 }
 
 void MainWindow::updateTowerBaseGeometry()
@@ -1065,7 +1055,6 @@ void MainWindow::applySceneRectFromMap()
         return;
     }
 
-
     QSizeF hint = mapSceneSizeHint();
 
     if (hint.isEmpty())
@@ -1081,13 +1070,11 @@ void MainWindow::applySceneRectFromMap()
     m_scene->setSceneRect(0, 0, hint.width(), hint.height());
     m_view->setSceneRect(m_scene->sceneRect());
 
-
     recalculateBaseRadius();
 
     updateTowerBaseGeometry();
     synchronizeLogicScreenSize();
     fitViewToScene();
-
 }
 
 QSizeF MainWindow::mapSceneSizeHint() const
@@ -1144,7 +1131,7 @@ void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
     for (const auto &proto : towerChoices)
     {
         QString label = proto.name.isEmpty() ? proto.type : proto.name;
-        label.append(QStringLiteral(" (%1)").arg(QString::number(proto.cost)));
+        label.append(QStringLiteral(" (%1)").arg(String::number(proto.cost)));
         QAction *action = menu.addAction(label);
         action->setData(proto.type);
     }
@@ -1229,18 +1216,13 @@ void MainWindow::fitViewToScene()
         return;
     }
 
-
-
     m_view->resetTransform();
 
-
     m_view->fitInView(m_scene->sceneRect(), Qt::KeepAspectRatio);
-
 }
 
 QSizeF MainWindow::defaultSceneSize() const
 {
-
 
     return QSizeF(1024, 768);
 }
@@ -1266,7 +1248,6 @@ void MainWindow::onTowerBaseClicked(int baseIndex, const QPointF &scenePos)
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
-
 
     QTimer::singleShot(0, this, [this]()
                        { fitViewToScene(); });
