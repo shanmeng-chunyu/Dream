@@ -118,8 +118,8 @@ QProgressBar::chunk {
     <rect>
      <x>60</x>
      <y>120</y>
-     <width>85</width>
-     <height>85</height>
+     <width>95</width>
+     <height>95</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -147,8 +147,8 @@ QProgressBar::chunk {
     <rect>
      <x>60</x>
      <y>280</y>
-     <width>85</width>
-     <height>85</height>
+     <width>95</width>
+     <height>95</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -176,8 +176,8 @@ QProgressBar::chunk {
     <rect>
      <x>660</x>
      <y>120</y>
-     <width>85</width>
-     <height>85</height>
+     <width>95</width>
+     <height>95</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -205,8 +205,8 @@ QProgressBar::chunk {
     <rect>
      <x>660</x>
      <y>280</y>
-     <width>85</width>
-     <height>85</height>
+     <width>95</width>
+     <height>95</height>
     </rect>
    </property>
    <property name="styleSheet">

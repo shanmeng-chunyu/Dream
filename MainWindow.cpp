@@ -4,14 +4,16 @@
 #include "widget_choose_level.h"
 #include "widget_level_loading.h"
 #include "widget_post_game.h"
+#include "widget_ingame.h"
+#include "widget_building_list.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
     // 设置窗口大小
     setFixedSize(800, 600);
     setWindowTitle("Dream Guardian");
 
-     auto m=new widget_post_game(1,100,45);
-    //auto m=new widget_choose_level();
+    auto m=new widget_building_list(2);
     m->show();
 
     // 1. 创建场景

@@ -1,7 +1,7 @@
 #ifndef WIDGET_CHOOSE_LEVEL_H
 #define WIDGET_CHOOSE_LEVEL_H
 
-#include <QWidget>
+#include "auto_widget.h"
 #include <QVector>
 #include <Qstring>
 #include <QLabel>
@@ -14,7 +14,7 @@ namespace Ui {
 class widget_choose_level;
 }
 
-class widget_choose_level : public QWidget
+class widget_choose_level : public auto_widget
 {
     Q_OBJECT
 
