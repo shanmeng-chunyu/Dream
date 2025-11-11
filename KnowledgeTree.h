@@ -8,10 +8,9 @@ class KnowledgeTree:public Tower
 {
 public:
     explicit KnowledgeTree(QGraphicsItem* parent = nullptr);
-    //范围攻击通过子弹实现
+    //子弹爆炸的范围攻击通过Bullet实现，此处的攻击范围是属于tower的
     void upgrade()override;
-private:
-    QString upgradedPixmapPath;
 };
 
 #endif // KNOWLEDGETREE_H
+

@@ -9,8 +9,7 @@ class InspirationBulb:public Tower
 public:
     explicit InspirationBulb(int range,QGraphicsItem* parent = nullptr);
     void upgrade()override;
-private:
-    QString upgradedPixmapPath;//升级后的图片路径
 };
 
 #endif // INSPIRATIONBULB_H
+
