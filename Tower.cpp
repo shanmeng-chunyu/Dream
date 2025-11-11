@@ -19,7 +19,7 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     {
         fireTimer = new QTimer(this);
         connect(fireTimer, &QTimer::timeout, this, &Tower::findAndAttackTarget);
-        fireTimer->start(1000 / fireRate);
+        fireTimer->start(1000 * fireRate);
     }
 }
 
