@@ -36,7 +36,7 @@ public:
 public slots:
     void findAndAttackTarget();
     //应对enemy功能
-    virtual void slowAttack(double slowFactor);//降低攻速,针对摸鱼猫猫枕的实现，有所不同，设置为虚函数
+    void slowAttack(double slowFactor);//降低攻速
     void destroy();//摧毁tower，接收到信号直接删除对象
 
 signals:
