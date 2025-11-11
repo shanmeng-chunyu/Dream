@@ -70,12 +70,23 @@ void GameManager::loadLevel(const QString& levelPath) {
     // 根据地图数据创建障碍物
     for (const auto& obsData : m_gameMap->getObstacles()) {
         QPixmap pixmap(obsData.pixmapPath);
-        pixmap.scaled(QSize(152,152));
-        auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, pixmap);
 
-        QPointF absPos(obsData.relativePosition.x() * m_screenSize.width(),
-                       obsData.relativePosition.y() * m_screenSize.height());
-        obstacle->setPos(absPos);
+        // 1. 定义障碍物的固定像素大小
+        const QSize obstaclePixelSize(152, 152);
+        QPixmap scaledPixmap = pixmap.scaled(obstaclePixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, scaledPixmap);
+
+        // 2. 将json中的坐标视为“中心点”
+        QPointF absCenterPos(obsData.relativePosition.x() * m_screenSize.width(),
+                             obsData.relativePosition.y() * m_screenSize.height());
+
+        // 3. (统一逻辑) 根据中心点计算左上角位置
+        QPointF absTopLeftPos(absCenterPos.x() - obstaclePixelSize.width() / 2.0,
+                              absCenterPos.y() - obstaclePixelSize.height() / 2.0);
+
+        // 4. 使用计算出的左上角位置
+        obstacle->setPos(absTopLeftPos);
 
         m_scene->addItem(obstacle);
         m_obstacles.append(obstacle);
