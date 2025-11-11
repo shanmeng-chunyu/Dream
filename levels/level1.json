@@ -476,7 +476,7 @@
   "waves": [
     {
       "enemies": [
-        { "type": "ddl", "count": 10, "interval": 1.0 }
+        { "type": "ddl", "count": 10, "interval": 1.0 },
         { "type": "bug", "count": 3, "interval": 2.0 }
       ]
     },
