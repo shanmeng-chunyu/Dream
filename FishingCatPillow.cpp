@@ -14,30 +14,10 @@ FishingCatPillow::FishingCatPillow(QGraphicsItem* parent):Tower(0,2.5,0,120,180,
 }
 void FishingCatPillow::controlTarget()
 {
-    QList<QGraphicsItem*> items = scene()->items();//所有图形项
-    //寻找最近的敌人
-    Enemy* closestEnemy=nullptr;
-    double closestdistance=std::numeric_limits<double>::max();
-    for(auto& item:items)
+    //如果存在目标，发射信号冷冻enemy
+    if(currentTarget)
     {
-        Enemy *enemy=dynamic_cast<Enemy*>(item);
-        if(enemy)
-        {
-            QLineF line(pos(),enemy->pos());
-            if(line.length()<=range)
-            {
-                if(line.length()< closestdistance)
-                {
-                    closestdistance=line.length();
-                    closestEnemy=enemy;
-                }
-            }
-        }
-    }
-    //如果寻找到，发射信号冷冻enemy
-    if(closestEnemy)
-    {
-        emit applyControl(closestEnemy,controlDuration);
+        emit applyControl(currentTarget,controlDuration);
     }
 
 }
@@ -56,3 +36,5 @@ void FishingCatPillow::upgrade()
         }
     }
 }
+
+
