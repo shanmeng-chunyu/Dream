@@ -61,8 +61,7 @@ private slots:
     // ÓÎÏ·Ö÷Ñ­»·
     void updateGame();
 signals:
-    void gameWon(int finalStability, int enemiesKilled);
-    void gameLost(int finalStability, int enemiesKilled);
+    void gameFinished(bool win,int finalStability, int enemiesKilled);
 private:
     GameManager(QObject* parent = nullptr);
     ~GameManager() override;

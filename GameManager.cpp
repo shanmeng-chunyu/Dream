@@ -336,14 +336,14 @@ void GameManager::checkWinLossConditions() {
     if (m_player->getStability() <= 0) {
         m_gameIsOver = true;
         m_gameTimer->stop();
-        emit gameLost(m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
+        emit gameFinished(false,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏失败的信号
     }
 
     if (m_waveManager->isFinished() && m_enemies.isEmpty()) {
         m_gameIsOver = true;
         m_gameTimer->stop();
-        emit gameWon(m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
+        emit gameFinished(true,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏胜利的信号
     }
 }
