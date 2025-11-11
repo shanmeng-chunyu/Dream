@@ -1,6 +1,6 @@
 #include "KnowledgeTree.h"
 
-KnowledgeTree::KnowledgeTree(QGraphicsItem* parent):Tower(160,3.5,2.0,200,250,QPixmap( ":/towers/resources/towers/level1/KnowledgeTree.png"),parent){}
+KnowledgeTree::KnowledgeTree(double range,QGraphicsItem* parent):Tower(160,range,2.0,200,250,QPixmap( ":/towers/resources/towers/level1/KnowledgeTree.png"),parent){}
 
 void KnowledgeTree::upgrade()
 {

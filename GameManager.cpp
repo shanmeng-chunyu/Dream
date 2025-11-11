@@ -1,6 +1,8 @@
 #include "GameManager.h"
 
+#include <FishingCatPillow.h>
 #include <InspirationBulb.h>
+#include <KnowledgeTree.h>
 
 #include "LevelLoader.h"
 #include "Player.h"
@@ -260,6 +262,18 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     if (type == "InspirationBulb") {
         tower = new InspirationBulb(pixelRange);
     }else if (type == "KnowledgeTree") {
+        tower = new KnowledgeTree(pixelRange);
+    }else if (type == "FishingCatPillow") {
+        tower = new FishingCatPillow(pixelRange);
+    }else if (type == "LiveCoffee") {
+
+    }else if (type == "WarmMemories") {
+
+    }else if (type == "NightRadio") {
+
+    }else if (type == "PettingCatTime") {
+
+    }else if (type == "Companionship") {
 
     }
 

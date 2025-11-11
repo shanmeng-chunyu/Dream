@@ -8,7 +8,7 @@ class FishingCatPillow:public Tower
 {
     Q_OBJECT
 public:
-    explicit FishingCatPillow(QGraphicsItem* parent = nullptr);
+    explicit FishingCatPillow(double range,QGraphicsItem* parent = nullptr);
     void upgrade()override;
 private slots:
     void controlTarget();//索敌--控制逻辑

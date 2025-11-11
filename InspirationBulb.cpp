@@ -1,7 +1,7 @@
 #include "InspirationBulb.h"
 #include<QPixmap>
 
-InspirationBulb::InspirationBulb(int range,QGraphicsItem* parent):Tower(40,range,0.8,100,150,QPixmap(":/towers/resources/towers/level1/InspirationBulb.png"),parent){}
+InspirationBulb::InspirationBulb(double range,QGraphicsItem* parent):Tower(40,range,0.8,100,150,QPixmap(":/towers/resources/towers/level1/InspirationBulb.png"),parent){}
 void InspirationBulb::upgrade()
 {
     if(!upgraded)

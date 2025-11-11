@@ -3,7 +3,7 @@
 #include <QLineF>
 #include <QGraphicsScene>
 
-FishingCatPillow::FishingCatPillow(QGraphicsItem* parent):Tower(0,2.5,0,120,180,QPixmap( ":/towers/resources/towers/level1/FishingCatPillow.png"),parent)
+FishingCatPillow::FishingCatPillow(double range,QGraphicsItem* parent):Tower(0,range,0,120,180,QPixmap( ":/towers/resources/towers/level1/FishingCatPillow.png"),parent)
 {
     controlDuration=1.5;
     controlInterval=5.0;
