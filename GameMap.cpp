@@ -226,6 +226,17 @@ bool GameMap::loadFromFile(const QString &filePath)
         obstacles.push_back(data);
     }
 
+    if (stageIndex == 3)
+    {
+        const double offset = computeHorizontalCenterOffset(path);
+        if (std::abs(offset) > 1e-6)
+        {
+            applyHorizontalOffset(path, offset);
+            applyHorizontalOffset(towerPos, offset);
+            applyHorizontalOffset(obstacles, offset);
+        }
+    }
+
     setObstacles(obstacles);
 
     towerPrototypes.clear();
@@ -544,7 +555,7 @@ double GameMap::fallbackPathWidthRatio(int stageIndex)
     case 2:
         return 0.08;
     case 3:
-        return 0.08;
+        return 0.12548828125;
     default:
         return 0.06;
     }
@@ -643,4 +654,63 @@ QString GameMap::locateProjectRootPath(const QString &startDir)
         }
     }
     return startDir;
+}
+
+double GameMap::computeHorizontalCenterOffset(const std::vector<QPointF> &points)
+{
+    if (points.empty())
+    {
+        return 0.0;
+    }
+
+    double minX = 1.0;
+    double maxX = 0.0;
+    for (const QPointF &pt : points)
+    {
+        minX = std::min(minX, pt.x());
+        maxX = std::max(maxX, pt.x());
+    }
+
+    if (!(maxX > minX))
+    {
+        return 0.0;
+    }
+
+    const double currentCenter = minX + (maxX - minX) * 0.5;
+    double offset = 0.5 - currentCenter;
+    const double minOffset = -minX;
+    const double maxOffset = 1.0 - maxX;
+    offset = std::clamp(offset, minOffset, maxOffset);
+
+    if (std::abs(offset) < 1e-5)
+    {
+        return 0.0;
+    }
+    return offset;
+}
+
+void GameMap::applyHorizontalOffset(std::vector<QPointF> &points, double offset)
+{
+    if (points.empty() || std::abs(offset) < 1e-6)
+    {
+        return;
+    }
+    for (QPointF &pt : points)
+    {
+        const double shifted = std::clamp(pt.x() + offset, 0.0, 1.0);
+        pt.setX(shifted);
+    }
+}
+
+void GameMap::applyHorizontalOffset(std::vector<ObstacleData> &obstacles, double offset)
+{
+    if (obstacles.empty() || std::abs(offset) < 1e-6)
+    {
+        return;
+    }
+    for (ObstacleData &obs : obstacles)
+    {
+        const double shifted = std::clamp(obs.relativePosition.x() + offset, 0.0, 1.0);
+        obs.relativePosition.setX(shifted);
+    }
 }
