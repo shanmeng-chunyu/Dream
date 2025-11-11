@@ -11,6 +11,8 @@ class Player : public QObject {
 
     void decreaseStability(int amount);
 
+    void increaseStability(int amount);
+
     void addResource(int amount);
 
     bool spendResource(int amount);
@@ -23,7 +25,7 @@ class Player : public QObject {
 
     signals:
 
-        void stabilityChanged(int newStability);
+    void stabilityChanged(int newStability);
 
     void resourceChanged(int newResource);
 
