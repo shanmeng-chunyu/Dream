@@ -269,11 +269,11 @@ void MainWindow::initializeScene()
 
     appendCandidate(commandLineLevelCandidate);
     appendCandidate(envLevelCandidate);
-    appendCandidate(QStringLiteral("levels/level3.json"));
     appendCandidate(QStringLiteral("levels/level1.json"));
+    appendCandidate(QStringLiteral("levels/level2.json"));
     appendCandidate(QStringLiteral("level.json"));
     appendCandidate(QStringLiteral("levels/stage1.json"));
-    appendCandidate(QStringLiteral("levels/level2.json"));
+    appendCandidate(QStringLiteral("levels/level3.json"));
 
     QString preparedLevelPath;
     for (const QString &candidate : levelSearchOrder)
