@@ -2,7 +2,6 @@
 #define INSPIRATIONBULB_H
 
 #include "Tower.h"
-#include <QString>
 
 class InspirationBulb:public Tower
 {
@@ -12,4 +11,5 @@ public:
 };
 
 #endif // INSPIRATIONBULB_H
+
 
