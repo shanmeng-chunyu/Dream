@@ -81,8 +81,8 @@ private:
 
     // 游戏模块
     Player* m_player;
-    WaveManager* m_waveManager;
     GameMap* m_gameMap;
+    WaveManager* m_waveManager;
 
     // 实体管理
     QList<Enemy*> m_enemies;
