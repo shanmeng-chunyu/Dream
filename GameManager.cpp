@@ -202,6 +202,7 @@ void GameManager::setScreenSize(const QSizeF& size) {
 void GameManager::updateGame() {
     if (m_gameIsOver) return;
 
+    m_waveManager->update();
     // 移动所有实体
     for (Enemy* enemy : m_enemies) enemy->move();
     for (Bullet* bullet : m_bullets) bullet->move();
@@ -265,6 +266,8 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
         tower = new KnowledgeTree(pixelRange);
     }else if (type == "FishingCatPillow") {
         tower = new FishingCatPillow(pixelRange);
+        FishingCatPillow* pillow = qobject_cast<FishingCatPillow*>(tower);
+        connect(pillow,&FishingCatPillow::applyControl,this,&GameManager::onApplyEnemyControl);
     }else if (type == "LiveCoffee") {
 
     }else if (type == "WarmMemories") {
@@ -287,9 +290,10 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 void GameManager::onNewBullet(Tower* tower, Enemy* target) {
     // 根据发射塔的类型查找对应的子弹贴图
     // 这里简化处理，假设所有塔都用同一种子弹或在tower prototype里定义
-    QPixmap pixmap(":/bullets/default_bullet.png"); // 应从JSON读取
-
-    auto* bullet = new Bullet(tower->damage, 10.0, target, pixmap); // 速度硬编码，可改为从JSON读取
+    QString type = tower->getType();
+    QJsonObject proto = m_towerPrototypes[type];
+    QPixmap pixmap = (proto["bullet_pixmap"]).toString();
+    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, pixmap); // 速度硬编码，可改为从JSON读取
     bullet->setPos(tower->pos());
 
     m_scene->addItem(bullet);
@@ -299,6 +303,11 @@ void GameManager::onNewBullet(Tower* tower, Enemy* target) {
 
 void GameManager::onEnemyReachedEnd(Enemy* enemy) {
     m_player->decreaseStability(enemy->getDamage());
+    for (Tower* tower : m_towers) {
+        if (tower->getCurrentTarget() == enemy) {
+            tower->setTarget(nullptr);
+        }
+    }
     m_entitiesToClean.append(enemy);
     m_enemies.removeAll(enemy);
 }
@@ -307,6 +316,11 @@ void GameManager::onEnemyDied(Enemy* enemy) {
     // 可根据敌人类型给予不同资源
     QJsonObject proto = m_enemyPrototypes[enemy->getType()];
     m_player->addResource(proto["drops"].toInt());
+    for (Tower* tower : m_towers) {
+        if (tower->getCurrentTarget() == enemy) {
+            tower->setTarget(nullptr);
+        }
+    }
     m_entitiesToClean.append(enemy);
     m_enemies.removeAll(enemy);
 
@@ -410,4 +424,12 @@ void GameManager::resumeGame() {
     if (!m_gameIsOver) {
         m_gameTimer->start(16);
     }
+}
+
+void GameManager::onApplyEnemyControl(Enemy* enemy,double duration) {
+    if (!enemy || !m_enemies.contains(enemy)) {
+        return;
+    }
+
+    enemy->stopFor(duration);
 }

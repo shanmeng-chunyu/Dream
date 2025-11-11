@@ -18,6 +18,8 @@ public:
     void setAbsolutePath(const std::vector<QPointF>& path);
     QString getType() const{return type;};
     std::vector<QPointF> getAbsolutePath(){return absolutePath;};
+    void stopFor(double duration);
+
 
     public slots:
         void move();
@@ -33,6 +35,8 @@ private:
     std::vector<QPointF> absolutePath;
     int currentPathIndex;
     QString type;
+    //¿ØÖÆµÐÈËÔÝÍ£µÄÂß¼­
+    int m_stunTicksRemainimng = 0;
 };
 
 #endif // ENEMY_H

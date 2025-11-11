@@ -60,6 +60,7 @@ public slots:
 private slots:
     // ÓÎÏ·Ö÷Ñ­»·
     void updateGame();
+    void onApplyEnemyControl(Enemy* enemy,double duration);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
 private:

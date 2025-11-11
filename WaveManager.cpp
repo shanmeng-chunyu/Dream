@@ -1,9 +1,7 @@
 #include "WaveManager.h"
 
 WaveManager::WaveManager(GameMap* map, QObject* parent)
-    : QObject(parent), currentWaveIndex(-1), gameMap(map), screenSize(800, 600) {
-    spawnTimer = new QTimer(this);
-    connect(spawnTimer, &QTimer::timeout, this, &WaveManager::spawnEnemyFromQueue);
+    : QObject(parent), currentWaveIndex(-1), gameMap(map), screenSize(800, 600) ,m_spawnCooldownTicks(-1){
 }
 
 void WaveManager::loadWaves(const QJsonArray& wavesData) {
@@ -32,16 +30,16 @@ void WaveManager::startNextWave() {
     currentWaveIndex++;
     spawnQueue = waves[currentWaveIndex].enemies;
     if (!spawnQueue.isEmpty()) {
-        spawnTimer->start(spawnQueue.first().interval * 1000);
+        m_spawnCooldownTicks = intervalToTicks(spawnQueue.first().interval);
     }
 }
 
-void WaveManager::spawnEnemyFromQueue() {
+void WaveManager::spawnEnemyAndResetCooldown() {
     if (spawnQueue.isEmpty()) {
-        spawnTimer->stop();
         if (currentWaveIndex >= waves.size() - 1) {
              emit allWavesCompleted();
         }
+        m_spawnCooldownTicks = -1;
         return;
     }
 
@@ -60,13 +58,15 @@ void WaveManager::spawnEnemyFromQueue() {
     if (current.count <= 0) {
         spawnQueue.removeFirst();
         if (spawnQueue.isEmpty()) {
-            spawnTimer->stop();
              if (currentWaveIndex >= waves.size() - 1) {
                 emit allWavesCompleted();
             }
+            m_spawnCooldownTicks = -1;
         } else {
-            spawnTimer->setInterval(spawnQueue.first().interval * 1000);
+            m_spawnCooldownTicks = intervalToTicks(spawnQueue.first().interval);
         }
+    }else {
+        m_spawnCooldownTicks = intervalToTicks(current.interval);
     }
 }
 
@@ -77,4 +77,18 @@ bool WaveManager::isFinished() const {
 
 void WaveManager::setScreenSize(const QSizeF& size) {
     screenSize = size;
+}
+
+void WaveManager::update() {
+    if (m_spawnCooldownTicks == 0) {
+        spawnEnemyAndResetCooldown();
+    }else if (m_spawnCooldownTicks > 0) {
+        m_spawnCooldownTicks--;
+    }
+}
+
+int WaveManager::intervalToTicks(double intervalInSeconds) {
+    const int gameTickMs = 16;
+    int ticks = static_cast<int>((intervalInSeconds * 1000.0) / gameTickMs);
+    return std::max(1,ticks);
 }

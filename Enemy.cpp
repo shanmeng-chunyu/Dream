@@ -25,6 +25,10 @@ void Enemy::setAbsolutePath(const std::vector<QPointF>& path) {
 
 
 void Enemy::move() {
+    if (m_stunTicksRemainimng > 0) {
+        m_stunTicksRemainimng--;
+        return;
+    }
     if (currentPathIndex >= absolutePath.size() - 1) {
         emit reachedEnd(this);
         return;
@@ -57,4 +61,8 @@ void Enemy::takeDamage(int damageAmount) {
 
 int Enemy::getDamage() const {
     return damage;
+}
+
+void Enemy::stopFor(double duration) {
+    m_stunTicksRemainimng = static_cast<int>(duration * 60);
 }
