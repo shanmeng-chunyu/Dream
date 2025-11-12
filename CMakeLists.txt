@@ -55,6 +55,8 @@ add_executable(Dream
         InspirationBulb.cpp
         KnowledgeTree.cpp
         FishingCatPillow.cpp
+        AbilitiesImpl.h
+        EnemyAbility.h
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc
