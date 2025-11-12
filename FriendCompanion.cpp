@@ -6,10 +6,12 @@ FriendCompanion::FriendCompanion(QGraphicsItem* parent):Tower(0,2.5,1,100,150,QP
     increaseDamage=1.15;
     type="FriendCompanion";
 }
+void FriendCompanion::attack(){return;}
 void FriendCompanion:: upgrade()
 {
     increaseDamage=1.25;
     upgraded=true;
     setPixmap(QPixmap(":/towers/resources/towers/level2/Companionship_upgrade.png"));
 }
+
 
