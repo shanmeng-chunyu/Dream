@@ -34,11 +34,8 @@ public:
     void died(Enemy* enemy);
 
 private:
-    int currentHealth;
-    double speed;
     int damage;
     std::vector<QPointF> absolutePath;
-    int currentPathIndex;
     QString type;
     int m_health;
     double m_speed;
