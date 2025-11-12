@@ -14,10 +14,14 @@ public:
     void takeDamage(int damage);
     // 获取摧毁后提供的资源值
     int getResourceValue() const;
+    int getCurrentHealth()const{return currentHealth;}
+    int getMaxHealth()const{return maxHealth;}
 
     signals:
         // 当障碍物被摧毁时发出此信号
-        void destroyed(Obstacle* obstacle, int resourceValue);
+        void destroyedObstacle(Obstacle* obstacle, int resourceValue);
+        //障碍物生命值减少时的信号(用于ui中进度条更新，如果不需要可以直接删去
+        void healthChanged(int currentHealth,int maxHealth);
 
 private:
     int maxHealth;
