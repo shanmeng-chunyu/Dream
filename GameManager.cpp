@@ -290,7 +290,7 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 void GameManager::onNewBullet(Tower* tower, Enemy* target) {
     // 根据发射塔的类型查找对应的子弹贴图
     // 这里简化处理，假设所有塔都用同一种子弹或在tower prototype里定义
-    QString type = tower->getType();
+    QString type = tower->type;
     QJsonObject proto = m_towerPrototypes[type];
     QPixmap pixmap = (proto["bullet_pixmap"]).toString();
     auto* bullet = new Bullet(tower->getDamage(), 10.0, target, pixmap); // 速度硬编码，可改为从JSON读取
@@ -393,7 +393,7 @@ void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
         QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
                             tower->pos().y() / m_screenSize.height());
         if (qFuzzyCompare(towerRelPos, relativePosition)) {
-            QJsonObject proto = m_towerPrototypes[tower->getType()];
+            QJsonObject proto = m_towerPrototypes[tower->type];
             if (m_player->spendResource(proto["upgrade_cost"].toInt())) {
                 tower->upgrade();
             }

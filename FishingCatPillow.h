@@ -5,8 +5,9 @@
 
 class FishingCatPillow:public Tower
 {
+    Q_OBJECT
 public:
-    explicit FishingCatPillow(QGraphicsItem* parent = nullptr);
+    explicit FishingCatPillow(double range,QGraphicsItem* parent = nullptr);
     void upgrade()override;
     void attack()override;//通过fireRate来表示controlRate，但是不作出攻击
 signals:
