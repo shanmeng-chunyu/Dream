@@ -2,14 +2,16 @@
 #include <QLineF>
 #include <QDebug>
 
-Enemy::Enemy(int health, double speed, int damage, const std::vector<QPointF>& path, const QPixmap& pixmap, QGraphicsItem* parent)
+Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& path,const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
       QGraphicsPixmapItem(pixmap, parent),
-      currentHealth(health),
-      speed(speed),
+      m_health(health),
+      m_speed(speed),
       damage(damage),
       absolutePath(path),
-      currentPathIndex(0) {
+      m_currentPathIndex(0),
+      m_stunTicksRemainimng(0)
+{
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
     }
@@ -38,23 +40,23 @@ void Enemy::move() {
     QLineF line(pos(), targetPoint);
 
     if (line.length() < speed) {
-        currentPathIndex++;
+        ++m_currentPathIndex;
         setPos(targetPoint);
-        if (currentPathIndex >= absolutePath.size() - 1) {
+        if (m_currentPathIndex >= absolutePath.size() - 1) {
             emit reachedEnd(this);
         }
         return;
     }
 
     double angle = atan2(targetPoint.y() - pos().y(), targetPoint.x() - pos().x());
-    double dx = speed * cos(angle);
-    double dy = speed * sin(angle);
+    double dx = m_speed * cos(angle);
+    double dy =m_speed * sin(angle);
     setPos(pos().x() + dx, pos().y() + dy);
 }
 
 void Enemy::takeDamage(int damageAmount) {
-    currentHealth -= damageAmount;
-    if (currentHealth <= 0) {
+    m_health -= damageAmount;
+    if (m_health <= 0) {
         emit died(this);
     }
 }
