@@ -10,7 +10,11 @@ void WarmMemory::attack()
 {
     if(currentTarget)
     {
-        emit applyControl(currentTarget,stopDuration);
+        Enemy* enemy = dynamic_cast<Enemy*>(currentTarget);
+        if(enemy)
+        {
+            emit applyControl(enemy,stopDuration);
+        }
     }
 }
 
@@ -30,3 +34,4 @@ void WarmMemory::upgrade()
         setPixmap(QPixmap(":/towers/resources/towers/level2/WarmMemory_upgrade.png"));
     }
 }
+
