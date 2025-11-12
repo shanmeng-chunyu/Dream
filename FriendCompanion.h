@@ -8,9 +8,11 @@ class FriendCompanion:public Tower
 public:
     explicit FriendCompanion(QGraphicsItem* parent = nullptr);
     void upgrade() override;
+    void attack()override;
     double getFactor(){return increaseDamage;};
 private:
     double increaseDamage;
 };
 
 #endif // FRIENDCOMPANION_H
+
