@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QPropertyAnimation>
 #include <QIcon>
+#include <QTimer>
 
 class IconButton : public QPushButton
 {
@@ -27,6 +28,8 @@ public:
     void setIconSizePolicy(SizePolicy policy);
     void setIconWidthRatio(qreal ratio);  // 图标宽度占按钮宽度的比例
     void setIconHeightRatio(qreal ratio); // 图标高度占按钮高度的比例
+    void updateIconSize();
+    QIcon createScalableIcon(const QIcon &originalIcon);
 
 protected:
     void enterEvent(QEnterEvent *event) override;
@@ -39,7 +42,7 @@ protected:
 private:
     void setupStyle();
     void startScaleAnimation(qreal targetScale);
-    void updateIconSize();
+
     QSize calculateIconSize() const;
 
 private:
@@ -49,6 +52,8 @@ private:
     SizePolicy m_sizePolicy;
     qreal m_widthRatio;
     qreal m_heightRatio;
+    bool m_animationRunning;
+    qreal m_targetScale;
 };
 
 #endif // ICON_BUTTON_H

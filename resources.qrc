@@ -9,6 +9,11 @@
         <file>resources/button/win_repeat.png</file>
         <file>resources/button/lose_continue.png</file>
         <file>resources/button/lose_repeat.png</file>
+        <file>resources/button/begin.png</file>
+        <file>resources/button/pause.png</file>
+        <file>resources/button/speed.png</file>
+        <file>resources/button/speed_pressed.png</file>
+        <file>resources/button/menu.png</file>
     </qresource>
     <qresource prefix="/background">
         <file>resources/background/choose.png</file>
@@ -55,8 +60,13 @@
         <file>resources/frame/level3.png</file>
         <file>resources/frame/defeat.png</file>
         <file>resources/frame/victory.png</file>
+        <file>resources/frame/time.png</file>
+        <file>resources/frame/building1.png</file>
+        <file>resources/frame/building2.png</file>
+        <file>resources/frame/building3.png</file>
     </qresource>
     <qresource prefix="/map">
+        <file>resources/map/first_map.png</file>
         <file>resources/map/brief_first.png</file>
         <file>resources/map/brief_second.png</file>
         <file>resources/map/brief_third.png</file>
@@ -66,12 +76,26 @@
         <file>resources/map_items/first/draft_100_100.png</file>
         <file>resources/map_items/first/stationary_100_100.png</file>
         <file>resources/map_items/first/usb_100_100.png</file>
-        <file>resources/map_items/second/box_100_100.png</file>
         <file>resources/map_items/second/flower_100_100.png</file>
         <file>resources/map_items/second/photo_100_100.png</file>
         <file>resources/map_items/second/ring_100_100.png</file>
         <file>resources/map_items/third/third_end_100_100.png</file>
         <file>resources/map_items/third/third_start_100_100.png</file>
+        <file>resources/map_items/second/box_100_100.png</file>
+    </qresource>
+    <qresource prefix="/resource">
+        <file>resources/resource/first_inspiration.png</file>
+        <file>resources/resource/stability.png</file>
+    </qresource>
+    <qresource prefix="/tower">
+        <file>resources/tower/first/bulb.png</file>
+        <file>resources/tower/first/coffee.png</file>
+        <file>resources/tower/first/pillow.png</file>
+        <file>resources/tower/first/tree.png</file>
+        <file>resources/tower/second/cat.png</file>
+        <file>resources/tower/second/fire.png</file>
+        <file>resources/tower/second/memory.png</file>
+        <file>resources/tower/second/radio.png</file>
         <file>resources/map_items/first/book.png</file>
         <file>resources/map_items/first/scratchpaper.png</file>
         <file>resources/map_items/first/stationery.png</file>
