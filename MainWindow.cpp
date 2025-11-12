@@ -139,8 +139,10 @@ public:
         setAcceptHoverEvents(false);
         setAcceptedMouseButtons(Qt::LeftButton);
         setFlag(QGraphicsItem::ItemIsSelectable, false);
-        setPen(Qt::NoPen);
-        setBrush(Qt::NoBrush);
+        // setPen(Qt::NoPen);
+        // setBrush(Qt::NoBrush);
+        setPen(QPen(Qt::red, 2)); // 设置一个2像素宽的红色边框
+        setBrush(QColor(255, 0, 0, 80)); // 设置一个半透明的红色填充 (R, G, B, Alpha)
         setCenter(center);
     }
 
@@ -171,12 +173,12 @@ protected:
         event->accept();
     }
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
-    {
-        Q_UNUSED(painter);
-        Q_UNUSED(option);
-        Q_UNUSED(widget);
-    }
+    // void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
+    // {
+    //     Q_UNUSED(painter);
+    //     Q_UNUSED(option);
+    //     Q_UNUSED(widget);
+    // }
 
 private:
     int m_index;
@@ -292,21 +294,21 @@ void MainWindow::initializeScene()
         m_levelSources.append(resolved);
     }
 
-    bool loaded = false;
-    for (int idx = 0; idx < m_levelSources.size(); ++idx)
-    {
-        if (loadLevelByIndex(idx, false))
-        {
-            loaded = true;
-            break;
-        }
-    }
-
-    if (!loaded)
-    {
-        QMessageBox::critical(this, tr("Level Missing"), tr("Cannot find a usable level.json in the workspace."));
-        return;
-    }
+    // bool loaded = false;
+    // for (int idx = 0; idx < m_levelSources.size(); ++idx)
+    // {
+    //     if (loadLevelByIndex(idx, false))
+    //     {
+    //         loaded = true;
+    //         break;
+    //     }
+    // }
+    //
+    // if (!loaded)
+    // {
+    //     QMessageBox::critical(this, tr("Level Missing"), tr("Cannot find a usable level.json in the workspace."));
+    //     return;
+    // }
 }
 
 QString MainWindow::resolveLevelPath(const QString &candidate) const
@@ -761,7 +763,7 @@ bool MainWindow::loadLevelByIndex(int index, bool showError)
         {
             QMessageBox::information(this,
                                      tr("Level Switch"),
-                                     tr("No level mapped to shortcut %1.").arg(index + 1));
+                                     tr("No level mapped to shortcut %1.").arg(QString::number(index + 1)));
         }
         return false;
     }
