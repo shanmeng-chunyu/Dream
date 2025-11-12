@@ -5,12 +5,13 @@
 
 class WarmMemory:public Tower
 {
+    Q_OBJECT
 public:
    explicit WarmMemory(QGraphicsItem* parent = nullptr);
     void upgrade()override;
     void attack()override;//没有子弹
 signals:
-    void applyControl(Enemy *enemy,double duration);
+    void applyControl(QGraphicsPixmapItem *enemy,double duration);
 private:
     double stopDuration;
 };

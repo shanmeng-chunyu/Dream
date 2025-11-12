@@ -5,16 +5,14 @@ Obstacle::Obstacle(int health, int resourceValue, const QPixmap& pixmap, QGraphi
       QGraphicsPixmapItem(pixmap, parent),
       maxHealth(health),
       currentHealth(health),
-      resourceValue(resourceValue)
-{setPixmap(pixmap);}
+      resourceValue(resourceValue) {}
 
 void Obstacle::takeDamage(int damage) {
     currentHealth -= damage;
-    emit healthChanged(currentHealth, maxHealth);
     if (currentHealth <= 0) {
         currentHealth = 0;
         // 发射销毁信号，由GameManager处理资源增加和对象删除
-        emit destroyedObstacle(this, resourceValue);
+        emit destroyed(this, resourceValue);
     }
 }
 

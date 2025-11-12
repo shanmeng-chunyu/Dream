@@ -62,6 +62,12 @@ add_executable(Dream
         EnemyAbility.h
         LiveCoffee.h
         LiveCoffee.cpp
+        NightRadio.h
+        NightRadio.cpp
+        PettingCatTime.h
+        PettingCatTime.cpp
+        WarmMemory.h
+        WarmMemory.cpp
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc
