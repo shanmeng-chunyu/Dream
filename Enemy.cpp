@@ -19,7 +19,7 @@ Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& pa
 
 void Enemy::setAbsolutePath(const std::vector<QPointF>& path) {
     absolutePath = path;
-    currentPathIndex = 0;
+    m_currentPathIndex = 0;
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
     }
@@ -31,15 +31,15 @@ void Enemy::move() {
         m_stunTicksRemainimng--;
         return;
     }
-    if (currentPathIndex >= absolutePath.size() - 1) {
+    if (m_currentPathIndex>= absolutePath.size() - 1) {
         emit reachedEnd(this);
         return;
     }
 
-    QPointF targetPoint = absolutePath[currentPathIndex + 1];
+    QPointF targetPoint = absolutePath[m_currentPathIndex + 1];
     QLineF line(pos(), targetPoint);
 
-    if (line.length() < speed) {
+    if (line.length() < m_speed) {
         ++m_currentPathIndex;
         setPos(targetPoint);
         if (m_currentPathIndex >= absolutePath.size() - 1) {
