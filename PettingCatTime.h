@@ -6,7 +6,7 @@
 class PettingCatTime:public Tower
 {
 public:
-    explicit PettingCatTime(QGraphicsItem* parent = nullptr);
+    explicit PettingCatTime(double range,QGraphicsItem* parent = nullptr);
     void upgrade() override;
     void attack()override;
 };

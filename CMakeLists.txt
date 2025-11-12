@@ -68,6 +68,8 @@ add_executable(Dream
         PettingCatTime.cpp
         WarmMemory.h
         WarmMemory.cpp
+        FriendCompanion.h
+        FriendCompanion.cpp
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

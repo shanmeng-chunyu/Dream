@@ -23,6 +23,11 @@
 #include <QtMath>
 #include <QMessageBox>
 
+#include "FriendCompanion.h"
+#include "LiveCoffee.h"
+#include "NightRadio.h"
+#include "PettingCatTime.h"
+#include "WarmMemory.h"
 #include "widget_post_game.h"
 
 GameManager* GameManager::m_instance = nullptr;
@@ -296,6 +301,7 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 
     QJsonObject proto = m_towerPrototypes[type];
     int cost = proto["cost"].toInt();
+    QString pixmap_path = proto["pixmap"].toString();
 
     // 1. 检查资源
     if (!m_player->spendResource(cost)) {
@@ -322,20 +328,20 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
         FishingCatPillow* pillow = qobject_cast<FishingCatPillow*>(tower);
         connect(pillow,&FishingCatPillow::applyControl,this,&GameManager::onApplyEnemyControl);
     }else if (type == "LiveCoffee") {
-
+        tower = new LiveCoffee(pixelRange);
     }else if (type == "WarmMemories") {
-
+        tower = new WarmMemory(pixelRange);
     }else if (type == "NightRadio") {
-
+        tower = new NightRadio(pixelRange);
     }else if (type == "PettingCatTime") {
-
+        tower = new PettingCatTime(pixelRange);
     }else if (type == "Companionship") {
-
+        tower = new FriendCompanion(pixelRange);
     }
 
     const QSize towerPixelSize(77, 77);
     const QPointF towerOffset(-towerPixelSize.width() / 2.0, -towerPixelSize.height() / 2.0); // (即 -38.5, -38.5)
-    QPixmap originalPixmap = tower->pixmap(); // 获取构造函数设置的pixmap
+    QPixmap originalPixmap = QPixmap(pixmap_path); // 获取构造函数设置的pixmap
     // 缩放 pixmap
     QPixmap scaledPixmap = originalPixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     // 替换掉原来的 pixmap

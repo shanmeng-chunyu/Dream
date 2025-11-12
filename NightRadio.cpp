@@ -1,6 +1,6 @@
 #include "NightRadio.h"
 
-NightRadio::NightRadio(QGraphicsItem* parent):Tower(100,4.5,1.5,150,200,QPixmap(":/Tower/resources/towers/level2/NightRadio.png"),parent)
+NightRadio::NightRadio(double range,QGraphicsItem* parent):Tower(100,range,1.5,150,200,QPixmap(":/Tower/resources/towers/level2/NightRadio.png"),parent)
 {
     type="NightRadio";
 }

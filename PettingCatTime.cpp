@@ -1,7 +1,7 @@
 #include "PettingCatTime.h"
 
-PettingCatTime::PettingCatTime(QGraphicsItem* parent)
-    : Tower(60, 1.5, 0.5, 180, 220, QPixmap(":/towers/resources/towers/level2/PettingCatTime.png"), parent)
+PettingCatTime::PettingCatTime(double range,QGraphicsItem* parent)
+    : Tower(60, range, 0.5, 180, 220, QPixmap(":/towers/resources/towers/level2/PettingCatTime.png"), parent)
 {
     type = "PettingCatTime";
 }
