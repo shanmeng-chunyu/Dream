@@ -9,7 +9,7 @@
 #include <QSizeF>
 #include <QGraphicsItem>
 
-// Ç°ÏòÉùÃ÷£¬±ÜÃâÔÚÍ·ÎÄ¼şÖĞÒıÈë¹ı¶àÒÀÀµ
+// å‰å‘å£°æ˜ï¼Œé¿å…åœ¨å¤´æ–‡ä»¶ä¸­å¼•å…¥è¿‡å¤šä¾èµ–
 class QGraphicsScene;
 class QTimer;
 class Enemy;
@@ -24,41 +24,41 @@ class GameManager : public QObject {
     Q_OBJECT
 
 public:
-    // µ¥ÀıÄ£Ê½
+    // å•ä¾‹æ¨¡å¼
     static GameManager* instance();
 
-    // ³õÊ¼»¯
+    // åˆå§‹åŒ–
     void init(QGraphicsScene* scene);
-    // ¼ÓÔØ¹Ø¿¨
+    // åŠ è½½å…³å¡
     void loadLevel(const QString& levelPath);
-    // ¿ªÊ¼ÓÎÏ·
+    // å¼€å§‹æ¸¸æˆ
     void startGame();
-    // ÏìÓ¦´°¿Ú´óĞ¡±ä»¯
+    // å“åº”çª—å£å¤§å°å˜åŒ–
     void setScreenSize(const QSizeF& size);
 
-    // ½¨Ôì·ÀÓùËş
+    // å»ºé€ é˜²å¾¡å¡”
     void buildTower(const QString& type, const QPointF& relativePosition);
 
 public slots:
-    // ÏìÓ¦WaveManagerµÄĞÅºÅÀ´Éú³ÉµĞÈË
+    // å“åº”WaveManagerçš„ä¿¡å·æ¥ç”Ÿæˆæ•Œäºº
     void onSpawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath);
-    // ÏìÓ¦TowerµÄĞÅºÅÀ´Éú³É×Óµ¯
+    // å“åº”Towerçš„ä¿¡å·æ¥ç”Ÿæˆå­å¼¹
     void onNewBullet(Tower* tower, Enemy* target);
-    // ÏìÓ¦EnemyĞÅºÅ
+    // å“åº”Enemyä¿¡å·
     void onEnemyReachedEnd(Enemy* enemy);
     void onEnemyDied(Enemy* enemy);
-    // ÏìÓ¦BulletĞÅºÅ
+    // å“åº”Bulletä¿¡å·
     void onBulletHitTarget(Bullet* bullet);
-    // ÏìÓ¦ObstacleĞÅºÅ
+    // å“åº”Obstacleä¿¡å·
     void onObstacleDestroyed(Obstacle* obstacle, int resourceValue);
-    //ÏàÓ¦ÓÃ»§ÇëÇóÉı¼¶»ò³öÊÛ·ÀÓùËş
+    //ç›¸åº”ç”¨æˆ·è¯·æ±‚å‡çº§æˆ–å‡ºå”®é˜²å¾¡å¡”
     void onTowerUpgradeRequested(const QPointF& relativePosition);
     void onTowerSellRequested(const QPointF& relativePosition);
     void pauseGame();
     void resumeGame();
 
 private slots:
-    // ÓÎÏ·Ö÷Ñ­»·
+    // æ¸¸æˆä¸»å¾ªç¯
     void updateGame();
     void onApplyEnemyControl(Enemy* enemy,double duration);
 signals:
@@ -81,25 +81,34 @@ private:
     QTimer* m_gameTimer;
     QSizeF m_screenSize;
 
-    // ÓÎÏ·Ä£¿é
+    // æ¸¸æˆæ¨¡å—
     Player* m_player;
     GameMap* m_gameMap;
     WaveManager* m_waveManager;
 
-    // ÊµÌå¹ÜÀí
+    // å®ä½“ç®¡ç†
     QList<Enemy*> m_enemies;
     QList<Tower*> m_towers;
     QList<Bullet*> m_bullets;
     QList<Obstacle*> m_obstacles;
 
-    // ´ıÉ¾³ıµÄÊµÌåÁĞ±í£¬ÓÃÓÚ°²È«É¾³ı
+    // å¾…åˆ é™¤çš„å®ä½“åˆ—è¡¨ï¼Œç”¨äºå®‰å…¨åˆ é™¤
     QList<QGraphicsItem*> m_entitiesToClean;
 
-    // ´Ó¹Ø¿¨ÎÄ¼ş¼ÓÔØµÄÔ­ĞÍÊı¾İ
+    // ä»å…³å¡æ–‡ä»¶åŠ è½½çš„åŸå‹æ•°æ®
     QMap<QString, QJsonObject> m_enemyPrototypes;
     QMap<QString, QJsonObject> m_towerPrototypes;
 
     bool m_gameIsOver;
+    Enemy* spawnByTypeWithPath(const QString& type,
+                               const std::vector<QPointF>& absPath,
+                               double scale = 1.0);
+    
+    void destroyAllTowers(bool withEffects = true);
+    
+    QSet<Enemy*> m_raged;
+    QHash<Enemy*, int> m_healCd;
+
 };
 
 #endif // GAMEMANAGER_H
