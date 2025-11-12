@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QDebug>
 #include <QPointer>
+#include <QStringList>
 
 #include "GameMap.h"
 #include "widget_post_game.h"
@@ -14,6 +15,7 @@
 class QGraphicsPixmapItem;
 class QGraphicsItem;
 class QResizeEvent;
+class QKeyEvent;
 class TowerBaseItem;
 
 struct TowerBaseVisual
@@ -29,13 +31,16 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+    bool startLevelFromSource(const QString &candidatePath, bool showError = true);
 
 signals:
     void towerUpgradeRequested(const QPointF &relativePosition);
     void towerSellRequested(const QPointF &relativePosition);
+    void levelSelectionRequested();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
     void onTowerBaseClicked(int baseIndex, const QPointF &scenePos);
@@ -70,6 +75,10 @@ private:
     QString absoluteAssetPath(const QString &path, const QString &projectRoot) const;
     QString locateProjectRootPath(const QString &levelPath) const;
     void showPostGameWidget(bool win, int stability, int killCount);
+    void dismissPostGameWidget();
+    bool loadLevelByIndex(int index, bool showError = true);
+    void cycleLevel(int delta);
+    void updateLevelSwitchStatus(int index);
 
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
@@ -83,6 +92,8 @@ private:
     qreal m_baseRadius;
     QSizeF m_sceneDesignSize;
     QPointer<widget_post_game> m_postGameWidget;
+    QStringList m_levelSources;
+    int m_currentLevelIndex;
 };
 
 #endif

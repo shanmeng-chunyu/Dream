@@ -23,6 +23,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QKeyEvent>
 
 #include <QSet>
 #include <algorithm>
@@ -191,7 +192,8 @@ MainWindow::MainWindow(QWidget *parent)
       m_view(new QGraphicsView(m_scene, this)),
       m_backgroundItem(nullptr),
       m_baseRadius(26.0),
-      m_sceneDesignSize(1024, 768)
+      m_sceneDesignSize(1024, 768),
+      m_currentLevelIndex(-1)
 {
 
     setWindowTitle("Dream Guardian");
@@ -269,13 +271,13 @@ void MainWindow::initializeScene()
 
     appendCandidate(commandLineLevelCandidate);
     appendCandidate(envLevelCandidate);
-    appendCandidate(QStringLiteral("levels/level1.json"));
-    appendCandidate(QStringLiteral("levels/level2.json"));
-    appendCandidate(QStringLiteral("level.json"));
-    appendCandidate(QStringLiteral("levels/stage1.json"));
     appendCandidate(QStringLiteral("levels/level3.json"));
+    appendCandidate(QStringLiteral("levels/level2.json"));
+    // appendCandidate(QStringLiteral("level.json"));
+    // appendCandidate(QStringLiteral("levels/stage1.json"));
+    appendCandidate(QStringLiteral("levels/level1.json"));
 
-    QString preparedLevelPath;
+    m_levelSources.clear();
     for (const QString &candidate : levelSearchOrder)
     {
         const QString resolved = resolveLevelPath(candidate);
@@ -283,30 +285,28 @@ void MainWindow::initializeScene()
         {
             continue;
         }
-
-        const QString preparedCandidate = prepareRuntimeLevelFile(resolved);
-        if (preparedCandidate.isEmpty())
+        if (m_levelSources.contains(resolved))
         {
             continue;
         }
-
-        if (loadVisualLevel(preparedCandidate))
-        {
-            preparedLevelPath = preparedCandidate;
-            break;
-        }
-
-        qWarning() << "Level candidate rejected during loading:" << resolved;
+        m_levelSources.append(resolved);
     }
 
-    if (preparedLevelPath.isEmpty())
+    bool loaded = false;
+    for (int idx = 0; idx < m_levelSources.size(); ++idx)
+    {
+        if (loadLevelByIndex(idx, false))
+        {
+            loaded = true;
+            break;
+        }
+    }
+
+    if (!loaded)
     {
         QMessageBox::critical(this, tr("Level Missing"), tr("Cannot find a usable level.json in the workspace."));
         return;
     }
-
-    manager->loadLevel(preparedLevelPath);
-    manager->startGame();
 }
 
 QString MainWindow::resolveLevelPath(const QString &candidate) const
@@ -687,16 +687,13 @@ void MainWindow::handleGameFinished(bool win, int stability, int killCount)
 
 void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
 {
-    if (m_postGameWidget)
-    {
-        m_postGameWidget->close();
-        m_postGameWidget->deleteLater();
-    }
+    dismissPostGameWidget();
     m_postGameWidget = new widget_post_game(win, stability, killCount, this);
     m_postGameWidget->setAttribute(Qt::WA_DeleteOnClose);
+
     // 2. 获取父窗口 (MainWindow) 和子窗口 (结算界面) 的大小
     //    (根据 widget_post_game.ui，我们知道它的固定大小是 400x400)
-    int childWidth = m_postGameWidget->width(); // 应该是 400
+    int childWidth = m_postGameWidget->width();   // 应该是 400
     int childHeight = m_postGameWidget->height(); // 应该是 400
 
     // 3. 计算中心点的 X 和 Y 坐标
@@ -705,7 +702,145 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
 
     // 4. 将子窗口移动到计算出的位置
     m_postGameWidget->move(x, y);
+
+    connect(m_postGameWidget, &widget_post_game::repeat, this, [this]()
+            {
+                const int targetIndex = m_currentLevelIndex;
+                dismissPostGameWidget();
+                if (targetIndex >= 0)
+                {
+                    loadLevelByIndex(targetIndex, true);
+                } });
+
+    connect(m_postGameWidget, &widget_post_game::next, this, [this]()
+            {
+                const int nextIndex = m_currentLevelIndex + 1;
+                dismissPostGameWidget();
+                if (nextIndex < m_levelSources.size())
+                {
+                    loadLevelByIndex(nextIndex, true);
+                }
+                else
+                {
+                    QMessageBox::information(this,
+                                             tr("Level Switch"),
+                                             tr("No further level is available. Please select a level manually."));
+                } });
+
     m_postGameWidget->show();
+}
+
+void MainWindow::dismissPostGameWidget()
+{
+    if (!m_postGameWidget)
+    {
+        return;
+    }
+    m_postGameWidget->close();
+    m_postGameWidget->deleteLater();
+    m_postGameWidget = nullptr;
+}
+
+void MainWindow::updateLevelSwitchStatus(int index)
+{
+    if (index < 0 || index >= m_levelSources.size())
+    {
+        setWindowTitle(QStringLiteral("Dream Guardian"));
+        return;
+    }
+
+    QFileInfo info(m_levelSources.at(index));
+    setWindowTitle(QStringLiteral("Dream Guardian - %1").arg(info.fileName()));
+}
+
+bool MainWindow::loadLevelByIndex(int index, bool showError)
+{
+    if (index < 0 || index >= m_levelSources.size())
+    {
+        if (showError)
+        {
+            QMessageBox::information(this,
+                                     tr("Level Switch"),
+                                     tr("No level mapped to shortcut %1.").arg(index + 1));
+        }
+        return false;
+    }
+
+    const QString sourcePath = m_levelSources.at(index);
+    const QString preparedPath = prepareRuntimeLevelFile(sourcePath);
+    if (preparedPath.isEmpty())
+    {
+        if (showError)
+        {
+            QMessageBox::warning(this,
+                                 tr("Level Switch"),
+                                 tr("Failed to preprocess:\n%1").arg(sourcePath));
+        }
+        return false;
+    }
+
+    if (!loadVisualLevel(preparedPath))
+    {
+        if (showError)
+        {
+            QMessageBox::warning(this,
+                                 tr("Level Switch"),
+                                 tr("Unable to render level:\n%1").arg(sourcePath));
+        }
+        return false;
+    }
+
+    GameManager *manager = GameManager::instance();
+    manager->loadLevel(preparedPath);
+    manager->startGame();
+
+    m_currentLevelIndex = index;
+    updateLevelSwitchStatus(index);
+    return true;
+}
+
+bool MainWindow::startLevelFromSource(const QString &candidatePath, bool showError)
+{
+    const QString resolved = resolveLevelPath(candidatePath);
+    if (resolved.isEmpty())
+    {
+        if (showError)
+        {
+            QMessageBox::warning(this,
+                                 tr("Level Switch"),
+                                 tr("Cannot locate level file:\n%1").arg(candidatePath));
+        }
+        return false;
+    }
+
+    int index = m_levelSources.indexOf(resolved);
+    if (index < 0)
+    {
+        m_levelSources.append(resolved);
+        index = m_levelSources.size() - 1;
+    }
+
+    return loadLevelByIndex(index, showError);
+}
+
+void MainWindow::cycleLevel(int delta)
+{
+    if (m_levelSources.isEmpty() || delta == 0)
+    {
+        return;
+    }
+
+    int nextIndex = m_currentLevelIndex;
+    if (nextIndex < 0)
+    {
+        nextIndex = delta > 0 ? 0 : m_levelSources.size() - 1;
+    }
+    else
+    {
+        nextIndex = (nextIndex + delta + m_levelSources.size()) % m_levelSources.size();
+    }
+
+    loadLevelByIndex(nextIndex, true);
 }
 
 bool MainWindow::loadVisualLevel(const QString &levelPath)
@@ -1298,14 +1433,61 @@ void MainWindow::onTowerBaseClicked(int baseIndex, const QPointF &scenePos)
     }
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (!event)
+    {
+        QMainWindow::keyPressEvent(event);
+        return;
+    }
+
+    const int key = event->key();
+    const Qt::KeyboardModifiers mods = event->modifiers();
+    const bool noModifier = (mods == Qt::NoModifier);
+
+    if (noModifier && key >= Qt::Key_1 && key <= Qt::Key_9)
+    {
+        const int targetIndex = key - Qt::Key_1;
+        if (loadLevelByIndex(targetIndex, true))
+        {
+            event->accept();
+            return;
+        }
+    }
+
+    if (noModifier && key == Qt::Key_BracketLeft)
+    {
+        cycleLevel(-1);
+        event->accept();
+        return;
+    }
+
+    if (noModifier && key == Qt::Key_BracketRight)
+    {
+        cycleLevel(1);
+        event->accept();
+        return;
+    }
+
+    if (noModifier && key == Qt::Key_M)
+    {
+        emit levelSelectionRequested();
+        event->accept();
+        return;
+    }
+
+    QMainWindow::keyPressEvent(event);
+}
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
 
     QTimer::singleShot(0, this, [this]()
                        { fitViewToScene(); });
-    //调整结算窗口位置
-    if (m_postGameWidget && m_postGameWidget->isVisible()) {
+    // 调整结算窗口位置
+    if (m_postGameWidget && m_postGameWidget->isVisible())
+    {
         int childWidth = m_postGameWidget->width();
         int childHeight = m_postGameWidget->height();
 
