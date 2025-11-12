@@ -86,7 +86,7 @@ private:
     GameMap* m_gameMap;
     WaveManager* m_waveManager;
 
-    // ʵ�����
+    // 实体管理
     QList<Enemy*> m_enemies;
     QList<Tower*> m_towers;
     QList<Bullet*> m_bullets;
@@ -100,9 +100,7 @@ private:
     QMap<QString, QJsonObject> m_towerPrototypes;
 
     bool m_gameIsOver;
-    Enemy* spawnByTypeWithPath(const QString& type,
-                               const std::vector<QPointF>& absPath,
-                               double scale = 1.0);
+    Enemy* spawnByTypeWithPath(const QString& type, const std::vector<QPointF>& absPath,double scale = 1.0);
 
     void destroyAllTowers(bool withEffects = true);
 
