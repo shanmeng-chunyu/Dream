@@ -243,6 +243,9 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
 
     connect(enemy, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
     connect(enemy, &Enemy::died, this, &GameManager::onEnemyDied);
+
+    if (type == "nightmare") { destroyAllTowers(true); }
+
 }
 
 void GameManager::buildTower(const QString& type, const QPointF& relativePosition) {
