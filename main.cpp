@@ -1,36 +1,104 @@
 #include <QApplication>
-#include <ui_widget_menu.h>
+#include <QTimer>
+#include <QStringList>
 
-#include "MainWindow.h"
 #include "LevelEditorWidget.h"
+#include "MainWindow.h"
 #include "widget_choose_level.h"
 
-int main(int argc, char *argv[]) {
+namespace
+{
+    QString commandLineLevelCandidate()
+    {
+        const QStringList args = QCoreApplication::arguments();
+        for (int i = 1; i < args.size(); ++i)
+        {
+            const QString &arg = args.at(i);
+            if (arg.startsWith(QStringLiteral("--level="), Qt::CaseInsensitive))
+            {
+                return arg.section('=', 1).trimmed();
+            }
+            if (arg.compare(QStringLiteral("--level"), Qt::CaseInsensitive) == 0 && i + 1 < args.size())
+            {
+                return args.at(i + 1).trimmed();
+            }
+        }
+        return {};
+    }
+}
+
+int main(int argc, char *argv[])
+{
     QApplication a(argc, argv);
     MainWindow w;
-    w.resize(1024,768);
-    w.show();
+    w.resize(1024, 768);
 
-    //用于调试主菜单的代码
-    // Ui::widget_menu menu_ui;
-    // QWidget menu_widget;
-    // menu_ui.setupUi(&menu_widget);
-    // menu_widget.setWindowTitle("Level3 Main Menu (Menu Debug)");
-    // menu_widget.resize(800, 600); // 调整为你认为合适的大小
-    // menu_widget.show();
+    widget_choose_level levelChooser;
+    levelChooser.setWindowTitle(QStringLiteral("Choose Level"));
+    levelChooser.resize(1024, 768);
 
-    //用于调试关卡选择界面的代码
-    // widget_choose_level choose_level_widget;
-    // choose_level_widget.setWindowTitle("Level3 Choose Level (Choose Level Debug)");
-    // choose_level_widget.resize(1024, 768); // 调整为你认为合适的大小
-    // choose_level_widget.show();
+    auto focusWindow = [](QWidget *widget)
+    {
+        if (!widget)
+        {
+            return;
+        }
+        widget->show();
+        widget->raise();
+        widget->activateWindow();
+    };
 
-    // --- 用于调试编辑器的新代码 ---
-    // LevelEditorWidget editor;
-    // editor.setWindowTitle("Level3 Editor (Level Editor Debug)");
-    // editor.resize(1024, 768); // 调整为你认为合适的大小
-    // editor.show();
-    // --- 结束 ---
+    auto startLevel = [&](const QString &candidatePath)
+    {
+        if (!w.startLevelFromSource(candidatePath, true))
+        {
+            focusWindow(&levelChooser);
+            return;
+        }
+
+        levelChooser.hide();
+        if (!w.isVisible())
+        {
+            w.show();
+        }
+        w.raise();
+        w.activateWindow();
+    };
+
+    QObject::connect(&levelChooser, &widget_choose_level::level1, &a, [&]()
+                     { startLevel(QStringLiteral("levels/level1.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::level2, &a, [&]()
+                     { startLevel(QStringLiteral("levels/level2.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]()
+                     { startLevel(QStringLiteral("levels/level3.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::back, &a, [&]()
+                     {
+                         levelChooser.hide();
+                         if (w.isVisible())
+                         {
+                             focusWindow(&w);
+                         }
+                         else
+                         {
+                             a.quit();
+                         } });
+
+    QObject::connect(&w, &MainWindow::levelSelectionRequested, &levelChooser, [&]()
+                     { focusWindow(&levelChooser); });
+
+    const QString cmdCandidate = commandLineLevelCandidate();
+    const QString envCandidate = QString::fromLocal8Bit(qgetenv("DREAM_LEVEL_PATH")).trimmed();
+    const bool hasExplicitLevel = !cmdCandidate.isEmpty() || !envCandidate.isEmpty();
+
+    if (hasExplicitLevel)
+    {
+        w.show();
+    }
+    else
+    {
+        QTimer::singleShot(0, &levelChooser, [&]()
+                           { focusWindow(&levelChooser); });
+    }
 
     return a.exec();
 }
