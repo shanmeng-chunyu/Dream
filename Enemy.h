@@ -11,7 +11,7 @@ class Enemy : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    explicit Enemy(int health, double speed, int damage, const std::vector<QPointF>& path, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
+    explicit Enemy(int health, double speed, int damage, const std::vector<QPointF>& path,QString type, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
 
     void takeDamage(int damageAmount);
     int getDamage() const;

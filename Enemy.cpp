@@ -2,14 +2,16 @@
 #include <QLineF>
 #include <QDebug>
 
-Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& path,const QPixmap& pixmap, QGraphicsItem* parent)
+Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& path,QString type, const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
       QGraphicsPixmapItem(pixmap, parent),
+      type(type),
       m_health(health),
       m_speed(speed),
       damage(damage),
       absolutePath(path),
       m_currentPathIndex(0),
+      m_maxHealth(health),
       m_stunTicksRemainimng(0)
 {
     if (!absolutePath.empty()) {

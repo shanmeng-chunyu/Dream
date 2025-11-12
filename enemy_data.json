@@ -11,6 +11,16 @@
       "description": "程序中的错误，被击杀后会分裂成两只小bug"
     },
     {
+      "type": "bugmini",
+      "name": "小BUG",
+      "pixmap": ":/enemies/resources/enemies/level1/bug.png",
+      "health": 75,
+      "speed": 1.2,
+      "drops": 5,
+      "damage": 1,
+      "description": "由BUG分裂而成，体型更小，速度更快"
+    },
+    {
       "type": "gpa",
       "name": "GPA",
       "pixmap": ":/enemies/resources/enemies/level1/gpa.png",
@@ -116,16 +126,5 @@
       "damage": 30,
       "description": "“只要还有梦境，我就不可能被战胜，防御我？做梦！！！！！”"
     }
-    {
-  "type": "bugmini",
-  "name": "小BUG",
-  "pixmap": ":/enemies/resources/enemies/level1/bug.png",
-  "health": 75,
-  "speed": 1.2,
-  "drops": 5,
-  "damage": 1,
-  "description": "由BUG分裂而成，体型更小，速度更快"
-}
-
   ]
 }

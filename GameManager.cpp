@@ -272,6 +272,7 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
         proto["speed"].toDouble(),
         proto["damage"].toInt(),
         absolutePath,
+        proto["type"].toString(),
         scaledPixmap
     );
 
@@ -551,7 +552,7 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     const QString pix = proto.value("pixmap").toString();
 
     QPixmap pm(pix);
-    Enemy* e = new Enemy(hp, spd, dmg, absPath, pm);
+    Enemy* e = new Enemy(hp, spd, dmg, absPath, type, pm);
     if (scale != 1.0) e->setScale(scale);
 
     m_scene->addItem(e);
