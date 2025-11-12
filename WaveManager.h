@@ -2,7 +2,6 @@
 #define WAVEMANAGER_H
 
 #include <QObject>
-#include <QTimer>
 #include <QList>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -30,21 +29,24 @@ public:
     void startNextWave();
     bool isFinished() const;
     void setScreenSize(const QSizeF& size);
+    int getTotalEnemiesKilled() const { return totalEnemiesKilled; }
+    //更新函数
+    void update();
 
     signals:
         void spawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath);
     void allWavesCompleted();
 
-    private slots:
-        void spawnEnemyFromQueue();
-
 private:
+    void spawnEnemyAndResetCooldown();
+    int intervalToTicks(double intervalInSeconds);
     QList<Wave> waves;
     int currentWaveIndex;
     QList<EnemyWaveData> spawnQueue;
-    QTimer* spawnTimer;
+    int m_spawnCooldownTicks;//计时器，-1空闲，0准备就绪，>0正在倒计时
     GameMap* gameMap;
     QSizeF screenSize;
+    int totalEnemiesKilled = 0;
 };
 
 #endif // WAVEMANAGER_H

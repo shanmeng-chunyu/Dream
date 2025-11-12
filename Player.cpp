@@ -6,10 +6,15 @@ Player::Player(QObject *parent)
 
 void Player::decreaseStability(int amount) {
     m_dreamStability -= amount;
-    emit stabilityChanged(m_dreamStability);
+    emit stabilityChanged(std::max(m_dreamStability, 0));
     if (m_dreamStability <= 0) {
         emit noStability();
     }
+}
+
+void Player::increaseStability(int amount) {
+    m_dreamStability += amount;
+    emit stabilityChanged(m_dreamStability);
 }
 
 void Player::addResource(int amount) {

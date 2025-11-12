@@ -31,6 +31,29 @@
         <file>resources/background/third_background.png</file>
         <file>resources/background/title.png</file>
     </qresource>
+    <qresource prefix="/bullet">
+        <file>resources/bullet/level1/InspirationBulb.png</file>
+        <file>resources/bullet/level1/InspirationBulb_upgrade.png</file>
+        <file>resources/bullet/level1/KnowledgeTree.png</file>
+        <file>resources/bullet/level1/KnowledgeTree_upgrade.png</file>
+        <file>resources/bullet/level1/LiveCoffee.png</file>
+        <file>resources/bullet/level2/Companionship.png</file>
+        <file>resources/bullet/level2/NightRadio.png</file>
+        <file>resources/bullet/level2/NightRadio_upgrade.png</file>
+    </qresource>
+    <qresource prefix="/enemies">
+        <file>resources/enemies/level1/bug.png</file>
+        <file>resources/enemies/level1/ddl.png</file>
+        <file>resources/enemies/level1/gpa.png</file>
+        <file>resources/enemies/level1/pre.png</file>
+        <file>resources/enemies/level1/thesis.png</file>
+        <file>resources/enemies/level2/coldwords.png</file>
+        <file>resources/enemies/level2/lonelyness.png</file>
+        <file>resources/enemies/level2/recall.png</file>
+        <file>resources/enemies/level2/tears.png</file>
+        <file>resources/enemies/level2/thephantomofthepast.png</file>
+        <file>resources/enemies/level3/nightmare.png</file>
+    </qresource>
     <qresource prefix="/frame">
         <file>resources/frame/level1.png</file>
         <file>resources/frame/level2.png</file>
@@ -73,5 +96,57 @@
         <file>resources/tower/second/fire.png</file>
         <file>resources/tower/second/memory.png</file>
         <file>resources/tower/second/radio.png</file>
+        <file>resources/map_items/first/book.png</file>
+        <file>resources/map_items/first/scratchpaper.png</file>
+        <file>resources/map_items/first/stationery.png</file>
+        <file>resources/map_items/first/cable.png</file>
+        <file>resources/map_items/first/end_block.png</file>
+        <file>resources/map_items/first/path_block.png</file>
+        <file>resources/map_items/first/start_block.png</file>
+        <file>resources/map_items/second/memory_box.png</file>
+        <file>resources/map_items/second/withered_flowers.png</file>
+        <file>resources/map_items/second/broken_friendship.png</file>
+        <file>resources/map_items/second/start_block.png</file>
+        <file>resources/map_items/second/end_block.png</file>
+        <file>resources/map_items/second/path_block.png</file>
+        <file>resources/map_items/third/end_block.png</file>
+        <file>resources/map_items/third/path_block.png</file>
+        <file>resources/map_items/third/start_block.png</file>
+    </qresource>
+    <qresource prefix="/resource">
+        <file>resources/resource/Comfort.png</file>
+        <file>resources/resource/Courage.png</file>
+        <file>resources/resource/Inspiration.png</file>
+        <file>resources/resource/Dream_Stability.png</file>
+    </qresource>
+    <qresource prefix="/towers">
+        <file>resources/towers/level1/FishingCatPillow.png</file>
+        <file>resources/towers/level1/FishingCatPillow_upgrade.png</file>
+        <file>resources/towers/level1/InspirationBulb.png</file>
+        <file>resources/towers/level1/InspirationBulb_upgrade.png</file>
+        <file>resources/towers/level1/KnowledgeTree.png</file>
+        <file>resources/towers/level1/KnowledgeTree_upgrade.png</file>
+        <file>resources/towers/level1/LiveCoffee.png</file>
+        <file>resources/towers/level1/LiveCoffee_upgrade.png</file>
+        <file>resources/towers/level2/Companionship.png</file>
+        <file>resources/towers/level2/Companionship_upgrade.png</file>
+        <file>resources/towers/level2/NightRadio.png</file>
+        <file>resources/towers/level2/NightRadio_upgrade.png</file>
+        <file>resources/towers/level2/PettingCatTime.png</file>
+        <file>resources/towers/level2/PettingCatTime_upgrade.png</file>
+        <file>resources/towers/level2/WarmMemories.png</file>
+        <file>resources/towers/level2/WarmMemories_charge.png</file>
+        <file>resources/towers/level2/WarmMemories_upgrade.png</file>
+        <file>resources/towers/level2/WarmMemories_upgrade_charge.png</file>
+    </qresource>
+    <qresource prefix="/data">
+        <file>enemy_data.json</file>
+        <file>tower_data.json</file>
+    </qresource>
+    <qresource prefix="/levels">
+        <file>levels/level3.json</file>
+    </qresource>
+    <qresource prefix="/font">
+        <file>resources/font/font.ttf</file>
     </qresource>
 </RCC>

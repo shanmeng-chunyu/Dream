@@ -1,4 +1,9 @@
 #include "GameManager.h"
+
+#include <FishingCatPillow.h>
+#include <InspirationBulb.h>
+#include <KnowledgeTree.h>
+
 #include "LevelLoader.h"
 #include "Player.h"
 #include "WaveManager.h"
@@ -17,6 +22,8 @@
 #include <QLineF>
 #include <QtMath>
 #include <QMessageBox>
+
+#include "widget_post_game.h"
 
 GameManager* GameManager::m_instance = nullptr;
 
@@ -60,16 +67,28 @@ void GameManager::loadLevel(const QString& levelPath) {
 
     // 使用LevelLoader加载核心数据
     LevelLoader::loadLevel(levelPath, *m_gameMap, *m_waveManager, *m_player);
-    loadPrototypes(rootObj);
+    loadPrototypes();
 
     // 根据地图数据创建障碍物
     for (const auto& obsData : m_gameMap->getObstacles()) {
         QPixmap pixmap(obsData.pixmapPath);
-        auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, pixmap);
 
-        QPointF absPos(obsData.relativePosition.x() * m_screenSize.width(),
-                       obsData.relativePosition.y() * m_screenSize.height());
-        obstacle->setPos(absPos);
+        // 1. 定义障碍物的固定像素大小
+        const QSize obstaclePixelSize(152, 152);
+        QPixmap scaledPixmap = pixmap.scaled(obstaclePixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, scaledPixmap);
+
+        // 2. 将json中的坐标视为“中心点”
+        QPointF absCenterPos(obsData.relativePosition.x() * m_screenSize.width(),
+                             obsData.relativePosition.y() * m_screenSize.height());
+
+        // 3. (统一逻辑) 根据中心点计算左上角位置
+        QPointF absTopLeftPos(absCenterPos.x() - obstaclePixelSize.width() / 2.0,
+                              absCenterPos.y() - obstaclePixelSize.height() / 2.0);
+
+        // 4. 使用计算出的左上角位置
+        obstacle->setPos(absTopLeftPos);
 
         m_scene->addItem(obstacle);
         m_obstacles.append(obstacle);
@@ -77,19 +96,35 @@ void GameManager::loadLevel(const QString& levelPath) {
     }
 }
 
-void GameManager::loadPrototypes(const QJsonObject& rootObj) {
+void GameManager::loadPrototypes() {
     m_enemyPrototypes.clear();
-    QJsonArray enemyArray = rootObj["available_enemies"].toArray();
-    for (const QJsonValue& val : enemyArray) {
-        QJsonObject obj = val.toObject();
-        m_enemyPrototypes[obj["type"].toString()] = obj;
+    m_towerPrototypes.clear();
+
+    // --- 加载敌人主数据 ---
+    // (注意：这些路径是 .qrc 文件中定义的路径)
+    QFile enemyFile(":/data/enemy_data.json");
+    if (enemyFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument enemyDoc = QJsonDocument::fromJson(enemyFile.readAll());
+        // (根据 enemy_data.json 的结构)
+        QJsonArray enemyArray = enemyDoc.object()["master_enemies"].toArray();
+        for (const QJsonValue& val : enemyArray) {
+            QJsonObject obj = val.toObject();
+            m_enemyPrototypes[obj["type"].toString()] = obj;
+        }
+        enemyFile.close();
     }
 
-    m_towerPrototypes.clear();
-    QJsonArray towerArray = rootObj["available_towers"].toArray();
-    for (const QJsonValue& val : towerArray) {
-        QJsonObject obj = val.toObject();
-        m_towerPrototypes[obj["type"].toString()] = obj;
+    // --- 加载防御塔主数据 ---
+    QFile towerFile(":/data/tower_data.json");
+    if (towerFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument towerDoc = QJsonDocument::fromJson(towerFile.readAll());
+        // (根据 tower_data.json 的结构)
+        QJsonArray towerArray = towerDoc.object()["master_towers"].toArray();
+        for (const QJsonValue& val : towerArray) {
+            QJsonObject obj = val.toObject();
+            m_towerPrototypes[obj["type"].toString()] = obj;
+        }
+        towerFile.close();
     }
 }
 
@@ -100,14 +135,74 @@ void GameManager::startGame() {
 }
 
 void GameManager::setScreenSize(const QSizeF& size) {
+    //1.获取旧尺寸，并防止无效计算
+    QSizeF oldSize = m_screenSize;
+    if (size == oldSize || oldSize.isEmpty() || oldSize.width() == 0 || oldSize.height() == 0) {
+        m_screenSize = size;
+        m_waveManager->setScreenSize(size);
+        return;
+    }
+
+    // 2. 更新管理器中的尺寸
     m_screenSize = size;
     m_waveManager->setScreenSize(size);
-    // 可在此处添加代码，重新计算所有现有实体的位置以适应新窗口大小
+
+    // 3. 计算 X 和 Y 方向的缩放因子
+    qreal scaleX = size.width() / oldSize.width();
+    qreal scaleY = size.height() / oldSize.height();
+
+    // 4. 定义一个辅助函数，用于缩放 QGraphicsItem 的位置
+    auto rescaleItemPos = [=](QGraphicsItem* item) {
+        if (item) {
+            item->setPos(item->pos().x() * scaleX, item->pos().y() * scaleY);
+        }
+    };
+
+    // 5. 遍历和更新所有实体
+
+    // 更新敌人
+    for (Enemy* enemy : m_enemies) {
+        rescaleItemPos(enemy);
+
+        // 关键：必须同时更新敌人未走完的路径点
+        std::vector<QPointF> newPath;
+        const auto& oldPath = enemy->getAbsolutePath(); // (我们将在 Enemy.h 中添加这个函数)
+        newPath.reserve(oldPath.size());
+
+        for(const QPointF& pt : oldPath) {
+            newPath.emplace_back(pt.x() * scaleX, pt.y() * scaleY);
+        }
+        // setAbsolutePath 已经存在
+        enemy->setAbsolutePath(newPath);
+    }
+
+    // 更新防御塔
+    for (Tower* tower : m_towers) {
+        rescaleItemPos(tower);
+
+        // 关键：必须同时更新塔的攻击范围
+        // getRange() 已经存在
+        double oldRange = tower->getRange();
+        // 我们的 buildTower 是按宽度缩放范围的，所以这里也按 X 缩放
+        double newRange = oldRange * scaleX;
+        tower->setRange(newRange); // (我们将在 Tower.h 中添加这个函数)
+    }
+
+    // 更新子弹
+    for (Bullet* bullet : m_bullets) {
+        rescaleItemPos(bullet);
+    }
+
+    // 更新障碍物
+    for (Obstacle* obstacle : m_obstacles) {
+        rescaleItemPos(obstacle);
+    }
 }
 
 void GameManager::updateGame() {
     if (m_gameIsOver) return;
 
+    m_waveManager->update();
     // 移动所有实体
     for (Enemy* enemy : m_enemies) enemy->move();
     for (Bullet* bullet : m_bullets) bullet->move();
@@ -147,32 +242,58 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     if (!m_towerPrototypes.contains(type)) return;
 
     QJsonObject proto = m_towerPrototypes[type];
-    if (m_player->spendResource(proto["cost"].toInt())) {
-        QPixmap pixmap(proto["pixmap"].toString());
-        auto* tower = new Tower(
-            proto["damage"].toInt(),
-            proto["range"].toDouble() * m_screenSize.width(), // 范围也要转换为绝对值
-            proto["fire_rate"].toInt(),
-            pixmap
-        );
+    int cost = proto["cost"].toInt();
 
-        QPointF absPos(relativePosition.x() * m_screenSize.width(),
-                       relativePosition.y() * m_screenSize.height());
-        tower->setPos(absPos);
-
-        m_scene->addItem(tower);
-        m_towers.append(tower);
-        connect(tower, &Tower::newBullet, this, &GameManager::onNewBullet);
+    // 1. 检查资源
+    if (!m_player->spendResource(cost)) {
+        return;
     }
+
+    // 2. 计算塔的绝对像素位置
+    QPointF absPos(relativePosition.x() * m_screenSize.width(),
+                    relativePosition.y() * m_screenSize.height());
+
+    double relativeRange = proto["range"].toDouble();
+    double gridRelativeWidth = m_gameMap->getPathWidthRatio();
+    double gridPixelWidth = gridRelativeWidth * m_screenSize.width();
+    double pixelRange = relativeRange * gridPixelWidth;
+
+    Tower* tower = nullptr;
+
+    if (type == "InspirationBulb") {
+        tower = new InspirationBulb(pixelRange);
+    }else if (type == "KnowledgeTree") {
+        tower = new KnowledgeTree(pixelRange);
+    }else if (type == "FishingCatPillow") {
+        tower = new FishingCatPillow(pixelRange);
+        FishingCatPillow* pillow = qobject_cast<FishingCatPillow*>(tower);
+        connect(pillow,&FishingCatPillow::applyControl,this,&GameManager::onApplyEnemyControl);
+    }else if (type == "LiveCoffee") {
+
+    }else if (type == "WarmMemories") {
+
+    }else if (type == "NightRadio") {
+
+    }else if (type == "PettingCatTime") {
+
+    }else if (type == "Companionship") {
+
+    }
+
+    tower->setPos(absPos);
+    m_scene->addItem(tower);
+    m_towers.append(tower);
+    connect(tower,&Tower::newBullet,this,&GameManager::onNewBullet);
 }
 
 
 void GameManager::onNewBullet(Tower* tower, Enemy* target) {
     // 根据发射塔的类型查找对应的子弹贴图
     // 这里简化处理，假设所有塔都用同一种子弹或在tower prototype里定义
-    QPixmap pixmap(":/bullets/default_bullet.png"); // 应从JSON读取
-
-    auto* bullet = new Bullet(tower->damage, 10.0, target, pixmap); // 速度硬编码，可改为从JSON读取
+    QString type = tower->getType();
+    QJsonObject proto = m_towerPrototypes[type];
+    QPixmap pixmap = (proto["bullet_pixmap"]).toString();
+    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, pixmap); // 速度硬编码，可改为从JSON读取
     bullet->setPos(tower->pos());
 
     m_scene->addItem(bullet);
@@ -182,15 +303,27 @@ void GameManager::onNewBullet(Tower* tower, Enemy* target) {
 
 void GameManager::onEnemyReachedEnd(Enemy* enemy) {
     m_player->decreaseStability(enemy->getDamage());
+    for (Tower* tower : m_towers) {
+        if (tower->getCurrentTarget() == enemy) {
+            tower->setTarget(nullptr);
+        }
+    }
     m_entitiesToClean.append(enemy);
     m_enemies.removeAll(enemy);
 }
 
 void GameManager::onEnemyDied(Enemy* enemy) {
     // 可根据敌人类型给予不同资源
-    m_player->addResource(10);
+    QJsonObject proto = m_enemyPrototypes[enemy->getType()];
+    m_player->addResource(proto["drops"].toInt());
+    for (Tower* tower : m_towers) {
+        if (tower->getCurrentTarget() == enemy) {
+            tower->setTarget(nullptr);
+        }
+    }
     m_entitiesToClean.append(enemy);
     m_enemies.removeAll(enemy);
+
 }
 
 void GameManager::onBulletHitTarget(Bullet* bullet) {
@@ -242,14 +375,61 @@ void GameManager::checkWinLossConditions() {
     if (m_player->getStability() <= 0) {
         m_gameIsOver = true;
         m_gameTimer->stop();
-        QMessageBox::information(nullptr, "Game Over", "You Lost!");
+        emit gameFinished(false,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏失败的信号
     }
 
     if (m_waveManager->isFinished() && m_enemies.isEmpty()) {
         m_gameIsOver = true;
         m_gameTimer->stop();
-        QMessageBox::information(nullptr, "Congratulations", "You Won!");
+        emit gameFinished(true,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏胜利的信号
     }
+}
+
+void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
+    // 查找对应位置的塔并升级
+    for (Tower* tower : m_towers) {
+        QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
+                            tower->pos().y() / m_screenSize.height());
+        if (qFuzzyCompare(towerRelPos, relativePosition)) {
+            QJsonObject proto = m_towerPrototypes[tower->getType()];
+            if (m_player->spendResource(proto["upgrade_cost"].toInt())) {
+                tower->upgrade();
+            }
+            break;
+        }
+    }
+}
+
+void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
+    // 查找对应位置的塔并出售
+    for (int i = 0; i < m_towers.size(); ++i) {
+        Tower* tower = m_towers[i];
+        QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
+                            tower->pos().y() / m_screenSize.height());
+        if (qFuzzyCompare(towerRelPos, relativePosition)) {
+            m_entitiesToClean.append(tower);
+            m_towers.removeAt(i);
+            break;
+        }
+    }
+}
+
+void GameManager::pauseGame() {
+    m_gameTimer->stop();
+}
+
+void GameManager::resumeGame() {
+    if (!m_gameIsOver) {
+        m_gameTimer->start(16);
+    }
+}
+
+void GameManager::onApplyEnemyControl(Enemy* enemy,double duration) {
+    if (!enemy || !m_enemies.contains(enemy)) {
+        return;
+    }
+
+    enemy->stopFor(duration);
 }

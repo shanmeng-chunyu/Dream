@@ -31,9 +31,27 @@ bool LevelLoader::loadLevel(const QString& filePath, GameMap& map, WaveManager& 
         towerPositions.emplace_back(pointObj["x"].toDouble(), pointObj["y"].toDouble());
     }
 
+    std::vector<ObstacleData> obstacles;
+    QJsonArray obstaclesArray = mapObj["obstacles"].toArray();
+    for (const auto& obsValue : obstaclesArray) {
+        QJsonObject obsObj = obsValue.toObject();
+        obstacles.emplace_back();
+        ObstacleData& obsData = obstacles.back();
+        obsData.type = obsObj["type"].toString();
+        obsData.pixmapPath = obsObj["pixmap"].toString();
+
+        QJsonObject posObj = obsObj["position"].toObject(); // 先拿出position对象
+        obsData.relativePosition = QPointF(posObj["x"].toDouble(),
+                                           posObj["y"].toDouble());
+
+        obsData.health = obsObj["health"].toInt();
+        obsData.resourceValue = obsObj["resource"].toInt();
+    }
+
     // ... load obstacles in a similar way if needed by GameMap ...
     map.setPath(path);
     map.setTowerPositions(towerPositions);
+    map.setObstacles(obstacles);
 
     // Load player data
     QJsonObject playerObj = rootObj["player"].toObject();

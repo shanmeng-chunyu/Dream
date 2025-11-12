@@ -21,8 +21,8 @@ widget_post_game::widget_post_game(bool win,int stability,int kill_nums,QWidget 
         ui->repeat->setIcon(QPixmap(":/button/resources/button/lose_repeat.png"));
         ui->next->setIcon(QPixmap(":/button/resources/button/lose_continue.png"));
     }
-    ui->stability->setText(QString("%1").arg(stability));
-    ui->kill_nums->setText(QString("%1").arg(kill_nums));
+    ui->stability->setText(QString("%1").arg(QString::number(stability)));
+    ui->kill_nums->setText(QString("%1").arg(QString::number(kill_nums)));
 
     connect(ui->repeat,&QPushButton::clicked,this,&widget_post_game::repeat);
     connect(ui->next,&QPushButton::clicked,this,&widget_post_game::next);
