@@ -60,7 +60,7 @@ public slots:
 private slots:
     // ÓÎÏ·Ö÷Ñ­»·
     void updateGame();
-    void onApplyEnemyControl(Enemy* enemy,double duration);
+    void onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
 
@@ -100,6 +100,15 @@ private:
     QMap<QString, QJsonObject> m_towerPrototypes;
 
     bool m_gameIsOver;
+    Enemy* spawnByTypeWithPath(const QString& type,
+                               const std::vector<QPointF>& absPath,
+                               double scale = 1.0);
+
+    void destroyAllTowers(bool withEffects = true);
+
+    QSet<Enemy*> m_raged;
+    QHash<Enemy*, int> m_healCd;
+
 };
 
 #endif // GAMEMANAGER_H

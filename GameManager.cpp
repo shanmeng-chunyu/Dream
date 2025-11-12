@@ -244,7 +244,7 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
     connect(enemy, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
     connect(enemy, &Enemy::died, this, &GameManager::onEnemyDied);
 
-    if (type == "nightmare") { destroyAllTowers(true); }
+    //if (type == "nightmare") { destroyAllTowers(true); }
 
 }
 
@@ -488,12 +488,13 @@ void GameManager::resumeGame() {
     }
 }
 
-void GameManager::onApplyEnemyControl(Enemy* enemy,double duration) {
-    if (!enemy || !m_enemies.contains(enemy)) {
+void GameManager::onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration) {
+    Enemy* enemyTarget = static_cast<Enemy*>(enemy);
+    if (!enemyTarget || !m_enemies.contains(enemy)) {
         return;
     }
 
-    enemy->stopFor(duration);
+    enemyTarget->stopFor(duration);
 }
 Enemy* GameManager::spawnByTypeWithPath(const QString& type,
                                         const std::vector<QPointF>& absPath,

@@ -11,7 +11,8 @@ LiveCoffee::LiveCoffee(double range,QGraphicsItem* parent):Tower(0,range,1,80,12
 
 void LiveCoffee::attack()
 {
-    if(currentTarget){
+    Enemy* enemyTarget = static_cast<Enemy*>(currentTarget);
+    if(enemyTarget){
         emit newBullet(this, currentTarget);
         QList<QGraphicsItem*> items=scene()->items();//获得场景中所有图形项
         QSet<Enemy*>currentEnemies;
