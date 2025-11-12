@@ -1,34 +1,49 @@
 #include "Bullet.h"
 #include "Enemy.h"
+#include "Obstacle.h"
 #include <QLineF>
 #include <QtMath>
+#include <QGraphicsScene>
 
 Bullet::Bullet(int damage, double speed, QGraphicsPixmapItem* target, const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
       QGraphicsPixmapItem(pixmap, parent),
       damage(damage),
       speed(speed),
-      target(target) {}
+      target(target) {
 
-void Bullet::move() {
-    if (!target) {
-        // Ä¿±ê²»´æÔÚ£¬×ÔÎÒÏú»Ù
+    setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
+}
+
+void Bullet::update() {
+    // æ¯å¸§ç§»åŠ¨ä¸€æ¬¡
+    if (moveCounter-- > 0) {
+        return;
+    }
+    moveCounter = 1;
+
+    if (!target || !scene()->items().contains(target)) {
+        // ç›®æ ‡ä¸å­˜åœ¨ï¼Œè§¦å‘å‡»ä¸­äº‹ä»¶
         emit hitTarget(this);
         return;
     }
 
     QLineF line(pos(), target->pos());
     if (line.length() < speed) {
-        // µ½´ïÄ¿±ê
+        //å­å¼¹å‡»ä¸­ç›®æ ‡
         emit hitTarget(this);
         return;
     }
 
-    // ³¯Ä¿±êÒÆ¶¯
+    // å­å¼¹ç§»åŠ¨çš„è§’åº¦å’Œåç§»é‡
     double angle = atan2(target->pos().y() - pos().y(), target->pos().x() - pos().x());
     double dx = speed * cos(angle);
     double dy = speed * sin(angle);
     setPos(pos().x() + dx, pos().y() + dy);
+
+    if (!scene()->sceneRect().contains(target->pos())) {
+        emit outOfBounds(this);
+    }
 }
 
 int Bullet::getDamage() const {

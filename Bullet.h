@@ -5,6 +5,7 @@
 #include <QGraphicsPixmapItem>
 
 class Enemy;
+class Obstacle;
 
 class Bullet : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
@@ -14,16 +15,17 @@ public:
     int getDamage() const;
     QGraphicsPixmapItem* getTarget() const;
 
-    public slots:
-        void move();
+    void update();
 
     signals:
         void hitTarget(Bullet* bullet);
+        void outOfBounds(Bullet* bullet);
 
 private:
     int damage;
     double speed;
     QGraphicsPixmapItem* target;
+    int moveCounter = 1;
 };
 
 #endif // BULLET_H
