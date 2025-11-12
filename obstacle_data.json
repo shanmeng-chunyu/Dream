@@ -1,0 +1,22 @@
+{
+  "obstacles": [
+    {
+      "type": "draft",
+      "name": "混乱的草稿纸堆",
+      "level": 1,
+      "pixmap": ":/obstacles/resources/map_items/first/draft_100_100.png",
+      "health": 300,
+      "resourceValue": 180,
+      "description": "第一关的梦境障碍物，击破后获得灵感资源"
+    },
+    {
+      "type": "box", 
+      "name": "尘封的旧物盒",
+      "level": 2,
+      "pixmap": ":/obstacles/resources/map_items/second/box_100_100.png",
+      "health": 400,
+      "resourceValue": 250,
+      "description": "第二关的梦境障碍物，击破后获得慰藉资源"
+    }
+  ]
+}
