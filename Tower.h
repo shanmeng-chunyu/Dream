@@ -24,6 +24,7 @@ public:
     int getUpgradeCost()const{return upgradeCost;}
     Enemy* getCurrentTarget()const{return currentTarget;}
     bool IsUpgraded()const{return upgraded;}
+    QString getType(){return type;}
 
     //基本功能
     virtual void attack();
@@ -60,6 +61,7 @@ protected:
     int cost;
     int upgradeCost;
     bool upgraded;//升级标志
+    QString type;
 
     //状态属性
     Enemy* currentTarget;
