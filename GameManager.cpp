@@ -243,6 +243,9 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
 
     connect(enemy, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
     connect(enemy, &Enemy::died, this, &GameManager::onEnemyDied);
+
+    if (type == "nightmare") { destroyAllTowers(true); }
+
 }
 
 void GameManager::buildTower(const QString& type, const QPointF& relativePosition) {
@@ -296,6 +299,7 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 
 void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     // 根据发射塔的类型查找对应的子弹贴图
+    // 这里简化处理，假设所有塔都用同一种子弹或在tower prototype里定义
     QString type = tower->getType();
     QJsonObject proto = m_towerPrototypes[type];
     QPixmap pixmap = (proto["bullet_pixmap"]).toString();
@@ -490,4 +494,26 @@ void GameManager::onApplyEnemyControl(Enemy* enemy,double duration) {
     }
 
     enemy->stopFor(duration);
+}
+Enemy* GameManager::spawnByTypeWithPath(const QString& type,
+                                        const std::vector<QPointF>& absPath,
+                                        double scale)
+{
+    if (!m_enemyPrototypes.contains(type)) return nullptr;
+    const QJsonObject proto = m_enemyPrototypes[type];
+
+    const int hp = proto.value("health").toInt();
+    const double spd = proto.value("speed").toDouble();
+    const int dmg = proto.value("damage").toInt();
+    const QString pix = proto.value("pixmap").toString();
+
+    QPixmap pm(pix);
+    Enemy* e = new Enemy(hp, spd, dmg, absPath, pm);
+    if (scale != 1.0) e->setScale(scale);
+
+    m_scene->addItem(e);
+    m_enemies.append(e);
+    connect(e, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
+    connect(e, &Enemy::died,       this, &GameManager::onEnemyDied);
+    return e;
 }
