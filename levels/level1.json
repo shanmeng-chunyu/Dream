@@ -469,7 +469,7 @@
     ]
   },
   "player": {
-    "initial_stability": 20,
+    "initial_stability": 100,
     "initial_resource": 150
   },
   "available_towers": ["InspirationBulb", "KnowledgeTree", "FishingCatPillow", "LiveCoffee"],

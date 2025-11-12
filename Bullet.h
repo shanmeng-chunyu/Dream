@@ -10,9 +10,9 @@ class Bullet : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    explicit Bullet(int damage, double speed, Enemy* target, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
+    explicit Bullet(int damage, double speed, QGraphicsPixmapItem* target, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
     int getDamage() const;
-    Enemy* getTarget() const;
+    QGraphicsPixmapItem* getTarget() const;
 
     public slots:
         void move();
@@ -23,7 +23,7 @@ public:
 private:
     int damage;
     double speed;
-    Enemy* target;
+    QGraphicsPixmapItem* target;
 };
 
 #endif // BULLET_H

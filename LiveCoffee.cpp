@@ -1,11 +1,12 @@
 #include "LiveCoffee.h"
 #include <QGraphicsScene>
 #include <QLineF>
-LiveCoffee::LiveCoffee(QGraphicsItem* parent):Tower(0,2.5,1,80,120,QPixmap(":/towers/resources/towers/level1/LiveCoffee.png"),parent),enemies()
+LiveCoffee::LiveCoffee(double range,QGraphicsItem* parent):Tower(0,range,1,80,120,QPixmap(":/towers/resources/towers/level1/LiveCoffee.png"),parent),enemies()
 {
     //续命咖啡的fireRate应该是存在的，因为有对应的bullet，应该有一个发射频率(只是对应的功能不是“攻击”，先设为1）
     slowFactor=0.8;
     increaseFactor=0.9;//增加10%攻速，fireRate*0.9
+    type = "LiveCoffee";
 }
 
 void LiveCoffee::attack()

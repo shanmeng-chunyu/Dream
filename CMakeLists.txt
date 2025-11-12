@@ -57,6 +57,7 @@ add_executable(Dream
         FishingCatPillow.cpp
         AbilitiesImpl.h
         EnemyAbility.h
+        LiveCoffee.cpp
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

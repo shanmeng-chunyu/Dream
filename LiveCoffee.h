@@ -6,7 +6,7 @@
 class LiveCoffee:public Tower
 {
 public:
-    explicit LiveCoffee(QGraphicsItem* parent = nullptr);
+    explicit LiveCoffee(double range,QGraphicsItem* parent = nullptr);
     void attack()override;
     void upgrade()override;
     double getFactor(){return increaseFactor;};

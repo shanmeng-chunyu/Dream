@@ -43,7 +43,7 @@ public slots:
     // 响应WaveManager的信号来生成敌人
     void onSpawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath);
     // 响应Tower的信号来生成子弹
-    void onNewBullet(Tower* tower, Enemy* target);
+    void onNewBullet(Tower* tower, QGraphicsPixmapItem* target);
     // 响应Enemy信号
     void onEnemyReachedEnd(Enemy* enemy);
     void onEnemyDied(Enemy* enemy);

@@ -3,7 +3,7 @@
 #include <QLineF>
 #include <QtMath>
 
-Bullet::Bullet(int damage, double speed, Enemy* target, const QPixmap& pixmap, QGraphicsItem* parent)
+Bullet::Bullet(int damage, double speed, QGraphicsPixmapItem* target, const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
       QGraphicsPixmapItem(pixmap, parent),
       damage(damage),
@@ -35,6 +35,6 @@ int Bullet::getDamage() const {
     return damage;
 }
 
-Enemy* Bullet::getTarget() const {
+QGraphicsPixmapItem* Bullet::getTarget() const {
     return target;
 }

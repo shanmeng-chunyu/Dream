@@ -294,9 +294,8 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 }
 
 
-void GameManager::onNewBullet(Tower* tower, Enemy* target) {
+void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     // 根据发射塔的类型查找对应的子弹贴图
-    // 这里简化处理，假设所有塔都用同一种子弹或在tower prototype里定义
     QString type = tower->getType();
     QJsonObject proto = m_towerPrototypes[type];
     QPixmap pixmap = (proto["bullet_pixmap"]).toString();
@@ -334,9 +333,18 @@ void GameManager::onEnemyDied(Enemy* enemy) {
 }
 
 void GameManager::onBulletHitTarget(Bullet* bullet) {
-    Enemy* target = bullet->getTarget();
-    if (target && m_enemies.contains(target)) { // 确保目标仍然有效
-        target->takeDamage(bullet->getDamage());
+    QGraphicsPixmapItem* target = bullet->getTarget();
+    //确定子弹目标
+    if (target) {
+        Enemy *enemyTarget = dynamic_cast<Enemy*>(target);
+        if (enemyTarget && m_enemies.contains(enemyTarget)) {
+            enemyTarget->takeDamage(bullet->getDamage());
+        }else {
+            Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(target);
+            if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
+                obstacleTarget->takeDamage(bullet->getDamage());
+            }
+        }
     }
     m_entitiesToClean.append(bullet);
     m_bullets.removeAll(bullet);
@@ -344,6 +352,13 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
 
 void GameManager::onObstacleDestroyed(Obstacle* obstacle, int resourceValue) {
     m_player->addResource(resourceValue);
+
+    //检查是否有塔的目标为该障碍物
+    for (Tower* tower : m_towers) {
+        if (tower->getCurrentTarget() == obstacle) {
+            tower->setTarget(nullptr);
+        }
+    }
     m_entitiesToClean.append(obstacle);
     m_obstacles.removeAll(obstacle);
 }
@@ -360,21 +375,57 @@ void GameManager::cleanupEntities() {
 
 void GameManager::updateTowerTargets() {
     for (Tower* tower : m_towers) {
+
+        // 1. 检查当前目标是否仍然有效且在范围内
         if (tower->currentTarget && tower->targetIsInRange()) {
-            continue; // 当前目标有效，无需更换
+            // 检查目标是否还“存活”
+            Enemy* enemyTarget = dynamic_cast<Enemy*>(tower->currentTarget);
+            if (enemyTarget && m_enemies.contains(enemyTarget)) {
+                continue; // 目标是敌人，有效，继续攻击
+            }
+            Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(tower->currentTarget);
+            if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
+                continue; // 目标是障碍物，有效，继续攻击
+            }
         }
 
+        // 2. 目标无效或出范围，寻找新目标
+        //    【优先级 1: 寻找最近的敌人】
         Enemy* closestEnemy = nullptr;
-        double minDistance = tower->range + 1.0;
+        double minEnemyDistance = tower->range + 1.0;
 
         for (Enemy* enemy : m_enemies) {
             double distance = QLineF(tower->pos(), enemy->pos()).length();
-            if (distance < minDistance) {
-                minDistance = distance;
+            if (distance < minEnemyDistance) {
+                minEnemyDistance = distance;
                 closestEnemy = enemy;
             }
         }
-        tower->setTarget(closestEnemy);
+
+        if (closestEnemy) {
+            tower->setTarget(closestEnemy);
+            continue; // 找到敌人，此塔更新完毕
+        }
+
+        // 3. 【优先级 2: 寻找最近的障碍物】
+        //    (只有在没有敌人在范围内时，才会执行到这里)
+        Obstacle* closestObstacle = nullptr;
+        double minObstacleDistance = tower->range + 1.0;
+
+        for (Obstacle* obstacle : m_obstacles) {
+            double distance = QLineF(tower->pos(), obstacle->pos()).length();
+            if (distance < minObstacleDistance) {
+                minObstacleDistance = distance;
+                closestObstacle = obstacle;
+            }
+        }
+
+        if (closestObstacle) {
+            tower->setTarget(closestObstacle);
+        } else {
+            // 4. 【优先级 3: 没有目标】
+            tower->setTarget(nullptr);
+        }
     }
 }
 
