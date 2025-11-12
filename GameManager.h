@@ -51,18 +51,25 @@ public slots:
     void onBulletHitTarget(Bullet* bullet);
     // 响应Obstacle信号
     void onObstacleDestroyed(Obstacle* obstacle, int resourceValue);
+    //相应用户请求升级或出售防御塔
+    void onTowerUpgradeRequested(const QPointF& relativePosition);
+    void onTowerSellRequested(const QPointF& relativePosition);
+    void pauseGame();
+    void resumeGame();
 
 private slots:
     // 游戏主循环
     void updateGame();
-
+    void onApplyEnemyControl(Enemy* enemy,double duration);
+signals:
+    void gameFinished(bool win,int finalStability, int enemiesKilled);
 private:
     GameManager(QObject* parent = nullptr);
     ~GameManager() override;
     GameManager(const GameManager&) = delete;
     GameManager& operator=(const GameManager&) = delete;
 
-    void loadPrototypes(const QJsonObject& rootObj);
+    void loadPrototypes();
     void cleanupEntities();
     void updateTowerTargets();
     void checkWinLossConditions();
@@ -75,8 +82,8 @@ private:
 
     // 游戏模块
     Player* m_player;
-    WaveManager* m_waveManager;
     GameMap* m_gameMap;
+    WaveManager* m_waveManager;
 
     // 实体管理
     QList<Enemy*> m_enemies;

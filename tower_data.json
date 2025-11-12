@@ -1,0 +1,100 @@
+{
+  "master_towers": [
+    {
+      "type": "InspirationBulb",
+      "name": "灵感灯泡",
+      "cost": 100,
+      "upgrade_cost": 150,
+      "pixmap": ":/towers/resources/towers/level1/InspirationBulb.png",
+      "bullet_pixmap": ":/bullet/resources/bullet/level1/InspirationBulb.png",
+      "damage": 40,
+      "range": 2.5,
+      "fire_rate": 0.8,
+      "description": "单体攻击，较快的射速和较低的伤害。升级后提升伤害和攻速"
+    },
+    {
+      "type": "KnowledgeTree",
+      "name": "知识古树",
+      "cost": 200,
+      "upgrade_cost": 250,
+      "pixmap": ":/towers/resources/towers/level1/KnowledgeTree.png",
+      "bullet_pixmap": ":/bullet/resources/bullet/level1/KnowledgeTree.png",
+      "damage": 160,
+      "range": 3.5,
+      "fire_rate": 2.0,
+      "description": "群体攻击，较高的伤害和较慢的射速"
+    },
+    {
+      "type": "FishingCatPillow",
+      "name": "摸鱼猫猫枕",
+      "cost": 120,
+      "upgrade_cost": 180,
+      "pixmap": ":/towers/resources/towers/level1/FishingCatPillow.png",
+      "bullet_pixmap": "",
+      "damage": 0,
+      "range": 2.5,
+      "fire_rate": null,
+      "description": "每隔一段时间会吸引一名敌人，使其停止移动一段时间。升级后提升伤害与攻速"
+    },
+    {
+      "type": "LiveCoffee",
+      "name": "续命咖啡",
+      "cost": 80,
+      "upgrade_cost": 120,
+      "pixmap": ":/towers/resources/towers/level1/LiveCoffee.png",
+      "bullet_pixmap": ":/bullet/resources/bullet/level1/LiveCoffee.png",
+      "damage": 0,
+      "range": 2.5,
+      "fire_rate": null,
+      "description": "增加范围内友军的攻速，降低范围内敌人的移速，升级后提升效果"
+    },
+    {
+      "type": "WarmMemories",
+      "name": "温暖的记忆",
+      "cost": 120,
+      "upgrade_cost": 150,
+      "pixmap": ":/towers/resources/towers/level2/WarmMemories.png",
+      "bullet_pixmap": "",
+      "damage": 200,
+      "range": 2.5,
+      "fire_rate": 8,
+      "description": "每隔一段时间对单个敌人造成大量伤害并造成眩晕，升级后提升伤害和眩晕时间"
+    },
+    {
+      "type": "NightRadio",
+      "name": "深夜电台",
+      "cost": 150,
+      "upgrade_cost": 200,
+      "pixmap": ":/towers/resources/towers/level2/NightRadio.png",
+      "bullet_pixmap": ":/bullet/resources/bullet/level2/NightRadio.png",
+      "damage": 100,
+      "range": 4.5,
+      "fire_rate": 1.5,
+      "description": "子弹可以穿透敌人，升级后提升伤害和攻速"
+    },
+    {
+      "type": "PettingCatTime",
+      "name": "撸猫时间",
+      "cost": 180,
+      "upgrade_cost": 220,
+      "pixmap": ":/towers/resources/towers/level2/PettingCatTime.png",
+      "bullet_pixmap": "",
+      "damage": 60,
+      "range": 1.5,
+      "fire_rate": 0.5,
+      "description": "对攻击范围内的单个敌人快速造成多次伤害，升级后提升伤害和攻速"
+    },
+    {
+      "type": "Companionship",
+      "name": "朋友的陪伴",
+      "cost": 100,
+      "upgrade_cost": 150,
+      "pixmap": ":/towers/resources/towers/level2/Companionship.png",
+      "bullet_pixmap": ":/bullet/resources/bullet/level2/Companionship.png",
+      "damage": 0,
+      "range": 2.5,
+      "fire_rate": null,
+      "description": "提升范围内友军的攻击力，升级后提升效果"
+    }
+  ]
+}
