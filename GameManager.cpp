@@ -220,16 +220,23 @@ void GameManager::updateGame() {
 void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath) {
     if (!m_enemyPrototypes.contains(type)) return;
 
+    const QSize enemyPixelSize(126, 126);
     QJsonObject proto = m_enemyPrototypes[type];
     QPixmap pixmap(proto["pixmap"].toString());
+    QPixmap scaledPixmap = pixmap.scaled(enemyPixelSize,Qt::KeepAspectRatio);
 
     auto* enemy = new Enemy(
         proto["health"].toInt(),
         proto["speed"].toDouble(),
         proto["damage"].toInt(),
         absolutePath,
-        pixmap
+        scaledPixmap
     );
+
+    enemy->setOffset(-enemyPixelSize.width() / 2.0, -enemyPixelSize.height()*0.8);
+    if (!absolutePath.empty()) {
+        enemy->setPos(absolutePath[0]);
+    }
 
     m_scene->addItem(enemy);
     m_enemies.append(enemy);

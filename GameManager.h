@@ -63,6 +63,7 @@ private slots:
     void onApplyEnemyControl(Enemy* enemy,double duration);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
+
 private:
     GameManager(QObject* parent = nullptr);
     ~GameManager() override;

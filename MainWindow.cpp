@@ -694,6 +694,17 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
     }
     m_postGameWidget = new widget_post_game(win, stability, killCount, this);
     m_postGameWidget->setAttribute(Qt::WA_DeleteOnClose);
+    // 2. 获取父窗口 (MainWindow) 和子窗口 (结算界面) 的大小
+    //    (根据 widget_post_game.ui，我们知道它的固定大小是 400x400)
+    int childWidth = m_postGameWidget->width(); // 应该是 400
+    int childHeight = m_postGameWidget->height(); // 应该是 400
+
+    // 3. 计算中心点的 X 和 Y 坐标
+    int x = (this->width() - childWidth) / 2;
+    int y = (this->height() - childHeight) / 2;
+
+    // 4. 将子窗口移动到计算出的位置
+    m_postGameWidget->move(x, y);
     m_postGameWidget->show();
 }
 
@@ -1293,4 +1304,14 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
     QTimer::singleShot(0, this, [this]()
                        { fitViewToScene(); });
+    //调整结算窗口位置
+    if (m_postGameWidget && m_postGameWidget->isVisible()) {
+        int childWidth = m_postGameWidget->width();
+        int childHeight = m_postGameWidget->height();
+
+        int x = (this->width() - childWidth) / 2;
+        int y = (this->height() - childHeight) / 2;
+
+        m_postGameWidget->move(x, y);
+    }
 }

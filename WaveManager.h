@@ -30,6 +30,7 @@ public:
     bool isFinished() const;
     void setScreenSize(const QSizeF& size);
     int getTotalEnemiesKilled() const { return totalEnemiesKilled; }
+    void onEnemykilled(){totalEnemiesKilled++;}
     //更新函数
     void update();
 
@@ -44,6 +45,7 @@ private:
     int currentWaveIndex;
     QList<EnemyWaveData> spawnQueue;
     int m_spawnCooldownTicks;//计时器，-1空闲，0准备就绪，>0正在倒计时
+    int m_interWaveCooldownTicks;//波次间计时器
     GameMap* gameMap;
     QSizeF screenSize;
     int totalEnemiesKilled = 0;
