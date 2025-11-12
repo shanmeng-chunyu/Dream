@@ -50,7 +50,7 @@ GameManager::GameManager(QObject* parent)
 
 GameManager::~GameManager() {
     delete m_gameMap;
-    // m_playerºÍm_waveManagerÒòÎªÉèÖÃÁËparentÎªthis£¬»á±»Qt×Ô¶¯¹ÜÀíÏú»Ù
+    // m_playerå’Œm_waveManagerå› ä¸ºè®¾ç½®äº†parentä¸ºthisï¼Œä¼šè¢«Qtè‡ªåŠ¨ç®¡ç†é”€æ¯
 }
 
 void GameManager::init(QGraphicsScene* scene) {
@@ -65,29 +65,29 @@ void GameManager::loadLevel(const QString& levelPath) {
     QJsonObject rootObj = doc.object();
     file.close();
 
-    // Ê¹ÓÃLevelLoader¼ÓÔØºËĞÄÊı¾İ
+    // ä½¿ç”¨LevelLoaderåŠ è½½æ ¸å¿ƒæ•°æ®
     LevelLoader::loadLevel(levelPath, *m_gameMap, *m_waveManager, *m_player);
     loadPrototypes();
 
-    // ¸ù¾İµØÍ¼Êı¾İ´´½¨ÕÏ°­Îï
+    // æ ¹æ®åœ°å›¾æ•°æ®åˆ›å»ºéšœç¢ç‰©
     for (const auto& obsData : m_gameMap->getObstacles()) {
         QPixmap pixmap(obsData.pixmapPath);
 
-        // 1. ¶¨ÒåÕÏ°­ÎïµÄ¹Ì¶¨ÏñËØ´óĞ¡
+        // 1. å®šä¹‰éšœç¢ç‰©çš„å›ºå®šåƒç´ å¤§å°
         const QSize obstaclePixelSize(152, 152);
         QPixmap scaledPixmap = pixmap.scaled(obstaclePixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
         auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, scaledPixmap);
 
-        // 2. ½«jsonÖĞµÄ×ø±êÊÓÎª¡°ÖĞĞÄµã¡±
+        // 2. å°†jsonä¸­çš„åæ ‡è§†ä¸ºâ€œä¸­å¿ƒç‚¹â€
         QPointF absCenterPos(obsData.relativePosition.x() * m_screenSize.width(),
                              obsData.relativePosition.y() * m_screenSize.height());
 
-        // 3. (Í³Ò»Âß¼­) ¸ù¾İÖĞĞÄµã¼ÆËã×óÉÏ½ÇÎ»ÖÃ
+        // 3. (ç»Ÿä¸€é€»è¾‘) æ ¹æ®ä¸­å¿ƒç‚¹è®¡ç®—å·¦ä¸Šè§’ä½ç½®
         QPointF absTopLeftPos(absCenterPos.x() - obstaclePixelSize.width() / 2.0,
                               absCenterPos.y() - obstaclePixelSize.height() / 2.0);
 
-        // 4. Ê¹ÓÃ¼ÆËã³öµÄ×óÉÏ½ÇÎ»ÖÃ
+        // 4. ä½¿ç”¨è®¡ç®—å‡ºçš„å·¦ä¸Šè§’ä½ç½®
         obstacle->setPos(absTopLeftPos);
 
         m_scene->addItem(obstacle);
@@ -100,12 +100,12 @@ void GameManager::loadPrototypes() {
     m_enemyPrototypes.clear();
     m_towerPrototypes.clear();
 
-    // --- ¼ÓÔØµĞÈËÖ÷Êı¾İ ---
-    // (×¢Òâ£ºÕâĞ©Â·¾¶ÊÇ .qrc ÎÄ¼şÖĞ¶¨ÒåµÄÂ·¾¶)
+    // --- åŠ è½½æ•Œäººä¸»æ•°æ® ---
+    // (æ³¨æ„ï¼šè¿™äº›è·¯å¾„æ˜¯ .qrc æ–‡ä»¶ä¸­å®šä¹‰çš„è·¯å¾„)
     QFile enemyFile(":/data/enemy_data.json");
     if (enemyFile.open(QIODevice::ReadOnly)) {
         QJsonDocument enemyDoc = QJsonDocument::fromJson(enemyFile.readAll());
-        // (¸ù¾İ enemy_data.json µÄ½á¹¹)
+        // (æ ¹æ® enemy_data.json çš„ç»“æ„)
         QJsonArray enemyArray = enemyDoc.object()["master_enemies"].toArray();
         for (const QJsonValue& val : enemyArray) {
             QJsonObject obj = val.toObject();
@@ -114,11 +114,11 @@ void GameManager::loadPrototypes() {
         enemyFile.close();
     }
 
-    // --- ¼ÓÔØ·ÀÓùËşÖ÷Êı¾İ ---
+    // --- åŠ è½½é˜²å¾¡å¡”ä¸»æ•°æ® ---
     QFile towerFile(":/data/tower_data.json");
     if (towerFile.open(QIODevice::ReadOnly)) {
         QJsonDocument towerDoc = QJsonDocument::fromJson(towerFile.readAll());
-        // (¸ù¾İ tower_data.json µÄ½á¹¹)
+        // (æ ¹æ® tower_data.json çš„ç»“æ„)
         QJsonArray towerArray = towerDoc.object()["master_towers"].toArray();
         for (const QJsonValue& val : towerArray) {
             QJsonObject obj = val.toObject();
@@ -135,7 +135,7 @@ void GameManager::startGame() {
 }
 
 void GameManager::setScreenSize(const QSizeF& size) {
-    //1.»ñÈ¡¾É³ß´ç£¬²¢·ÀÖ¹ÎŞĞ§¼ÆËã
+    //1.è·å–æ—§å°ºå¯¸ï¼Œå¹¶é˜²æ­¢æ— æ•ˆè®¡ç®—
     QSizeF oldSize = m_screenSize;
     if (size == oldSize || oldSize.isEmpty() || oldSize.width() == 0 || oldSize.height() == 0) {
         m_screenSize = size;
@@ -143,57 +143,57 @@ void GameManager::setScreenSize(const QSizeF& size) {
         return;
     }
 
-    // 2. ¸üĞÂ¹ÜÀíÆ÷ÖĞµÄ³ß´ç
+    // 2. æ›´æ–°ç®¡ç†å™¨ä¸­çš„å°ºå¯¸
     m_screenSize = size;
     m_waveManager->setScreenSize(size);
 
-    // 3. ¼ÆËã X ºÍ Y ·½ÏòµÄËõ·ÅÒò×Ó
+    // 3. è®¡ç®— X å’Œ Y æ–¹å‘çš„ç¼©æ”¾å› å­
     qreal scaleX = size.width() / oldSize.width();
     qreal scaleY = size.height() / oldSize.height();
 
-    // 4. ¶¨ÒåÒ»¸ö¸¨Öúº¯Êı£¬ÓÃÓÚËõ·Å QGraphicsItem µÄÎ»ÖÃ
+    // 4. å®šä¹‰ä¸€ä¸ªè¾…åŠ©å‡½æ•°ï¼Œç”¨äºç¼©æ”¾ QGraphicsItem çš„ä½ç½®
     auto rescaleItemPos = [=](QGraphicsItem* item) {
         if (item) {
             item->setPos(item->pos().x() * scaleX, item->pos().y() * scaleY);
         }
     };
 
-    // 5. ±éÀúºÍ¸üĞÂËùÓĞÊµÌå
+    // 5. éå†å’Œæ›´æ–°æ‰€æœ‰å®ä½“
 
-    // ¸üĞÂµĞÈË
+    // æ›´æ–°æ•Œäºº
     for (Enemy* enemy : m_enemies) {
         rescaleItemPos(enemy);
 
-        // ¹Ø¼ü£º±ØĞëÍ¬Ê±¸üĞÂµĞÈËÎ´×ßÍêµÄÂ·¾¶µã
+        // å…³é”®ï¼šå¿…é¡»åŒæ—¶æ›´æ–°æ•Œäººæœªèµ°å®Œçš„è·¯å¾„ç‚¹
         std::vector<QPointF> newPath;
-        const auto& oldPath = enemy->getAbsolutePath(); // (ÎÒÃÇ½«ÔÚ Enemy.h ÖĞÌí¼ÓÕâ¸öº¯Êı)
+        const auto& oldPath = enemy->getAbsolutePath(); // (æˆ‘ä»¬å°†åœ¨ Enemy.h ä¸­æ·»åŠ è¿™ä¸ªå‡½æ•°)
         newPath.reserve(oldPath.size());
 
         for(const QPointF& pt : oldPath) {
             newPath.emplace_back(pt.x() * scaleX, pt.y() * scaleY);
         }
-        // setAbsolutePath ÒÑ¾­´æÔÚ
+        // setAbsolutePath å·²ç»å­˜åœ¨
         enemy->setAbsolutePath(newPath);
     }
 
-    // ¸üĞÂ·ÀÓùËş
+    // æ›´æ–°é˜²å¾¡å¡”
     for (Tower* tower : m_towers) {
         rescaleItemPos(tower);
 
-        // ¹Ø¼ü£º±ØĞëÍ¬Ê±¸üĞÂËşµÄ¹¥»÷·¶Î§
-        // getRange() ÒÑ¾­´æÔÚ
+        // å…³é”®ï¼šå¿…é¡»åŒæ—¶æ›´æ–°å¡”çš„æ”»å‡»èŒƒå›´
+        // getRange() å·²ç»å­˜åœ¨
         double oldRange = tower->getRange();
-        // ÎÒÃÇµÄ buildTower ÊÇ°´¿í¶ÈËõ·Å·¶Î§µÄ£¬ËùÒÔÕâÀïÒ²°´ X Ëõ·Å
+        // æˆ‘ä»¬çš„ buildTower æ˜¯æŒ‰å®½åº¦ç¼©æ”¾èŒƒå›´çš„ï¼Œæ‰€ä»¥è¿™é‡Œä¹ŸæŒ‰ X ç¼©æ”¾
         double newRange = oldRange * scaleX;
-        tower->setRange(newRange); // (ÎÒÃÇ½«ÔÚ Tower.h ÖĞÌí¼ÓÕâ¸öº¯Êı)
+        tower->setRange(newRange); // (æˆ‘ä»¬å°†åœ¨ Tower.h ä¸­æ·»åŠ è¿™ä¸ªå‡½æ•°)
     }
 
-    // ¸üĞÂ×Óµ¯
+    // æ›´æ–°å­å¼¹
     for (Bullet* bullet : m_bullets) {
         rescaleItemPos(bullet);
     }
 
-    // ¸üĞÂÕÏ°­Îï
+    // æ›´æ–°éšœç¢ç‰©
     for (Obstacle* obstacle : m_obstacles) {
         rescaleItemPos(obstacle);
     }
@@ -203,17 +203,17 @@ void GameManager::updateGame() {
     if (m_gameIsOver) return;
 
     m_waveManager->update();
-    // ÒÆ¶¯ËùÓĞÊµÌå
+    // ç§»åŠ¨æ‰€æœ‰å®ä½“
     for (Enemy* enemy : m_enemies) enemy->move();
     for (Bullet* bullet : m_bullets) bullet->move();
 
-    // ¸üĞÂ·ÀÓùËşÄ¿±ê
+    // æ›´æ–°é˜²å¾¡å¡”ç›®æ ‡
     updateTowerTargets();
 
-    // ÇåÀíÉÏÒ»Ö¡±ê¼ÇÎªÉ¾³ıµÄÊµÌå
+    // æ¸…ç†ä¸Šä¸€å¸§æ ‡è®°ä¸ºåˆ é™¤çš„å®ä½“
     cleanupEntities();
 
-    // ¼ì²éÓÎÏ·½áÊøÌõ¼ş
+    // æ£€æŸ¥æ¸¸æˆç»“æŸæ¡ä»¶
     checkWinLossConditions();
 }
 
@@ -251,12 +251,12 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     QJsonObject proto = m_towerPrototypes[type];
     int cost = proto["cost"].toInt();
 
-    // 1. ¼ì²é×ÊÔ´
+    // 1. æ£€æŸ¥èµ„æº
     if (!m_player->spendResource(cost)) {
         return;
     }
 
-    // 2. ¼ÆËãËşµÄ¾ø¶ÔÏñËØÎ»ÖÃ
+    // 2. è®¡ç®—å¡”çš„ç»å¯¹åƒç´ ä½ç½®
     QPointF absPos(relativePosition.x() * m_screenSize.width(),
                     relativePosition.y() * m_screenSize.height());
 
@@ -295,12 +295,12 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 
 
 void GameManager::onNewBullet(Tower* tower, Enemy* target) {
-    // ¸ù¾İ·¢ÉäËşµÄÀàĞÍ²éÕÒ¶ÔÓ¦µÄ×Óµ¯ÌùÍ¼
-    // ÕâÀï¼ò»¯´¦Àí£¬¼ÙÉèËùÓĞËş¶¼ÓÃÍ¬Ò»ÖÖ×Óµ¯»òÔÚtower prototypeÀï¶¨Òå
+    // æ ¹æ®å‘å°„å¡”çš„ç±»å‹æŸ¥æ‰¾å¯¹åº”çš„å­å¼¹è´´å›¾
+    // è¿™é‡Œç®€åŒ–å¤„ç†ï¼Œå‡è®¾æ‰€æœ‰å¡”éƒ½ç”¨åŒä¸€ç§å­å¼¹æˆ–åœ¨tower prototypeé‡Œå®šä¹‰
     QString type = tower->getType();
     QJsonObject proto = m_towerPrototypes[type];
     QPixmap pixmap = (proto["bullet_pixmap"]).toString();
-    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, pixmap); // ËÙ¶ÈÓ²±àÂë£¬¿É¸ÄÎª´ÓJSON¶ÁÈ¡
+    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, pixmap); // é€Ÿåº¦ç¡¬ç¼–ç ï¼Œå¯æ”¹ä¸ºä»JSONè¯»å–
     bullet->setPos(tower->pos());
 
     m_scene->addItem(bullet);
@@ -320,7 +320,7 @@ void GameManager::onEnemyReachedEnd(Enemy* enemy) {
 }
 
 void GameManager::onEnemyDied(Enemy* enemy) {
-    // ¿É¸ù¾İµĞÈËÀàĞÍ¸øÓè²»Í¬×ÊÔ´
+    // å¯æ ¹æ®æ•Œäººç±»å‹ç»™äºˆä¸åŒèµ„æº
     QJsonObject proto = m_enemyPrototypes[enemy->getType()];
     m_player->addResource(proto["drops"].toInt());
     for (Tower* tower : m_towers) {
@@ -335,7 +335,7 @@ void GameManager::onEnemyDied(Enemy* enemy) {
 
 void GameManager::onBulletHitTarget(Bullet* bullet) {
     Enemy* target = bullet->getTarget();
-    if (target && m_enemies.contains(target)) { // È·±£Ä¿±êÈÔÈ»ÓĞĞ§
+    if (target && m_enemies.contains(target)) { // ç¡®ä¿ç›®æ ‡ä»ç„¶æœ‰æ•ˆ
         target->takeDamage(bullet->getDamage());
     }
     m_entitiesToClean.append(bullet);
@@ -361,7 +361,7 @@ void GameManager::cleanupEntities() {
 void GameManager::updateTowerTargets() {
     for (Tower* tower : m_towers) {
         if (tower->currentTarget && tower->targetIsInRange()) {
-            continue; // µ±Ç°Ä¿±êÓĞĞ§£¬ÎŞĞè¸ü»»
+            continue; // å½“å‰ç›®æ ‡æœ‰æ•ˆï¼Œæ— éœ€æ›´æ¢
         }
 
         Enemy* closestEnemy = nullptr;
@@ -383,19 +383,19 @@ void GameManager::checkWinLossConditions() {
         m_gameIsOver = true;
         m_gameTimer->stop();
         emit gameFinished(false,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
-        // ´Ë´¦¿ÉÒÔ·¢ÉäÒ»¸öÓÎÏ·Ê§°ÜµÄĞÅºÅ
+        // æ­¤å¤„å¯ä»¥å‘å°„ä¸€ä¸ªæ¸¸æˆå¤±è´¥çš„ä¿¡å·
     }
 
     if (m_waveManager->isFinished() && m_enemies.isEmpty()) {
         m_gameIsOver = true;
         m_gameTimer->stop();
         emit gameFinished(true,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
-        // ´Ë´¦¿ÉÒÔ·¢ÉäÒ»¸öÓÎÏ·Ê¤ÀûµÄĞÅºÅ
+        // æ­¤å¤„å¯ä»¥å‘å°„ä¸€ä¸ªæ¸¸æˆèƒœåˆ©çš„ä¿¡å·
     }
 }
 
 void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
-    // ²éÕÒ¶ÔÓ¦Î»ÖÃµÄËş²¢Éı¼¶
+    // æŸ¥æ‰¾å¯¹åº”ä½ç½®çš„å¡”å¹¶å‡çº§
     for (Tower* tower : m_towers) {
         QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
                             tower->pos().y() / m_screenSize.height());
@@ -410,7 +410,7 @@ void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
 }
 
 void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
-    // ²éÕÒ¶ÔÓ¦Î»ÖÃµÄËş²¢³öÊÛ
+    // æŸ¥æ‰¾å¯¹åº”ä½ç½®çš„å¡”å¹¶å‡ºå”®
     for (int i = 0; i < m_towers.size(); ++i) {
         Tower* tower = m_towers[i];
         QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
@@ -439,4 +439,26 @@ void GameManager::onApplyEnemyControl(Enemy* enemy,double duration) {
     }
 
     enemy->stopFor(duration);
+}
+Enemy* GameManager::spawnByTypeWithPath(const QString& type,
+                                        const std::vector<QPointF>& absPath,
+                                        double scale)
+{
+    if (!m_enemyPrototypes.contains(type)) return nullptr;
+    const QJsonObject proto = m_enemyPrototypes[type];
+
+    const int hp = proto.value("health").toInt();
+    const double spd = proto.value("speed").toDouble();
+    const int dmg = proto.value("damage").toInt();
+    const QString pix = proto.value("pixmap").toString();
+
+    QPixmap pm(pix);
+    Enemy* e = new Enemy(hp, spd, dmg, absPath, pm);
+    if (scale != 1.0) e->setScale(scale);
+
+    m_scene->addItem(e);
+    m_enemies.append(e);
+    connect(e, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
+    connect(e, &Enemy::died,       this, &GameManager::onEnemyDied);
+    return e;
 }
