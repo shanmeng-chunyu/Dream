@@ -333,6 +333,15 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 
     }
 
+    const QSize towerPixelSize(77, 77);
+    const QPointF towerOffset(-towerPixelSize.width() / 2.0, -towerPixelSize.height() / 2.0); // (即 -38.5, -38.5)
+    QPixmap originalPixmap = tower->pixmap(); // 获取构造函数设置的pixmap
+    // 缩放 pixmap
+    QPixmap scaledPixmap = originalPixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    // 替换掉原来的 pixmap
+    tower->setPixmap(scaledPixmap);
+    // 设置偏移量，将 (0,0) 点移动到中心
+    tower->setOffset(towerOffset);
     tower->setPos(absPos);
     m_scene->addItem(tower);
     m_towers.append(tower);
