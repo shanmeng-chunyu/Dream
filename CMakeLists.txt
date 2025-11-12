@@ -73,7 +73,4 @@ add_executable(Dream
         # resources.qrc
 )
 
-# ���� Qt6 �Ŀ⵽������Ŀ��
 target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
-
-add_executable(InspirationBulb InspirationBulb.h)
