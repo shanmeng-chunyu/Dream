@@ -11,26 +11,26 @@ int main(int argc, char *argv[]) {
     w.resize(1024,768);
     w.show();
 
-    //ç”¨äºè°ƒè¯•ä¸»èœå•çš„ä»£ç 
+    //ÓÃÓÚµ÷ÊÔÖ÷²Ëµ¥µÄ´úÂë
     // Ui::widget_menu menu_ui;
     // QWidget menu_widget;
     // menu_ui.setupUi(&menu_widget);
     // menu_widget.setWindowTitle("Level3 Main Menu (Menu Debug)");
-    // menu_widget.resize(800, 600); // è°ƒæ•´ä¸ºä½ è®¤ä¸ºåˆé€‚çš„å¤§å°
+    // menu_widget.resize(800, 600); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óĞ¡
     // menu_widget.show();
 
-    //ç”¨äºè°ƒè¯•å…³å¡é€‰æ‹©ç•Œé¢çš„ä»£ç 
+    //ÓÃÓÚµ÷ÊÔ¹Ø¿¨Ñ¡Ôñ½çÃæµÄ´úÂë
     // widget_choose_level choose_level_widget;
     // choose_level_widget.setWindowTitle("Level3 Choose Level (Choose Level Debug)");
-    // choose_level_widget.resize(1024, 768); // è°ƒæ•´ä¸ºä½ è®¤ä¸ºåˆé€‚çš„å¤§å°
+    // choose_level_widget.resize(1024, 768); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óĞ¡
     // choose_level_widget.show();
 
-    // --- ç”¨äºè°ƒè¯•ç¼–è¾‘å™¨çš„æ–°ä»£ç  ---
+    // --- ÓÃÓÚµ÷ÊÔ±à¼­Æ÷µÄĞÂ´úÂë ---
     // LevelEditorWidget editor;
     // editor.setWindowTitle("Level3 Editor (Level Editor Debug)");
-    // editor.resize(1024, 768); // è°ƒæ•´ä¸ºä½ è®¤ä¸ºåˆé€‚çš„å¤§å°
+    // editor.resize(1024, 768); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óĞ¡
     // editor.show();
-    // --- ç»“æŸ ---
+    // --- ½áÊø ---
 
     return a.exec();
 }

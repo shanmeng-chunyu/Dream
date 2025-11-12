@@ -64,7 +64,7 @@ void IconButton::setIconHeightRatio(qreal ratio)
 
 void IconButton::enterEvent(QEnterEvent *event)
 {
-    startScaleAnimation(1.1);
+    startScaleAnimation(1.3);
     QPushButton::enterEvent(event);
 }
 
@@ -83,7 +83,7 @@ void IconButton::mousePressEvent(QMouseEvent *event)
 void IconButton::mouseReleaseEvent(QMouseEvent *event)
 {
     if (underMouse()) {
-        startScaleAnimation(1.1);
+        startScaleAnimation(1.3);
     } else {
         startScaleAnimation(1.0);
     }

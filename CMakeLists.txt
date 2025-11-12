@@ -52,10 +52,6 @@ add_executable(Dream
         widget_level_loading.h widget_level_loading.cpp widget_level_loading.ui
         IconButton.h IconButton.cpp
         widget_post_game.h widget_post_game.cpp widget_post_game.ui
-        widget_ingame.h widget_ingame.cpp widget_ingame.ui
-        auto_widget.h auto_widget.cpp
-        widget_building_list.h widget_building_list.cpp widget_building_list.ui
-
         InspirationBulb.cpp
         KnowledgeTree.cpp
         FishingCatPillow.cpp

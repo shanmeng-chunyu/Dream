@@ -1,20 +1,5 @@
 #include "MainWindow.h"
 #include "GameManager.h"
-#include "widget_menu.h"
-#include "widget_choose_level.h"
-#include "widget_level_loading.h"
-#include "widget_post_game.h"
-#include "widget_ingame.h"
-#include "widget_building_list.h"
-
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent) {
-    // ���ô��ڴ�С
-    setFixedSize(800, 600);
-    setWindowTitle("Dream Guardian");
-
-    auto m=new widget_building_list(2);
-    m->show();
 #include "Tower.h"
 
 #include <QGraphicsItem>

@@ -2,13 +2,12 @@
 #define WIDGET_MENU_H
 
 #include <QWidget>
-#include <auto_widget.h>
 
 namespace Ui {
 class widget_menu;
 }
 
-class widget_menu : public auto_widget
+class widget_menu : public QWidget
 {
     Q_OBJECT
 
@@ -23,7 +22,6 @@ signals:
 
 private:
     Ui::widget_menu *ui;
-
 };
 
 #endif // WIDGET_MENU_H
