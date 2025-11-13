@@ -11,7 +11,7 @@ public:
     void upgrade()override;
     void attack()override;//通过fireRate来表示controlRate，但是不作出攻击
 signals:
-    void applyControl(Enemy *enemy,double duration);//给enemy发出的控制enemy效果信号
+    void applyControl(QGraphicsPixmapItem *enemy,double duration);//给enemy发出的控制enemy效果信号
 private:
     double controlDuration;//控制时长
 };

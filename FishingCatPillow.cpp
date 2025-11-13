@@ -12,7 +12,11 @@ void FishingCatPillow::attack()
 {    //如果存在目标，发射信号冷冻enemy
     if(currentTarget)
     {
-        emit applyControl(currentTarget,controlDuration);
+        Enemy* enemy = dynamic_cast<Enemy*>(currentTarget);
+        if(enemy)
+        {
+            emit applyControl(enemy,controlDuration);
+        }
     }
 }
 void FishingCatPillow::upgrade()
@@ -27,6 +31,11 @@ void FishingCatPillow::upgrade()
         if(fireCount>fireInterval)
             fireCount=fireInterval;
         upgraded=true;
-        setPixmap(QPixmap(":/towers/resources/towers/level1/FishingCatPillow_upgrade.png"));
+        const QSize towerPixelSize(76, 76);
+        QPixmap originalUpgradePixmap(":/towers/resources/towers/level1/FishingCatPillow_upgrade.png");
+        QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
     }
 }
+
+

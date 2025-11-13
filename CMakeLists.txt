@@ -52,16 +52,27 @@ add_executable(Dream
         widget_level_loading.h widget_level_loading.cpp widget_level_loading.ui
         IconButton.h IconButton.cpp
         widget_post_game.h widget_post_game.cpp widget_post_game.ui
+        InspirationBulb.h
         InspirationBulb.cpp
+        KnowledgeTree.h
         KnowledgeTree.cpp
+        FishingCatPillow.h
         FishingCatPillow.cpp
         AbilitiesImpl.h
         EnemyAbility.h
+        LiveCoffee.h
         LiveCoffee.cpp
+        NightRadio.h
+        NightRadio.cpp
+        PettingCatTime.h
+        PettingCatTime.cpp
+        WarmMemory.h
+        WarmMemory.cpp
+        FriendCompanion.h
+        FriendCompanion.cpp
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc
 )
 
-# ���� Qt6 �Ŀ⵽������Ŀ��
 target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
