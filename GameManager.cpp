@@ -458,11 +458,9 @@ void GameManager::onEnemyDied(Enemy* enemy) {
         QPointF deathPos = enemy->pos(); // "bug" 死亡的确切坐标
 
         // 4b. 为 "bugmini" 构建剩余路径
-        //     新路径 = [死亡坐标, 目标航点, 目标航点+1, ...]
         std::vector<QPointF> remainingPath;
         remainingPath.push_back(deathPos); // 路径的第一个点是死亡坐标
 
-        // 4c. 找到 "bug" 的下一个目标航点
         int nextWaypointIndex = currentIndex + 1;
         if (nextWaypointIndex < currentPath.size()) {
             // 将所有剩余的航点添加到新路径中
@@ -471,14 +469,48 @@ void GameManager::onEnemyDied(Enemy* enemy) {
             }
         }
 
-        // 4d. 【核心】调用 spawnByTypeWithPath 生成两个 "bugmini"
-        //     我们给小 bug 一个 0.75 的缩放
+        // 4c. 【核心】生成两个 "bugmini"
+        // (它们俩此时都会在 deathPos)
         Enemy* child1 = spawnByTypeWithPath("bugmini", remainingPath, 0.75);
         Enemy* child2 = spawnByTypeWithPath("bugmini", remainingPath, 0.75);
 
-        // 4e. 将第二只 "bugmini" 稍微偏移，防止它们完全重叠
-        if (child2) {
-            child2->setPos(child2->pos() + QPointF(5, -5)); // 5像素的小偏移
+        // 4d. 【替换】计算沿路径前后的分裂位置
+        if (child1 && child2) {
+            QPointF pathVector; // 存储路径的 (dx, dy) 方向向量
+
+            // 1. 尝试获取 "前进" 方向 (朝向下一个航点)
+            if (nextWaypointIndex < currentPath.size()) {
+                QPointF nextWaypoint = currentPath[nextWaypointIndex];
+                QLineF pathLine(deathPos, nextWaypoint);
+                if (pathLine.length() > 0.01) { // 避免除零
+                    QLineF unitPathLine = pathLine.unitVector();
+                    pathVector = unitPathLine.p2() - unitPathLine.p1();
+                }
+            }
+
+            // 2. 如果没有前进方向 (例如死在终点)，尝试获取 "后退" 方向 (来自上一个航点)
+            if (pathVector.isNull() && currentIndex > 0) {
+                QPointF prevWaypoint = currentPath[currentIndex]; // 注意是 currentIndex，不是-1
+                QLineF pathLine(prevWaypoint, deathPos);
+                if (pathLine.length() > 0.01) {
+                    QLineF unitPathLine = pathLine.unitVector();
+                    pathVector = unitPathLine.p2() - unitPathLine.p1();
+                }
+            }
+
+            // 3. 如果仍然没有方向 (罕见)，默认水平分裂
+            if (pathVector.isNull()) {
+                pathVector = QPointF(1.0, 0.0);
+            }
+
+            // 定义弹开的距离 (20 像素)
+            qreal offsetAmount = 25.0;
+
+            // 4e. 【替换】将两个 bugmini 设置到弹开后的位置
+            // child1 放在前面
+            child1->setPos(deathPos + pathVector * offsetAmount);
+            // child2 放在后面
+            child2->setPos(deathPos - pathVector * offsetAmount);
         }
     }
     // --- 分裂逻辑结束 ---
