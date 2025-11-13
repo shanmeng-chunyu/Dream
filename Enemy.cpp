@@ -1,6 +1,9 @@
 #include "Enemy.h"
+#include "LiveCoffee.h"
+#include <QGraphicsScene>
 #include <QLineF>
 #include <QDebug>
+#include <QGraphicsScene>
 
 Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& path,QString type, const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
@@ -12,7 +15,8 @@ Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& pa
       absolutePath(path),
       m_currentPathIndex(0),
       m_maxHealth(health),
-      m_stunTicksRemainimng(0)
+      m_stunTicksRemainimng(0),
+      m_baseSpeed(speed)
 {
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
@@ -33,6 +37,7 @@ void Enemy::move() {
         m_stunTicksRemainimng--;
         return;
     }
+    applyAuraEffects();
     if (m_currentPathIndex>= absolutePath.size() - 1) {
         emit reachedEnd(this);
         return;
@@ -79,10 +84,47 @@ void Enemy::heal(int amount) {
     m_health = std::min(m_health + amount, m_maxHealth);
 }
 
-void Enemy::setSpeed(double v) {
-    m_speed = v;
+void Enemy::setBaseSpeed(double v) {
+    m_baseSpeed = v;
 }
 
 int Enemy::getCurrentPathIndex() const {
     return m_currentPathIndex;
+}
+
+QList<LiveCoffee*> Enemy::findCoffeeInRange() const
+{
+    QList<LiveCoffee*> coffeeTowers;
+    if (!scene()) return coffeeTowers; // 安全检查
+
+    QList<QGraphicsItem*> items = scene()->items();
+    for(auto& item : items)
+    {
+        LiveCoffee* tower = dynamic_cast<LiveCoffee*>(item);
+        if(tower) // 如果它是一个咖啡塔
+        {
+            QLineF line(pos(), tower->pos());
+            // 检查敌人是否在塔的光环范围内
+            if(line.length() <= tower->getRange())
+                coffeeTowers.append(tower);
+        }
+    }
+    return coffeeTowers;
+}
+
+// 【新增】应用所有光环效果
+void Enemy::applyAuraEffects()
+{
+    // 1. 速度重置为基础速度 (可能是原始速度，也可能是Boss狂暴后的速度)
+    m_speed = m_baseSpeed;
+
+    // 2. 搜索咖啡塔
+    QList<LiveCoffee*> coffees = findCoffeeInRange();
+
+    // 3. 叠乘所有减速效果
+    for(LiveCoffee* coffee : coffees)
+    {
+        m_speed *= coffee->getEnemyDebuffFactor();
+    }
+    // (未来还可以添加其他光环, e.g., m_speed *= findOtherDebuff())
 }

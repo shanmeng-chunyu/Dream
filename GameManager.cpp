@@ -236,7 +236,7 @@ void GameManager::updateGame() {
             if (maxHp > 0 && (double)enemy->getHealth() / maxHp < thr) {
                 const double baseSpd = proto.value("speed").toDouble();
                 const double mul = proto.value("rageSpeedMul").toDouble(1.35);
-                enemy->setSpeed(baseSpd * mul);
+                enemy->setBaseSpeed(baseSpd * mul);
                 m_raged.insert(enemy);
             }
         }
@@ -325,9 +325,6 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
         connect(pillow,&FishingCatPillow::applyControl,this,&GameManager::onApplyEnemyControl);
     }else if (type == "LiveCoffee") {
         tower = new LiveCoffee(pixelRange);
-        LiveCoffee* coffee = static_cast<LiveCoffee*>(tower);
-        connect(coffee, &LiveCoffee::slowEnemyStart, this, &GameManager::onSlowEnemyStart);
-        connect(coffee, &LiveCoffee::slowEnemyStop, this, &GameManager::onSlowEnemyStop);
     }else if (type == "WarmMemories") {
         tower = new WarmMemory(pixelRange);
     }else if (type == "NightRadio") {
@@ -405,7 +402,6 @@ void GameManager::onEnemyReachedEnd(Enemy* enemy) {
     if (!m_enemies.contains(enemy)) {
         return;
     }
-    m_originalSpeeds.remove(enemy);
     m_player->decreaseStability(enemy->getDamage());
     for (Tower* tower : m_towers) {
         if (tower->getCurrentTarget() == enemy) {
@@ -420,7 +416,6 @@ void GameManager::onEnemyDied(Enemy* enemy) {
     if (!m_enemies.contains(enemy)) {
         return;
     }
-    m_originalSpeeds.remove(enemy);
     QString type = enemy->getType();
     QJsonObject proto = m_enemyPrototypes[type];
 
@@ -726,40 +721,10 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     e->setOffset(-enemyPixelSize.width() / 2.0, -enemyPixelSize.height() * 0.8);
 
     if (scale != 1.0) e->setScale(scale);
-    m_originalSpeeds[e] = spd;
 
     m_scene->addItem(e);
     m_enemies.append(e);
     connect(e, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
     connect(e, &Enemy::died,       this, &GameManager::onEnemyDied);
     return e;
-}
-
-void GameManager::onSlowEnemyStart(QGraphicsPixmapItem* enemyItem, double slowFactor)
-{
-    Enemy* enemy = dynamic_cast<Enemy*>(enemyItem);
-
-    // 确保敌人仍然存活且有记录
-    if (enemy && m_enemies.contains(enemy) && m_originalSpeeds.contains(enemy))
-    {
-        // 1. 获取原始速度
-        double originalSpeed = m_originalSpeeds.value(enemy);
-        // 2. 设置减慢后的速度
-        enemy->setSpeed(originalSpeed * slowFactor);
-    }
-}
-
-/**
- * @brief 槽：当敌人离开 LiveCoffee 光环时调用
- */
-void GameManager::onSlowEnemyStop(QGraphicsPixmapItem* enemyItem)
-{
-    Enemy* enemy = dynamic_cast<Enemy*>(enemyItem);
-
-    // 确保敌人仍然存活且有记录
-    if (enemy && m_enemies.contains(enemy) && m_originalSpeeds.contains(enemy))
-    {
-        // 1. 恢复原始速度
-        enemy->setSpeed(m_originalSpeeds.value(enemy));
-    }
 }

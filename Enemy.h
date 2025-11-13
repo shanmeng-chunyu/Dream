@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 
+class LiveCoffee;
 class Enemy : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
@@ -21,7 +22,7 @@ public:
     void stopFor(double duration);
     int getHealth() const;
     void heal(int amount);
-    void setSpeed(double v);
+    void setBaseSpeed(double v);
     int getCurrentPathIndex() const;
 
 
@@ -41,8 +42,11 @@ private:
     double m_speed;
     int m_maxHealth;
     int m_currentPathIndex;
+    void applyAuraEffects();
+    QList<LiveCoffee*> findCoffeeInRange() const;
 
     int m_stunTicksRemainimng = 0;
+    double m_baseSpeed;//原始速度
 };
 
 #endif // ENEMY_H

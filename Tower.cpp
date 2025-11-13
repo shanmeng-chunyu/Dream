@@ -125,7 +125,7 @@ void Tower::coffeeEffect()
     QList<LiveCoffee*>auraTowers=findCoffeeInRange();
     for(auto& tower:auraTowers)
     {
-        fireInterval = static_cast<int>(fireInterval * tower->getFactor());
+        fireInterval = static_cast<int>(fireInterval * tower->getTowerBuffFactor());
     }
     if (fireCount > fireInterval) {
         fireCount = fireInterval;

@@ -2,11 +2,9 @@
 #include <QGraphicsScene>
 #include <QLineF>
 #include <QGraphicsPixmapItem>
-#include "GameManager.h" // 包含 GameManager.h
-#include "Enemy.h"       // 包含 Enemy.h
 
 // --- 构造函数 (和我们之前修复的一样，保持不变) ---
-LiveCoffee::LiveCoffee(double range,QGraphicsItem* parent):Tower(0,range,1,80,120,QPixmap(":/towers/resources/towers/level1/LiveCoffee.png"),parent),enemies()
+LiveCoffee::LiveCoffee(double range,QGraphicsItem* parent):Tower(0,range,1,80,120,QPixmap(":/towers/resources/towers/level1/LiveCoffee.png"),parent)
 {
     slowFactor=0.8;
     increaseFactor=0.9;
@@ -29,49 +27,9 @@ LiveCoffee::LiveCoffee(double range,QGraphicsItem* parent):Tower(0,range,1,80,12
 // --- 【修改】attack() 函数现在什么都不做 ---
 void LiveCoffee::attack()
 {
-    // 逻辑已全部移至 findAndAttackTarget()
     return;
 }
 
-// --- 【新增】重写的 findAndAttackTarget() ---
-void LiveCoffee::findAndAttackTarget()
-{
-    // 1. 复制 Tower 基类的计时器逻辑
-    fireCount--;
-    if (fireCount <= 0)
-    {
-        // 2. 【关键】不再检查 "if (currentTarget ...)"
-        //    而是直接执行光环扫描逻辑
-
-        const QList<Enemy*>& allLivingEnemies = GameManager::instance()->getEnemies();
-
-        QSet<Enemy*>currentEnemies;
-        for(auto& enemy : allLivingEnemies)
-        {
-            // 'range' 是从 Tower 基类继承的成员变量
-            QLineF line(pos(), enemy->pos());
-            if(line.length() <= range)
-                currentEnemies.insert(enemy);
-        }
-
-        // (这部分逻辑和之前一样，现在 100% 安全了)
-        QSet<Enemy*>enemiesToAdd = currentEnemies - enemies;
-        QSet<Enemy*>enemiesToRemove = enemies - currentEnemies;
-
-        for(auto& enemy : enemiesToAdd)
-        {
-            emit slowEnemyStart(enemy, slowFactor);
-        }
-        for(auto& enemy : enemiesToRemove)
-        {
-            emit slowEnemyStop(enemy);
-        }
-        enemies = currentEnemies;
-
-        // 3. 复制 Tower 基类的计时器重置
-        fireCount = fireInterval;
-    }
-}
 
 
 // --- upgrade() 函数 (和我们之前修复的一样，保持不变) ---

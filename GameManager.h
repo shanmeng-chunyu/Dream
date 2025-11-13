@@ -63,8 +63,6 @@ private slots:
     // 游戏主循环
     void updateGame();
     void onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration);
-    void onSlowEnemyStart(QGraphicsPixmapItem* enemy, double slowFactor);
-    void onSlowEnemyStop(QGraphicsPixmapItem* enemy);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
 
@@ -102,7 +100,6 @@ private:
     // 从关卡文件加载的原型数据
     QMap<QString, QJsonObject> m_enemyPrototypes;
     QMap<QString, QJsonObject> m_towerPrototypes;
-    QHash<Enemy*, double> m_originalSpeeds;
 
     bool m_gameIsOver;
     Enemy* spawnByTypeWithPath(const QString& type, const std::vector<QPointF>& absPath,double scale = 1.0);
