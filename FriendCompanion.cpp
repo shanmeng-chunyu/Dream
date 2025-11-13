@@ -11,7 +11,11 @@ void FriendCompanion:: upgrade()
 {
     increaseDamage=1.25;
     upgraded=true;
-    setPixmap(QPixmap(":/towers/resources/towers/level2/Companionship_upgrade.png"));
+    const QSize towerPixelSize(76, 76);
+    QPixmap originalUpgradePixmap(":/towers/resources/towers/level2/Companionship_upgrade.png");
+    QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    setPixmap(scaledPixmap);
 }
+
 
 
