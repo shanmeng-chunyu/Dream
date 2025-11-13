@@ -848,20 +848,24 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     const int hp = proto.value("health").toInt();
     const double spd = proto.value("speed").toDouble();
     const int dmg = proto.value("damage").toInt();
-    const QString pix = proto.value("pixmap").toString();
-
+    const QString gifPath = proto.value("gif_path").toString();
+    const QString pixPath = proto.value("pixmap").toString();
+    QString RealPath;
+    if (gifPath != "") {
+        RealPath = gifPath;
+    }else {
+        RealPath = pixPath;
+    }
     // 【新增】1. 定义标准尺寸
     QSize enemyPixelSize(126, 126);
     if (type == "thesis" || type == "past"  || type == "nightmare") {
         enemyPixelSize = QSize(200,200);
     }
 
-    // 【修改】2. 加载并缩放贴图
-    QPixmap originalPixmap(pix);
-    QPixmap scaledPixmap = originalPixmap.scaled(enemyPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
 
     // 【修改】3. 使用缩放后的贴图创建 Enemy
-    Enemy* e = new Enemy(hp, spd, dmg, absPath, type, scaledPixmap);
+    Enemy* e = new Enemy(hp, spd, dmg, absPath, type, RealPath, enemyPixelSize);
 
     // 【新增】4. 设置偏移量，使其中心点在路径上
     e->setOffset(-enemyPixelSize.width() / 2.0, -enemyPixelSize.height() * 0.8);

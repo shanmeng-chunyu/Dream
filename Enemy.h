@@ -8,11 +8,16 @@
 #include <string>
 
 class LiveCoffee;
+class QMovie;
 class Enemy : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    explicit Enemy(int health, double speed, int damage, const std::vector<QPointF>& path,QString type, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
+    explicit Enemy(int health, double speed, int damage,
+               const std::vector<QPointF>& path, QString type,
+               const QString& gifPath,
+               const QSize& pixelSize,
+               QGraphicsItem* parent = nullptr);
 
     void takeDamage(int damageAmount);
     int getDamage() const;
@@ -29,7 +34,8 @@ public:
 
     public slots:
         void move();
-
+private slots:
+    void updatePixmapFromMovie(); // 更新当前帧
     signals:
         void reachedEnd(Enemy* enemy);
     void died(Enemy* enemy);
@@ -45,6 +51,8 @@ private:
     int m_currentPathIndex;
     void applyAuraEffects();
     QList<LiveCoffee*> findCoffeeInRange() const;
+    QMovie* m_movie;       // 用于播放GIF
+    QSize m_pixelSize;     // 存储敌人的标准像素尺寸
 
     int m_stunTicksRemainimng = 0;
     double m_baseSpeed;//Ô­Ê¼ËÙ¶È

@@ -5,19 +5,15 @@
         "coldwords",
         "ddl",
         "gpa",
-        "lonelyness",
+        "loneliness",
         "nightmare",
+        "past",
         "pre",
-        "recall",
+        "regret",
         "tears",
-        "thephantomofthepast",
         "thesis"
     ],
     "available_towers": [
-        "InspirationBulb",
-        "FishingCatPillow",
-        "LiveCoffee",
-        "KnowledgeTree"
     ],
     "level_name": "第三关：梦你所梦",
     "map": {
@@ -511,9 +507,14 @@
         {
             "enemies": [
                 {
-                    "count": 1,
+                    "count": 3,
                     "interval": 1,
-                    "type": "thephantomofthepast"
+                    "type": "bug"
+                },
+                {
+                    "count": 4,
+                    "interval": 1,
+                    "type": "pre"
                 }
             ]
         },

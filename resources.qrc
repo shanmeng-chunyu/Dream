@@ -38,9 +38,11 @@
     </qresource>
     <qresource prefix="/enemies">
         <file>resources/enemies/level1/bug.png</file>
+        <file>resources/enemies/level1/bug.gif</file>
         <file>resources/enemies/level1/ddl.png</file>
         <file>resources/enemies/level1/gpa.png</file>
         <file>resources/enemies/level1/pre.png</file>
+        <file>resources/enemies/level1/pre.gif</file>
         <file>resources/enemies/level1/thesis.png</file>
         <file>resources/enemies/level2/coldwords.png</file>
         <file>resources/enemies/level2/lonelyness.png</file>

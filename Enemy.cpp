@@ -6,10 +6,11 @@
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QtMath>
+#include <QMovie>
 
-Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& path,QString type, const QPixmap& pixmap, QGraphicsItem* parent)
+Enemy::Enemy(int health, double speed, int damage, const std::vector<QPointF>& path, QString type, const QString& gifPath, const QSize& pixelSize, QGraphicsItem* parent)
     : QObject(nullptr),
-      QGraphicsPixmapItem(pixmap, parent),
+      QGraphicsPixmapItem(parent),
       type(type),
       m_health(health),
       m_speed(speed),
@@ -19,10 +20,25 @@ Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& pa
       m_maxHealth(health),
       m_stunTicksRemainimng(0),
       m_baseSpeed(speed),
-      m_isFlipped(false)
+      m_isFlipped(false),
+      m_pixelSize(pixelSize)
 {
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
+    }
+    m_movie = new QMovie(gifPath, QByteArray(), this);
+
+    // 推荐：对于大量重复的GIF，开启缓存
+    m_movie->setCacheMode(QMovie::CacheAll);
+
+    // 连接 QMovie 的 frameChanged 信号到我们的槽
+    connect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
+
+    m_movie->start();
+
+    // 立即设置第一帧，防止敌人隐形
+    if (m_movie->isValid()) {
+        updatePixmapFromMovie();
     }
 }
 
@@ -219,3 +235,13 @@ void Enemy::paint(QPainter* painter,
     painter->restore();
 }
 
+void Enemy::updatePixmapFromMovie()
+{
+    // 关键：从 QMovie 获取当前帧，并 *缩放* 到我们期望的尺寸
+    QPixmap scaledFrame = m_movie->currentPixmap().scaled(m_pixelSize,
+                                                        Qt::KeepAspectRatio,
+                                                        Qt::SmoothTransformation);
+
+    // 将 QGraphicsPixmapItem 的贴图设置为这一帧
+    setPixmap(scaledFrame);
+}
