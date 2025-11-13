@@ -17,8 +17,27 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     upgraded(false),
     currentTarget(nullptr),
     fireInterval(static_cast<int>(fireRate * 60)),fireCount(fireInterval),
-    originalFireInterval(fireInterval),originalDamage(damage)
-{setPixmap(pixmap);}
+    originalFireInterval(fireInterval),originalDamage(damage) {
+    setPixmap(pixmap);
+    // 3. 启用鼠标悬停事件
+    setAcceptHoverEvents(true);
+    m_rangeCircle = new QGraphicsEllipseItem(this);
+
+    // 4. 设置范围圆的样式
+    QPen pen(QColor(255, 255, 255, 120));
+    pen.setWidth(2);
+    m_rangeCircle->setPen(pen);
+    m_rangeCircle->setBrush(QColor(255, 255, 255, 30));
+    m_rangeCircle->setZValue(-1);
+
+    // 5. 将默认可见性设置为 true
+    m_rangeCircle->setVisible(true); // <-- 修改为 true
+
+    // 6. 设置范围圆的位置和大小
+    qreal r = range;
+    qreal center = 76.0 / 2.0;
+    m_rangeCircle->setRect(center - r, center - r, r * 2, r * 2);
+}
 
 void Tower::setTarget(QGraphicsPixmapItem* target) {
     currentTarget = target;
@@ -129,3 +148,30 @@ void Tower::upgrade(){
     }
 }
 
+void Tower::setRange(double newrange) {
+    range=newrange;
+    if (m_rangeCircle) {
+        qreal r = range;
+        qreal center = 76.0 / 2.0;
+        m_rangeCircle->setRect(center - r, center - r, r * 2, r * 2);
+    }
+}
+
+void Tower::showRange(bool show)
+{
+    if (m_rangeCircle) {
+        m_rangeCircle->setVisible(show);
+    }
+}
+
+void Tower::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    showRange(true); // 显示范围
+    QGraphicsPixmapItem::hoverEnterEvent(event);
+}
+
+void Tower::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    showRange(false); // 隐藏范围
+    QGraphicsPixmapItem::hoverLeaveEvent(event);
+}

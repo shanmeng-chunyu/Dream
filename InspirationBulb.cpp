@@ -9,7 +9,6 @@ void InspirationBulb::upgrade()
     if(!upgraded)
     {
         damage=60;
-        range=3.5;
         fireRate=0.6;
         upgraded=true;
         fireInterval=fireRate*60;

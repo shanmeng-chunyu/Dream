@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
+#include <QPointer>
 
 class Enemy;
 
@@ -23,7 +24,8 @@ public:
 private:
     int damage;
     double speed;
-    QGraphicsPixmapItem* target;
+    QPointer<QObject> m_targetObject;
+    QGraphicsPixmapItem* m_targetPixmap;
 };
 
 #endif // BULLET_H

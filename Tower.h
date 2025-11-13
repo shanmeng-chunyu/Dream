@@ -12,6 +12,7 @@ class Bullet;
 class LiveCoffee;
 class FriendCompanion;
 class Obstacle;
+class QGraphicsSceneHoverEvent;
 class Tower : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
@@ -32,8 +33,8 @@ public:
     virtual void attack();
     bool targetIsInRange() const;//检查敌人是否在攻击范围内
     void setTarget(QGraphicsPixmapItem* target);
-    void setRange(int newrange){range=newrange;}
-
+    void setRange(double newrange);
+    void showRange(bool show);
     //升级
     virtual void upgrade();
 
@@ -74,6 +75,11 @@ protected:
     int originalFireInterval;
     int originalDamage;
 
+    QGraphicsEllipseItem* m_rangeCircle;
+    // 鼠标悬停进入事件
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    // 鼠标悬停离开事件
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
     friend class GameManager;
 };
 #endif // TOWER_H
