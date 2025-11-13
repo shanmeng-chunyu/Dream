@@ -4,6 +4,8 @@
 #include <QLineF>
 #include <QDebug>
 #include <QGraphicsScene>
+#include <QPainter>
+#include <QtMath>
 
 Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& path,QString type, const QPixmap& pixmap, QGraphicsItem* parent)
     : QObject(nullptr),
@@ -58,37 +60,37 @@ void Enemy::move() {
 
     double angle = atan2(targetPoint.y() - pos().y(), targetPoint.x() - pos().x());
     double dx = m_speed * cos(angle);
-    //·´×ªÌùÍ¼
+    //åè½¬è´´å›¾
     bool shouldBeFlipped = false;
 
-    // 1. ¸ù¾İÀàĞÍÅĞ¶Ï "ÆÚÍûµÄ" ·­×ª×´Ì¬
+    // 1. æ ¹æ®ç±»å‹åˆ¤æ–­ "æœŸæœ›çš„" ç¿»è½¬çŠ¶æ€
     if (type == "bug" || type == "bugmini") {
-        // ¼ÙÉè "bug" Ä¬ÈÏ³¯×ó
-        // µ±ÏòÓÒÒÆ¶¯ (dx > 0.01) Ê±£¬ËüÃÇ "Ó¦¸Ã±»·­×ª"
+        // å‡è®¾ "bug" é»˜è®¤æœå·¦
+        // å½“å‘å³ç§»åŠ¨ (dx > 0.01) æ—¶ï¼Œå®ƒä»¬ "åº”è¯¥è¢«ç¿»è½¬"
         shouldBeFlipped = (dx > 0.01);
     }
     else {
-        // ¼ÙÉè "ÆäËû" Ä¬ÈÏ³¯ÓÒ
-        // µ±Ïò×óÒÆ¶¯ (dx < -0.01) Ê±£¬ËüÃÇ "Ó¦¸Ã±»·­×ª"
+        // å‡è®¾ "å…¶ä»–" é»˜è®¤æœå³
+        // å½“å‘å·¦ç§»åŠ¨ (dx < -0.01) æ—¶ï¼Œå®ƒä»¬ "åº”è¯¥è¢«ç¿»è½¬"
         shouldBeFlipped = (dx < -0.01);
     }
 
-    // 2. ¼ì²é "ÆÚÍû×´Ì¬" ÊÇ·ñÓë "µ±Ç°×´Ì¬" (m_isFlipped) ²»·û
+    // 2. æ£€æŸ¥ "æœŸæœ›çŠ¶æ€" æ˜¯å¦ä¸ "å½“å‰çŠ¶æ€" (m_isFlipped) ä¸ç¬¦
     if (shouldBeFlipped && !m_isFlipped) {
-        // ÆÚÍû·­×ª£¬µ«µ±Ç°Î´·­×ª -> Ó¦ÓÃ·­×ª
+        // æœŸæœ›ç¿»è½¬ï¼Œä½†å½“å‰æœªç¿»è½¬ -> åº”ç”¨ç¿»è½¬
         QTransform t = transform();
         t.scale(-1, 1);
         setTransform(t);
         m_isFlipped = true;
     }
     else if (!shouldBeFlipped && m_isFlipped) {
-        // ÆÚÍû²»·­×ª£¬µ«µ±Ç°ÒÑ·­×ª -> ·­×ª»ØÀ´
+        // æœŸæœ›ä¸ç¿»è½¬ï¼Œä½†å½“å‰å·²ç¿»è½¬ -> ç¿»è½¬å›æ¥
         QTransform t = transform();
-        t.scale(-1, 1); // ÔÙ´Î·­×ªÒÔµÖÏû
+        t.scale(-1, 1); // å†æ¬¡ç¿»è½¬ä»¥æŠµæ¶ˆ
         setTransform(t);
         m_isFlipped = false;
     }
-    // --- ·­×ªÂß¼­½áÊø ---
+    // --- ç¿»è½¬é€»è¾‘ç»“æŸ ---
     double dy =m_speed * sin(angle);
     setPos(pos().x() + dx, pos().y() + dy);
 }
@@ -97,6 +99,8 @@ void Enemy::takeDamage(int damageAmount) {
     m_health -= damageAmount;
     if (m_health <= 0) {
         emit died(this);
+    } else {
+        update();
     }
 }
 
@@ -114,6 +118,7 @@ int Enemy::getHealth() const {
 void Enemy::heal(int amount) {
     if (amount <= 0) return;
     m_health = std::min(m_health + amount, m_maxHealth);
+    update();
 }
 
 void Enemy::setBaseSpeed(double v) {
@@ -127,16 +132,16 @@ int Enemy::getCurrentPathIndex() const {
 QList<LiveCoffee*> Enemy::findCoffeeInRange() const
 {
     QList<LiveCoffee*> coffeeTowers;
-    if (!scene()) return coffeeTowers; // °²È«¼ì²é
+    if (!scene()) return coffeeTowers; // å®‰å…¨æ£€æŸ¥
 
     QList<QGraphicsItem*> items = scene()->items();
     for(auto& item : items)
     {
         LiveCoffee* tower = dynamic_cast<LiveCoffee*>(item);
-        if(tower) // Èç¹ûËüÊÇÒ»¸ö¿§·ÈËş
+        if(tower) // å¦‚æœå®ƒæ˜¯ä¸€ä¸ªå’–å•¡å¡”
         {
             QLineF line(pos(), tower->pos());
-            // ¼ì²éµĞÈËÊÇ·ñÔÚËşµÄ¹â»··¶Î§ÄÚ
+            // æ£€æŸ¥æ•Œäººæ˜¯å¦åœ¨å¡”çš„å…‰ç¯èŒƒå›´å†…
             if(line.length() <= tower->getRange())
                 coffeeTowers.append(tower);
         }
@@ -144,19 +149,60 @@ QList<LiveCoffee*> Enemy::findCoffeeInRange() const
     return coffeeTowers;
 }
 
-// ¡¾ĞÂÔö¡¿Ó¦ÓÃËùÓĞ¹â»·Ğ§¹û
+// ã€æ–°å¢ã€‘åº”ç”¨æ‰€æœ‰å…‰ç¯æ•ˆæœ
 void Enemy::applyAuraEffects()
 {
-    // 1. ËÙ¶ÈÖØÖÃÎª»ù´¡ËÙ¶È (¿ÉÄÜÊÇÔ­Ê¼ËÙ¶È£¬Ò²¿ÉÄÜÊÇBoss¿ñ±©ºóµÄËÙ¶È)
+    // 1. é€Ÿåº¦é‡ç½®ä¸ºåŸºç¡€é€Ÿåº¦ (å¯èƒ½æ˜¯åŸå§‹é€Ÿåº¦ï¼Œä¹Ÿå¯èƒ½æ˜¯Bossç‹‚æš´åçš„é€Ÿåº¦)
     m_speed = m_baseSpeed;
 
-    // 2. ËÑË÷¿§·ÈËş
+    // 2. æœç´¢å’–å•¡å¡”
     QList<LiveCoffee*> coffees = findCoffeeInRange();
 
-    // 3. µş³ËËùÓĞ¼õËÙĞ§¹û
+    // 3. å ä¹˜æ‰€æœ‰å‡é€Ÿæ•ˆæœ
     for(LiveCoffee* coffee : coffees)
     {
         m_speed *= coffee->getEnemyDebuffFactor();
     }
-    // (Î´À´»¹¿ÉÒÔÌí¼ÓÆäËû¹â»·, e.g., m_speed *= findOtherDebuff())
+    // (æœªæ¥è¿˜å¯ä»¥æ·»åŠ å…¶ä»–å…‰ç¯, e.g., m_speed *= findOtherDebuff())
+}
+
+
+
+void Enemy::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    QGraphicsPixmapItem::paint(painter, option, widget);
+
+    if (m_maxHealth <= 0) return;
+
+    qreal ratio = (qreal)m_health / (qreal)m_maxHealth;
+    if (ratio < 0.0) ratio = 0.0;
+    if (ratio > 1.0) ratio = 1.0;
+    if (ratio <= 0.0) return;
+
+    int pw = pixmap().width();
+    int barW = pw - 8; 
+    if (barW < 20) barW = pw;
+    int barH = 5;
+    qreal x = (pw - barW) / 2.0;
+    qreal y = 2.0;
+
+    QRectF bgRect(x, y, barW, barH);
+    QRectF fgRect(x, y, barW * ratio, barH);
+
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing, true);
+
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(QColor(0, 0, 0, 160));
+    painter->drawRoundedRect(bgRect, 2, 2);
+
+    QColor front;
+    if (ratio >= 0.6) front = QColor(76, 175, 80);
+    else if (ratio >= 0.3) front = QColor(255, 193, 7);
+    else front = QColor(244, 67, 54);
+
+    painter->setBrush(front);
+    painter->drawRoundedRect(fgRect, 2, 2);
+
+    painter->restore();
 }
