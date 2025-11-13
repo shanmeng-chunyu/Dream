@@ -235,6 +235,7 @@ void MainWindow::initializeScene()
     {
         qWarning() << "GameManager::gameFinished 信号尚未可用，无法自动弹出结算界面。";
     }
+    connect(this, &MainWindow::towerUpgradeRequested, manager, &GameManager::onTowerUpgradeRequested);
     synchronizeLogicScreenSize();
     recalculateBaseRadius();
 
@@ -1361,7 +1362,7 @@ void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
     if (selected == upgradeAction)
     {
         emit towerUpgradeRequested(relativePos);
-        QMessageBox::information(this, tr("Upgrade"), tr("Upgrade logic not implemented yet."));
+        //QMessageBox::information(this, tr("Upgrade"), tr("Upgrade logic not implemented yet."));
     }
     else if (selected == sellAction)
     {

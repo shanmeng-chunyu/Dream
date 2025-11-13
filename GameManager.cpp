@@ -559,9 +559,18 @@ void GameManager::checkWinLossConditions() {
 
 void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
     // 查找对应位置的塔并升级
+    const QSize towerPixelSize(76, 76);
     for (Tower* tower : m_towers) {
-        QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
-                            tower->pos().y() / m_screenSize.height());
+        // 1. 获取塔的 "左上角" 绝对坐标
+        QPointF towerTopLeftAbs = tower->pos();
+
+        // 2. 计算塔的 "中心" 绝对坐标
+        QPointF towerCenterAbs(towerTopLeftAbs.x() + towerPixelSize.width() / 2.0,
+                               towerTopLeftAbs.y() + towerPixelSize.height() / 2.0);
+
+        // 3. 将 "中心" 绝对坐标 转换回 相对坐标
+        QPointF towerRelPos(towerCenterAbs.x() / m_screenSize.width(),
+                            towerCenterAbs.y() / m_screenSize.height());
         if (qFuzzyCompare(towerRelPos, relativePosition)) {
             QJsonObject proto = m_towerPrototypes[tower->getType()];
             if (m_player->spendResource(proto["upgrade_cost"].toInt())) {
