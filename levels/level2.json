@@ -183,7 +183,7 @@
     ]
   },
   "player": {
-    "initial_stability": 0,
+    "initial_stability": 100,
     "initial_resource": 150
   },
   "available_towers": ["WarmMemories", "NightRadio", "PettingCatTime", "Companionship"],

@@ -20,7 +20,7 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     originalFireInterval(fireInterval),originalDamage(damage)
 {setPixmap(pixmap);}
 
-void Tower::setTarget(Enemy* target) {
+void Tower::setTarget(QGraphicsPixmapItem* target) {
     currentTarget = target;
 }
 

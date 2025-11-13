@@ -66,3 +66,19 @@ int Enemy::getDamage() const {
 void Enemy::stopFor(double duration) {
     m_stunTicksRemainimng = static_cast<int>(duration * 60);
 }
+int Enemy::getHealth() const {
+    return m_health;
+}
+
+void Enemy::heal(int amount) {
+    if (amount <= 0) return;
+    m_health = std::min(m_health + amount, m_maxHealth);
+}
+
+void Enemy::setSpeed(double v) {
+    m_speed = v;
+}
+
+int Enemy::getCurrentPathIndex() const {
+    return m_currentPathIndex;
+}

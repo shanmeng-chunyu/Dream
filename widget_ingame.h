@@ -2,7 +2,10 @@
 #define WIDGET_INGAME_H
 
 #include "auto_widget.h"
-#include<QMouseEvent>
+#include <QMouseEvent>
+#include <QLabel>
+#include <QProgressBar>
+#include <QLCDNumber>
 
 namespace Ui {
 class widget_ingame;
@@ -16,6 +19,11 @@ public:
     //传入关卡序号，从0开始
     explicit widget_ingame(int level,QWidget *parent = nullptr);
     ~widget_ingame();
+
+    //设置波数 格式："1/10" 即十波中的第一波
+    void set_progress(int now,int total);
+    //设置资源量
+    void set_resource_value(int value);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override {
@@ -36,6 +44,9 @@ private:
     Ui::widget_ingame *ui;
     bool Pause=0;
     bool speed=0;
+    QLabel *progress;
+    QProgressBar *progress_bar;
+    QLCDNumber *resource_value;
 };
 
 #endif // WIDGET_INGAME_H

@@ -5,15 +5,15 @@ widget_level_loading::widget_level_loading(int type,QWidget *parent)
     :level_type(type)
     ,auto_widget(parent)
     , ui(new Ui::widget_level_loading)
-    ,map_picture({":/map/resources/map/brief_first.png",
-                   ":/map/resources/map/brief_second.png",
-                   ":/map/resources/map/brief_third.png"})
+    ,map_picture({":/map/resources/map/first.png",
+                   ":/map/resources/map/second.png",
+                   ":/map/resources/map/third.png"})
     ,background({":/background/resources/background/first_background.png",
                   ":/background/resources/background/second_background.png",
                   ":/background/resources/background/third_background.png"})
-    ,icon({{":/map_items/resources/map_items/first/books_100_100.png",":/map_items/resources/map_items/first/draft_100_100.png",":/map_items/resources/map_items/first/stationary_100_100.png",":/map_items/resources/map_items/first/usb_100_100.png"},
-           {":/map_items/resources/map_items/second/box_100_100.png",":/map_items/resources/map_items/second/flower_100_100.png",":/map_items/resources/map_items/second/photo_100_100.png",":/map_items/resources/map_items/second/ring_100_100.png"},
-           {":/map_items/resources/map_items/third/third_start_100_100.png",":/map_items/resources/map_items/first/books_100_100.png",":/map_items/resources/map_items/second/photo_100_100.png",":/map_items/resources/map_items/third/third_end_100_100.png"}})
+    ,icon({{":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/first/scratchpaper.png",":/map_items/resources/map_items/first/stationery.png",":/map_items/resources/map_items/first/cable.png"},
+           {":/map_items/resources/map_items/second/memory_box.png",":/map_items/resources/map_items/second/withered_flowers.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/second/broken_ring.png"},
+           {":/map_items/resources/map_items/third/start_block.png",":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/third/end_block.png"}})
     , m_animationDistance(20)
     , m_animationDuration(2000)
     , m_staggerDelay(200)

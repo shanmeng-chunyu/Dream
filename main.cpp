@@ -4,6 +4,10 @@
 #include "MainWindow.h"
 #include "LevelEditorWidget.h"
 #include "widget_choose_level.h"
+#include "widget_level_loading.h"
+#include "widget_building_list.h"
+#include "widget_menu.h"
+#include "widget_ingame.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -11,26 +15,40 @@ int main(int argc, char *argv[]) {
     w.resize(1024,768);
     w.show();
 
-    //ç”¨äºè°ƒè¯•ä¸»èœå•çš„ä»£ç 
-    // Ui::widget_menu menu_ui;
-    // QWidget menu_widget;
-    // menu_ui.setupUi(&menu_widget);
+    //ÓÃÓÚµ÷ÊÔÖ÷²Ëµ¥µÄ´úÂë
+    // widget_menu menu_widget;
     // menu_widget.setWindowTitle("Level3 Main Menu (Menu Debug)");
-    // menu_widget.resize(800, 600); // è°ƒæ•´ä¸ºä½ è®¤ä¸ºåˆé€‚çš„å¤§å°
+    // menu_widget.resize(800, 600); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óĞ¡
     // menu_widget.show();
 
-    //ç”¨äºè°ƒè¯•å…³å¡é€‰æ‹©ç•Œé¢çš„ä»£ç 
+
+    //ÓÃÓÚµ÷ÊÔ¹Ø¿¨Ñ¡Ôñ½çÃæµÄ´úÂë
     // widget_choose_level choose_level_widget;
     // choose_level_widget.setWindowTitle("Level3 Choose Level (Choose Level Debug)");
-    // choose_level_widget.resize(1024, 768); // è°ƒæ•´ä¸ºä½ è®¤ä¸ºåˆé€‚çš„å¤§å°
+    // choose_level_widget.resize(1024, 768); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óĞ¡
     // choose_level_widget.show();
 
-    // --- ç”¨äºè°ƒè¯•ç¼–è¾‘å™¨çš„æ–°ä»£ç  ---
+    // --- ÓÃÓÚµ÷ÊÔ±à¼­Æ÷µÄĞÂ´úÂë ---
     // LevelEditorWidget editor;
     // editor.setWindowTitle("Level3 Editor (Level Editor Debug)");
-    // editor.resize(1024, 768); // è°ƒæ•´ä¸ºä½ è®¤ä¸ºåˆé€‚çš„å¤§å°
+    // editor.resize(1024, 768); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óĞ¡
     // editor.show();
-    // --- ç»“æŸ ---
+    // --- ½áÊø ---
+
+    //¹Ø¿¨¼ÓÔØ½çÃæ
+    // widget_level_loading level_loading_widget(0);
+    // level_loading_widget.show();
+
+    //½¨ÔìÁĞ±í½çÃæ
+    // QVector<QString> n({"InspirationBulb","KnowledgeTree","FishingCatPillow","LiveCoffee"});
+    // QVector<QString> t({":/towers/resources/towers/level1/InspirationBulb.png",":/towers/resources/towers/level1/KnowledgeTree.png",":/towers/resources/towers/level1/FishingCatPillow.png",":/towers/resources/towers/level1/LiveCoffee.png"});
+    // QVector<QString> p({"100","200","120","80"});
+    // widget_building_list build_widget(0,0,n,t,p);
+    // build_widget.show();
+
+    //widget_ingame
+    // widget_ingame ingame(0);
+    // ingame.show();
 
     return a.exec();
 }

@@ -29,7 +29,7 @@
     <pixmap resource="resources.qrc">:/frame/resources/frame/building1.png</pixmap>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton">
+  <widget class="IconButton" name="tower1">
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -49,7 +49,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/tower/resources/tower/first/bulb.png</normaloff>:/tower/resources/tower/first/bulb.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -58,7 +58,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_2">
+  <widget class="IconButton" name="price1">
    <property name="geometry">
     <rect>
      <x>180</x>
@@ -85,7 +85,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resource/resources/resource/first_inspiration.png</normaloff>:/resource/resources/resource/first_inspiration.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -94,7 +94,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_3">
+  <widget class="IconButton" name="price2">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -121,7 +121,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resource/resources/resource/first_inspiration.png</normaloff>:/resource/resources/resource/first_inspiration.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -130,7 +130,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_4">
+  <widget class="IconButton" name="tower2">
    <property name="geometry">
     <rect>
      <x>300</x>
@@ -150,7 +150,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/tower/resources/tower/first/bulb.png</normaloff>:/tower/resources/tower/first/bulb.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -159,7 +159,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_5">
+  <widget class="IconButton" name="price3">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -186,7 +186,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resource/resources/resource/first_inspiration.png</normaloff>:/resource/resources/resource/first_inspiration.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -195,7 +195,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_6">
+  <widget class="IconButton" name="tower3">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -215,7 +215,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/tower/resources/tower/first/bulb.png</normaloff>:/tower/resources/tower/first/bulb.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -224,7 +224,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_7">
+  <widget class="IconButton" name="price4">
    <property name="geometry">
     <rect>
      <x>540</x>
@@ -251,7 +251,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resource/resources/resource/first_inspiration.png</normaloff>:/resource/resources/resource/first_inspiration.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -260,7 +260,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_8">
+  <widget class="IconButton" name="tower4">
    <property name="geometry">
     <rect>
      <x>540</x>
@@ -280,7 +280,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/tower/resources/tower/first/bulb.png</normaloff>:/tower/resources/tower/first/bulb.png</iconset>
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -289,7 +289,7 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="pushButton_9">
+  <widget class="IconButton" name="cancel">
    <property name="geometry">
     <rect>
      <x>360</x>
@@ -319,9 +319,205 @@
    </property>
    <property name="iconSize">
     <size>
+     <width>25</width>
+     <height>25</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="name1">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>180</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>9</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="name2">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>180</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>9</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="name3">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>180</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>9</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="name4">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>180</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>9</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="IconButton" name="price0">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>320</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>10</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background-color: rgba(255, 255, 255,128);
+        border-radius: 4px; /* 圆角（可选） */
+    }</string>
+   </property>
+   <property name="text">
+    <string>100</string>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
      <width>30</width>
      <height>30</height>
     </size>
+   </property>
+  </widget>
+  <widget class="IconButton" name="tower0">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>220</y>
+     <width>90</width>
+     <height>90</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+        background-color: rgba(255, 255, 255,128);
+        border-radius: 4px; /* 圆角（可选） */
+    }</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="name0">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>180</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>9</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
    </property>
   </widget>
  </widget>

@@ -3,15 +3,20 @@
 #include <QLineF>
 #include <QGraphicsScene>
 
-FishingCatPillow::FishingCatPillow(QGraphicsItem* parent):Tower(0,2.5,5,120,180,QPixmap( ":/towers/resources/towers/level1/FishingCatPillow.png"),parent)
+FishingCatPillow::FishingCatPillow(double range,QGraphicsItem* parent):Tower(0,range,5,120,180,QPixmap( ":/towers/resources/towers/level1/FishingCatPillow.png"),parent)
 {
     controlDuration=1.5;
+    type = "FishingCatPillow";
 }
 void FishingCatPillow::attack()
 {    //如果存在目标，发射信号冷冻enemy
     if(currentTarget)
     {
-        emit applyControl(currentTarget,controlDuration);
+        Enemy* enemy = dynamic_cast<Enemy*>(currentTarget);
+        if(enemy)
+        {
+            emit applyControl(enemy,controlDuration);
+        }
     }
 }
 void FishingCatPillow::upgrade()
@@ -29,3 +34,4 @@ void FishingCatPillow::upgrade()
         setPixmap(QPixmap(":/towers/resources/towers/level1/FishingCatPillow_upgrade.png"));
     }
 }
+

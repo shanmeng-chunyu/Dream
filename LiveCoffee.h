@@ -5,14 +5,15 @@
 #include <QSet>
 class LiveCoffee:public Tower
 {
+    Q_OBJECT
 public:
-    explicit LiveCoffee(QGraphicsItem* parent = nullptr);
+    explicit LiveCoffee(double range,QGraphicsItem* parent = nullptr);
     void attack()override;
     void upgrade()override;
     double getFactor(){return increaseFactor;};
 signals:
-    void slowEnemyStart(Enemy* enemy,double slowFactor);//对范围内所有敌人都减速
-    void slowEnemyStop(Enemy*enemy);
+    void slowEnemyStart(QGraphicsPixmapItem* enemy,double slowFactor);//对范围内所有敌人都减速
+    void slowEnemyStop(QGraphicsPixmapItem*enemy);
 private:
     double slowFactor;//敌人速度降低率
     double increaseFactor;//塔攻击速度提升率

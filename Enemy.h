@@ -19,6 +19,11 @@ public:
     QString getType() const{return type;};
     std::vector<QPointF> getAbsolutePath(){return absolutePath;};
     void stopFor(double duration);
+    int getHealth() const;
+    void heal(int amount);
+    void setSpeed(double v);
+    int getCurrentPathIndex() const;
+
 
 
     public slots:
@@ -35,7 +40,11 @@ private:
     std::vector<QPointF> absolutePath;
     int currentPathIndex;
     QString type;
-    //¿ØÖÆµÐÈËÔÝÍ£µÄÂß¼­
+    int m_health;
+    double m_speed;
+    int m_maxHealth;
+    int m_currentPathIndex;
+
     int m_stunTicksRemainimng = 0;
 };
 

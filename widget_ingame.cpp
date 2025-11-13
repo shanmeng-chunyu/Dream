@@ -7,7 +7,9 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     , ui(new Ui::widget_ingame)
 {
     ui->setupUi(this);
-
+    progress=ui->progress;
+    progress_bar=ui->progressbar;
+    resource_value=ui->resource_value;
     // connect(this, &widget_ingame::clicked,
     //                  [](double x,double y) {
     //                      qDebug() << "点击位置（相对窗口）：x=" << x << ", y=" << y;
@@ -54,6 +56,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     initialGeometries[ui->progressbar] = ui->progressbar->geometry();
     initialGeometries[ui->stability_progressbar] = ui->stability_progressbar->geometry();
     initialGeometries[ui->stability_value] = ui->stability_value->geometry();
+    initialGeometries[ui->resource_value] = ui->resource_value->geometry();
 
 
     // 保存图标按钮的初始图标大小
@@ -67,4 +70,13 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
 widget_ingame::~widget_ingame()
 {
     delete ui;
+}
+
+void widget_ingame::set_progress(int now,int total){
+    progress->setText(QString("%1/%2").arg(now).arg(total));
+    progress_bar->setValue(100*now/total);
+}
+
+void widget_ingame::set_resource_value(int value){
+    resource_value->display(value);
 }

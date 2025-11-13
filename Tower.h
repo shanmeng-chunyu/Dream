@@ -7,9 +7,11 @@
 #include <Qstring>
 #include "Enemy.h" // 包含头文件以使用Enemy类
 
+
 class Bullet;
 class LiveCoffee;
 class FriendCompanion;
+class Obstacle;
 class Tower : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
@@ -22,13 +24,14 @@ public:
     double getFireRate()const {return fireRate;}
     int getCost()const{return cost;}
     int getUpgradeCost()const{return upgradeCost;}
-    Enemy* getCurrentTarget()const{return currentTarget;}
+    QGraphicsPixmapItem* getCurrentTarget()const{return currentTarget;}
     bool IsUpgraded()const{return upgraded;}
+    QString getType(){return type;}
 
     //基本功能
     virtual void attack();
     bool targetIsInRange() const;//检查敌人是否在攻击范围内
-    void setTarget(Enemy* target);
+    void setTarget(QGraphicsPixmapItem* target);
     void setRange(int newrange){range=newrange;}
 
     //升级
@@ -42,7 +45,7 @@ public slots:
     void destroy();//摧毁tower，接收到信号直接删除对象
 
 signals:
-    void newBullet(Tower* tower, Enemy* target);
+    void newBullet(Tower* tower, QGraphicsPixmapItem* target);
     void towerDestroyed(Tower* tower);  //由GameManager处理实际删除
 
 private:
@@ -60,9 +63,10 @@ protected:
     int cost;
     int upgradeCost;
     bool upgraded;//升级标志
+    QString type;
 
     //状态属性
-    Enemy* currentTarget;
+    QGraphicsPixmapItem* currentTarget;
     int fireInterval;//开火间隔(帧数)
     int fireCount;//距离下次攻击的帧数
 

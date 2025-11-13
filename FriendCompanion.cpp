@@ -4,10 +4,14 @@ FriendCompanion::FriendCompanion(QGraphicsItem* parent):Tower(0,2.5,1,100,150,QP
 {
     //朋友陪伴的fireRate应该是存在的，因为有对应的bullet，应该有一个发射频率(只是对应敌人无功能，先设为1）
     increaseDamage=1.15;
+    type="FriendCompanion";
 }
+void FriendCompanion::attack(){return;}
 void FriendCompanion:: upgrade()
 {
     increaseDamage=1.25;
     upgraded=true;
     setPixmap(QPixmap(":/towers/resources/towers/level2/Companionship_upgrade.png"));
 }
+
+

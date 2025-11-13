@@ -1,7 +1,7 @@
 #include "WaveManager.h"
 
 WaveManager::WaveManager(GameMap* map, QObject* parent)
-    : QObject(parent), currentWaveIndex(-1), gameMap(map), screenSize(800, 600) ,m_spawnCooldownTicks(-1){
+    : QObject(parent), currentWaveIndex(-1), gameMap(map), screenSize(800, 600) ,m_spawnCooldownTicks(-1),m_interWaveCooldownTicks(0){
 }
 
 void WaveManager::loadWaves(const QJsonArray& wavesData) {
@@ -23,7 +23,6 @@ void WaveManager::loadWaves(const QJsonArray& wavesData) {
 
 void WaveManager::startNextWave() {
     if (currentWaveIndex + 1 >= waves.size()) {
-        emit allWavesCompleted();
         return;
     }
 
@@ -32,17 +31,11 @@ void WaveManager::startNextWave() {
     if (!spawnQueue.isEmpty()) {
         m_spawnCooldownTicks = intervalToTicks(spawnQueue.first().interval);
     }
+
+    m_interWaveCooldownTicks = 0;
 }
 
 void WaveManager::spawnEnemyAndResetCooldown() {
-    if (spawnQueue.isEmpty()) {
-        if (currentWaveIndex >= waves.size() - 1) {
-             emit allWavesCompleted();
-        }
-        m_spawnCooldownTicks = -1;
-        return;
-    }
-
     EnemyWaveData& current = spawnQueue.first();
 
     // 将地图的相对路径转换为绝对路径
@@ -58,11 +51,17 @@ void WaveManager::spawnEnemyAndResetCooldown() {
     if (current.count <= 0) {
         spawnQueue.removeFirst();
         if (spawnQueue.isEmpty()) {
-             if (currentWaveIndex >= waves.size() - 1) {
+            // 这个波次*生成*完毕
+            m_spawnCooldownTicks = -1; // 停止生成
+            if (currentWaveIndex >= waves.size() - 1) {
+                // 并且这是*最后*一波
                 emit allWavesCompleted();
+            } else {
+                // 并且这不是最后一波，开始 5 秒的波次间歇
+                m_interWaveCooldownTicks = intervalToTicks(5.0); // 5 秒
             }
-            m_spawnCooldownTicks = -1;
         } else {
+            // 队列没空，设置下一个敌人的生成CD
             m_spawnCooldownTicks = intervalToTicks(spawnQueue.first().interval);
         }
     }else {
@@ -80,9 +79,18 @@ void WaveManager::setScreenSize(const QSizeF& size) {
 }
 
 void WaveManager::update() {
-    if (m_spawnCooldownTicks == 0) {
+    if (m_interWaveCooldownTicks > 0) {
+        // 1. 优先处理波次间歇
+        m_interWaveCooldownTicks--;
+        if (m_interWaveCooldownTicks == 0) {
+            // 2. 间歇结束，开始下一波
+            startNextWave();
+        }
+    } else if (m_spawnCooldownTicks == 0) {
+        // 3. 间歇为0 且 CD为0，生成一个敌人
         spawnEnemyAndResetCooldown();
-    }else if (m_spawnCooldownTicks > 0) {
+    } else if (m_spawnCooldownTicks > 0) {
+        // 4. 间歇为0 且 CD > 0，倒计时
         m_spawnCooldownTicks--;
     }
 }
