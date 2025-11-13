@@ -118,6 +118,7 @@
     "selfRegenBelowHp": 0.50,
     "selfRegenPerTick": 40,
     "selfRegenInterval": 1.5
+      "slowMul": 0.50
 },
     {
       "type": "nightmare",
