@@ -6,12 +6,13 @@
 #include <QPointer>
 
 class Enemy;
+class Obstacle;
 
 class Bullet : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    //ÉËº¦ÀàĞÍ
+    //ä¼¤å®³ç±»å‹
     enum DamageType {
         SingleTarget,
         AreaOfEffect,
@@ -26,25 +27,27 @@ public:
     QPointF getStartPos() const;
     double getAoeRadius() const;
 
-    public slots:
-        void move();
+    void update();
 
     signals:
         void hitTarget(Bullet* bullet);
+        void outOfBounds(Bullet* bullet);
         void hitEnemy(Bullet* bullet, Enemy* enemy);
 
 private:
     int damage;
     double speed;
+    QGraphicsPixmapItem* target;
+    int moveCounter = 1;
     QPointer<QObject> m_targetObject;
     QGraphicsPixmapItem* m_targetPixmap;
-    bool m_isTracking;//ÊÇ·ñÕıÔÚ×·×Ù
-    QPointF m_lastKnownPos;//´¢´æÄ¿±êÎ»ÖÃ
+    bool m_isTracking;//æ˜¯å¦æ­£åœ¨è¿½è¸ª
+    QPointF m_lastKnownPos;//å‚¨å­˜ç›®æ ‡ä½ç½®
 
     DamageType m_damageType;
-    QPointF m_startPos;     // ´©Í¸ÉËº¦µÄÆğÊ¼µã (ËşµÄÖĞĞÄ)
-    double m_aoeRadius;     // ·¶Î§ÉËº¦µÄ°ë¾¶
-    QSet<QGraphicsItem*> m_hitTargets;//´©Í¸×Óµ¯¾­¹ıµÄµĞÈË
+    QPointF m_startPos;     // ç©¿é€ä¼¤å®³çš„èµ·å§‹ç‚¹ (å¡”çš„ä¸­å¿ƒ)
+    double m_aoeRadius;     // èŒƒå›´ä¼¤å®³çš„åŠå¾„
+    QSet<QGraphicsItem*> m_hitTargets;//ç©¿é€å­å¼¹ç»è¿‡çš„æ•Œäºº
 };
 
 #endif // BULLET_H

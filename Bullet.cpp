@@ -1,7 +1,9 @@
 #include "Bullet.h"
 #include "Enemy.h"
+#include "Obstacle.h"
 #include <QLineF>
 #include <QtMath>
+#include <QGraphicsScene>
 
 Bullet::Bullet(int damage, double speed, QGraphicsPixmapItem* target,
                DamageType type, QPointF startPos, double aoeRadius,
@@ -17,14 +19,14 @@ Bullet::Bullet(int damage, double speed, QGraphicsPixmapItem* target,
       m_aoeRadius(aoeRadius){
     QObject* targetAsQObject = dynamic_cast<QObject*>(target);
 
-    // 3. ½« QObject* ´æÈë QPointer
+    // 3. å°† QObject* å­˜å…¥ QPointer
     m_targetObject = targetAsQObject;
 
-    // 4. (ÖØÒª) Ìí¼ÓÒ»¸ö¶ÏÑÔ£¬È·±£ÎÒÃÇµÄÄ¿±êÈ·ÊµÊÇÒ»¸ö QObject
-    //    Èç¹ûÕâ¸ö¶ÏÑÔ´¥·¢£¬ËµÃ÷´«ÈëÁË·Ç QObject µÄÄ¿±ê
+    // 4. (é‡è¦) æ·»åŠ ä¸€ä¸ªæ–­è¨€ï¼Œç¡®ä¿æˆ‘ä»¬çš„ç›®æ ‡ç¡®å®æ˜¯ä¸€ä¸ª QObject
+    //    å¦‚æœè¿™ä¸ªæ–­è¨€è§¦å‘ï¼Œè¯´æ˜ä¼ å…¥äº†é QObject çš„ç›®æ ‡
     Q_ASSERT(m_targetObject != nullptr && "Bullet target must inherit from QObject to be tracked!");
 
-    // [ĞÂ] ÔÚ¹¹ÔìÊ±Á¢¼´´æ´¢Ä¿±êµÄ³õÊ¼Î»ÖÃ
+    // [æ–°] åœ¨æ„é€ æ—¶ç«‹å³å­˜å‚¨ç›®æ ‡çš„åˆå§‹ä½ç½®
     m_lastKnownPos = target->pos();
 
     setTransformOriginPoint(pixmap.width() / 2.0, pixmap.height() / 2.0);
@@ -32,14 +34,14 @@ Bullet::Bullet(int damage, double speed, QGraphicsPixmapItem* target,
 }
 
 void Bullet::move() {
-    QPointF targetPos; // ÕâÒ»Ö¡Òª·ÉÏòµÄÄ¿±êµã
+    QPointF targetPos; // è¿™ä¸€å¸§è¦é£å‘çš„ç›®æ ‡ç‚¹
 
-    // 1. È·¶¨Ä¿±êµã (m_lastKnownPos)
+    // 1. ç¡®å®šç›®æ ‡ç‚¹ (m_lastKnownPos)
     if (m_damageType == Piercing) {
-        // ´©Í¸µ¯£ºÊ¼ÖÕ·ÉÏò×î³õµÄÄ¿±êµã (m_lastKnownPos ±£³Ö²»±ä)
+        // ç©¿é€å¼¹ï¼šå§‹ç»ˆé£å‘æœ€åˆçš„ç›®æ ‡ç‚¹ (m_lastKnownPos ä¿æŒä¸å˜)
         targetPos = m_lastKnownPos;
     } else {
-        // µ¥Ìå/AOEµ¯£ºÈç¹ûÄ¿±ê»î×Å£¬¾Í¸üĞÂÄ¿±êµã
+        // å•ä½“/AOEå¼¹ï¼šå¦‚æœç›®æ ‡æ´»ç€ï¼Œå°±æ›´æ–°ç›®æ ‡ç‚¹
         if (m_isTracking) {
             if (m_targetObject.isNull()) {
                 m_isTracking = false;
@@ -50,45 +52,45 @@ void Bullet::move() {
         targetPos = m_lastKnownPos;
     }
 
-    // 2. ¼ì²éÊÇ·ñµ½´ïÖÕµã
+    // 2. æ£€æŸ¥æ˜¯å¦åˆ°è¾¾ç»ˆç‚¹
     QPointF bulletCenter = pos() + transformOriginPoint();
     QLineF line(bulletCenter, targetPos);
 
     if (line.length() < speed) {
-        // µ½´ï×îÖÕÄ¿µÄµØ
-        emit hitTarget(this); // ·¢Éä "ÎÒÒÑ·ÉÍê" ĞÅºÅ
+        // åˆ°è¾¾æœ€ç»ˆç›®çš„åœ°
+        emit hitTarget(this); // å‘å°„ "æˆ‘å·²é£å®Œ" ä¿¡å·
         return;
     }
 
-    // 3. ¼ÆËãÒÆ¶¯ (±£³Ö²»±ä)
+    // 3. è®¡ç®—ç§»åŠ¨ (ä¿æŒä¸å˜)
     double angle_rad = atan2(targetPos.y() - bulletCenter.y(), targetPos.x() - bulletCenter.x());
     double angle_deg = qRadiansToDegrees(angle_rad);
     setRotation(angle_deg);
     double dx = speed * cos(angle_rad);
     double dy = speed * sin(angle_rad);
 
-    // 4. [ĞŞ¸Ä] ÔÚÒÆ¶¯Ö®Ç°£¬ÏÈ²» setPos()
+    // 4. [ä¿®æ”¹] åœ¨ç§»åŠ¨ä¹‹å‰ï¼Œå…ˆä¸ setPos()
 
-    // 5. [ĞÂ] ´©Í¸ÉËº¦µÄÅö×²¼ì²â
+    // 5. [æ–°] ç©¿é€ä¼¤å®³çš„ç¢°æ’æ£€æµ‹
     if (m_damageType == Piercing) {
-        // ÏÈÒÆ¶¯
+        // å…ˆç§»åŠ¨
         setPos(pos().x() + dx, pos().y() + dy);
 
-        // ¼ì²éÒÆ¶¯ºóÎÒÃÇÓëË­Åö×²ÁË
+        // æ£€æŸ¥ç§»åŠ¨åæˆ‘ä»¬ä¸è°ç¢°æ’äº†
         QList<QGraphicsItem*> hits = collidingItems();
         for (QGraphicsItem* item : hits) {
             Enemy* enemy = dynamic_cast<Enemy*>(item);
 
-            // Èç¹ûÊÇÒ»¸öµĞÈË ²¢ÇÒ ÎÒÃÇÒÔÇ°Ã»ÓĞ»÷ÖĞ¹ıËü
+            // å¦‚æœæ˜¯ä¸€ä¸ªæ•Œäºº å¹¶ä¸” æˆ‘ä»¬ä»¥å‰æ²¡æœ‰å‡»ä¸­è¿‡å®ƒ
             if (enemy && !m_hitTargets.contains(enemy)) {
-                // ·¢Éä "ÎÒ´òÖĞÁËÒ»¸ö" ĞÅºÅ
+                // å‘å°„ "æˆ‘æ‰“ä¸­äº†ä¸€ä¸ª" ä¿¡å·
                 emit hitEnemy(this, enemy);
-                // ±ê¼ÇÎª "ÒÑ»÷ÖĞ"£¬ÕâÑùÎÒÃÇ¾Í²»»áÔÚÏÂÒ»Ö¡ÔÙ´ÎÉËº¦Ëü
+                // æ ‡è®°ä¸º "å·²å‡»ä¸­"ï¼Œè¿™æ ·æˆ‘ä»¬å°±ä¸ä¼šåœ¨ä¸‹ä¸€å¸§å†æ¬¡ä¼¤å®³å®ƒ
                 m_hitTargets.insert(enemy);
             }
         }
     } else {
-        // ·Ç´©Í¸µ¯£ºÖ±½ÓÒÆ¶¯ (Ô­Âß¼­)
+        // éç©¿é€å¼¹ï¼šç›´æ¥ç§»åŠ¨ (åŸé€»è¾‘)
         setPos(pos().x() + dx, pos().y() + dy);
     }
 }
@@ -98,7 +100,7 @@ int Bullet::getDamage() const {
 }
 
 QGraphicsPixmapItem* Bullet::getTarget() const {
-    // 7. Ö»ÓĞµ±Ä¿±ê´æ»îÊ±²Å·µ»ØÖ¸Õë£¬·ñÔò·µ»Ø nullptr
+    // 7. åªæœ‰å½“ç›®æ ‡å­˜æ´»æ—¶æ‰è¿”å›æŒ‡é’ˆï¼Œå¦åˆ™è¿”å› nullptr
     if (m_targetObject.isNull()) {
         return nullptr;
     }
