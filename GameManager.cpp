@@ -104,12 +104,9 @@ void GameManager::loadLevel(const QString& levelPath) {
         QPointF absCenterPos(obsData.relativePosition.x() * m_screenSize.width(),
                              obsData.relativePosition.y() * m_screenSize.height());
 
-        // 3. (统一逻辑) 根据中心点计算左上角位置
-        QPointF absTopLeftPos(absCenterPos.x() - obstaclePixelSize.width() / 2.0,
-                              absCenterPos.y() - obstaclePixelSize.height() / 2.0);
-
-        // 4. 使用计算出的左上角位置
-        obstacle->setPos(absTopLeftPos);
+        obstacle->setPos(absCenterPos);
+        obstacle->setOffset(-obstaclePixelSize.width() / 2.0,
+                    -obstaclePixelSize.height() / 2.0);
 
         m_scene->addItem(obstacle);
         m_obstacles.append(obstacle);
@@ -275,6 +272,10 @@ void GameManager::updateGame() {
     for (Bullet* bullet : m_bullets) bullet->move();
 
     updateTowerTargets();
+    for (Tower* tower : m_towers) {
+        tower->findAndAttackTarget();
+    }
+
     cleanupEntities();
     checkWinLossConditions();
 }
@@ -374,12 +375,44 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 
 void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     // 根据发射塔的类型查找对应的子弹贴图
-    // 这里简化处理，假设所有塔都用同一种子弹或在tower prototype里定义
+    // 1. 定义子弹的固定像素大小 (按照你的要求)
+    const QSize bulletPixelSize(76, 76);
+
+    // 2. 获取子弹贴图原型
     QString type = tower->getType();
     QJsonObject proto = m_towerPrototypes[type];
-    QPixmap pixmap = (proto["bullet_pixmap"]).toString();
-    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, pixmap); // 速度硬编码，可改为从JSON读取
-    bullet->setPos(tower->pos());
+    QPixmap originalPixmap(proto["bullet_pixmap"].toString());
+
+    // 3. 缩放贴图
+    QPixmap scaledPixmap = originalPixmap.scaled(bulletPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    // (健壮性检查：如果贴图路径错误，创建一个红色的方块)
+    if (scaledPixmap.isNull()) {
+        scaledPixmap = QPixmap(bulletPixelSize);
+        scaledPixmap.fill(Qt::red);
+    }
+
+    // 4. 创建子弹实例 (使用缩放后的贴图)
+    // (速度 10.0 仍然是硬编码，你可以后续从 proto 中读取)
+    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, scaledPixmap);
+
+    // 5. 计算生成位置（关键：中心对齐）
+
+    // 5a. 获取塔的 top-left 位置 (这是 tower->pos() 的含义)
+    QPointF towerTopLeft = tower->pos();
+
+    // 5b. 获取塔的尺寸 (必须与 buildTower 中定义的76x76一致)
+    const QSize towerPixelSize(76, 76);
+
+    // 5c. 计算塔的中心点 (即子弹的生成点)
+    QPointF spawnCenterPos(towerTopLeft.x() + towerPixelSize.width() / 2.0,
+                           towerTopLeft.y() + towerPixelSize.height() / 2.0);
+
+    // 5d. 根据子弹的中心点和40x40的尺寸，计算子弹的 top-left 位置
+    QPointF bulletTopLeftPos(spawnCenterPos.x() - bulletPixelSize.width() / 2.0,
+                             spawnCenterPos.y() - bulletPixelSize.height() / 2.0);
+
+    bullet->setPos(bulletTopLeftPos);
 
     m_scene->addItem(bullet);
     m_bullets.append(bullet);
