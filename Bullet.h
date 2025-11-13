@@ -27,18 +27,16 @@ public:
     QPointF getStartPos() const;
     double getAoeRadius() const;
 
-    void update();
+    void move();
 
     signals:
         void hitTarget(Bullet* bullet);
-        void outOfBounds(Bullet* bullet);
         void hitEnemy(Bullet* bullet, Enemy* enemy);
 
 private:
     int damage;
     double speed;
     QGraphicsPixmapItem* target;
-    int moveCounter = 1;
     QPointer<QObject> m_targetObject;
     QGraphicsPixmapItem* m_targetPixmap;
     bool m_isTracking;//是否正在追踪
