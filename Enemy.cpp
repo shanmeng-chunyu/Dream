@@ -98,11 +98,13 @@ void Enemy::move() {
 void Enemy::takeDamage(int damageAmount) {
     m_health -= damageAmount;
     if (m_health <= 0) {
+        m_health = 0;      // 保证血量不为负
         emit died(this);
     } else {
-        update();
+        update();          // 受伤刷新血条
     }
 }
+
 
 int Enemy::getDamage() const {
     return damage;
@@ -168,23 +170,26 @@ void Enemy::applyAuraEffects()
 
 
 
-void Enemy::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void Enemy::paint(QPainter* painter,
+                  const QStyleOptionGraphicsItem* option,
+                  QWidget* widget)
 {
+    // 先画贴图
     QGraphicsPixmapItem::paint(painter, option, widget);
 
-    if (m_maxHealth <= 0) return;
+    if (m_maxHealth <= 0 || m_health <= 0) return;
 
     qreal ratio = (qreal)m_health / (qreal)m_maxHealth;
     if (ratio < 0.0) ratio = 0.0;
     if (ratio > 1.0) ratio = 1.0;
-    if (ratio <= 0.0) return;
+    if (ratio == 0.0) return;
 
-    int pw = pixmap().width();
-    int barW = pw - 8; 
-    if (barW < 20) barW = pw;
-    int barH = 5;
-    qreal x = (pw - barW) / 2.0;
-    qreal y = 2.0;
+    // 用物体自己的边界来算宽度和位置
+    QRectF br = boundingRect();             // 通常是 (0,0,w,h)
+    qreal barW = br.width() * 0.8;          // 血条占宽度 80%
+    qreal barH = 4.0;
+    qreal x = br.left() + (br.width() - barW) / 2.0;
+    qreal y = br.top() - barH - 2.0;        // ⬅ 在贴图“正上方”2 像素
 
     QRectF bgRect(x, y, barW, barH);
     QRectF fgRect(x, y, barW * ratio, barH);
@@ -197,9 +202,9 @@ void Enemy::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWi
     painter->drawRoundedRect(bgRect, 2, 2);
 
     QColor front;
-    if (ratio >= 0.6) front = QColor(76, 175, 80);
+    if (ratio >= 0.6)      front = QColor(76, 175, 80);
     else if (ratio >= 0.3) front = QColor(255, 193, 7);
-    else front = QColor(244, 67, 54);
+    else                   front = QColor(244, 67, 54);
 
     painter->setBrush(front);
     painter->drawRoundedRect(fgRect, 2, 2);
