@@ -282,34 +282,12 @@ void GameManager::updateGame() {
 
 
 void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath) {
-    if (!m_enemyPrototypes.contains(type)) return;
 
-    const QSize enemyPixelSize(126, 126);
-    QJsonObject proto = m_enemyPrototypes[type];
-    QPixmap pixmap(proto["pixmap"].toString());
-    QPixmap scaledPixmap = pixmap.scaled(enemyPixelSize,Qt::KeepAspectRatio);
+    Enemy* enemy = spawnByTypeWithPath(type, absolutePath, 1.0);
 
-    auto* enemy = new Enemy(
-        proto["health"].toInt(),
-        proto["speed"].toDouble(),
-        proto["damage"].toInt(),
-        absolutePath,
-        proto["type"].toString(),
-        scaledPixmap
-    );
-
-    enemy->setOffset(-enemyPixelSize.width() / 2.0, -enemyPixelSize.height()*0.8);
-    if (!absolutePath.empty()) {
+    if (enemy && !absolutePath.empty()) {
         enemy->setPos(absolutePath[0]);
     }
-
-    m_scene->addItem(enemy);
-    m_enemies.append(enemy);
-
-    connect(enemy, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
-    connect(enemy, &Enemy::died, this, &GameManager::onEnemyDied);
-
-    //if (type == "nightmare") { destroyAllTowers(true); }
 
 }
 
@@ -420,6 +398,9 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
 }
 
 void GameManager::onEnemyReachedEnd(Enemy* enemy) {
+    if (!m_enemies.contains(enemy)) {
+        return;
+    }
     m_player->decreaseStability(enemy->getDamage());
     for (Tower* tower : m_towers) {
         if (tower->getCurrentTarget() == enemy) {
@@ -431,20 +412,77 @@ void GameManager::onEnemyReachedEnd(Enemy* enemy) {
 }
 
 void GameManager::onEnemyDied(Enemy* enemy) {
-    // 可根据敌人类型给予不同资源
-    QJsonObject proto = m_enemyPrototypes[enemy->getType()];
+    if (!m_enemies.contains(enemy)) {
+        return;
+    }
+    QString type = enemy->getType();
+    QJsonObject proto = m_enemyPrototypes[type];
+
+    // 1. 增加资源
     m_player->addResource(proto["drops"].toInt());
+
+    // 2. 【修复】通知 WaveManager 敌人被击杀，用于统计总击杀数
+    m_waveManager->onEnemykilled();
+
+    // 3. 清理所有指向该敌人的塔
     for (Tower* tower : m_towers) {
         if (tower->getCurrentTarget() == enemy) {
             tower->setTarget(nullptr);
         }
     }
+
+    // 4. 【新增】分裂逻辑
+    if (type == "bug") {
+        // 4a. 获取 "bug" 死亡时的路径信息
+        const auto& currentPath = enemy->getAbsolutePath();
+        int currentIndex = enemy->getCurrentPathIndex();
+        QPointF deathPos = enemy->pos(); // "bug" 死亡的确切坐标
+
+        // 4b. 为 "bugmini" 构建剩余路径
+        //     新路径 = [死亡坐标, 目标航点, 目标航点+1, ...]
+        std::vector<QPointF> remainingPath;
+        remainingPath.push_back(deathPos); // 路径的第一个点是死亡坐标
+
+        // 4c. 找到 "bug" 的下一个目标航点
+        int nextWaypointIndex = currentIndex + 1;
+        if (nextWaypointIndex < currentPath.size()) {
+            // 将所有剩余的航点添加到新路径中
+            for (size_t i = nextWaypointIndex; i < currentPath.size(); ++i) {
+                remainingPath.push_back(currentPath[i]);
+            }
+        }
+
+        // 4d. 【核心】调用 spawnByTypeWithPath 生成两个 "bugmini"
+        //     我们给小 bug 一个 0.75 的缩放
+        Enemy* child1 = spawnByTypeWithPath("bugmini", remainingPath, 0.75);
+        Enemy* child2 = spawnByTypeWithPath("bugmini", remainingPath, 0.75);
+
+        // 4e. 将第二只 "bugmini" 稍微偏移，防止它们完全重叠
+        if (child2) {
+            child2->setPos(child2->pos() + QPointF(5, -5)); // 5像素的小偏移
+        }
+    }
+    // --- 分裂逻辑结束 ---
+
+    // 5. (额外修复) 清理与该敌人相关的 Boss 状态
+    //    防止在敌人被删除后，QHash 中留下悬垂指针
+    if (m_healCd.contains(enemy)) {
+        m_healCd.remove(enemy);
+    }
+    if (m_raged.contains(enemy)) {
+        m_raged.remove(enemy);
+    }
+
+    // 6. 将原始的 "bug" 敌人添加到清理队列
     m_entitiesToClean.append(enemy);
     m_enemies.removeAll(enemy);
 
 }
 
 void GameManager::onBulletHitTarget(Bullet* bullet) {
+    if (!m_bullets.contains(bullet)) {
+        return;
+    }
     QGraphicsPixmapItem* target = bullet->getTarget();
     //确定子弹目标
     if (target) {
@@ -463,6 +501,9 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
 }
 
 void GameManager::onObstacleDestroyed(Obstacle* obstacle, int resourceValue) {
+    if (!m_obstacles.contains(obstacle)) {
+        return;
+    }
     m_player->addResource(resourceValue);
 
     //检查是否有塔的目标为该障碍物
@@ -488,54 +529,65 @@ void GameManager::cleanupEntities() {
 void GameManager::updateTowerTargets() {
     for (Tower* tower : m_towers) {
 
-        // 1. 检查当前目标是否仍然有效且在范围内
-        if (tower->currentTarget && tower->targetIsInRange()) {
-            // 检查目标是否还“存活”
-            Enemy* enemyTarget = dynamic_cast<Enemy*>(tower->currentTarget);
-            if (enemyTarget && m_enemies.contains(enemyTarget)) {
-                continue; // 目标是敌人，有效，继续攻击
-            }
-            Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(tower->currentTarget);
-            if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
-                continue; // 目标是障碍物，有效，继续攻击
-            }
-        }
-
-        // 2. 目标无效或出范围，寻找新目标
-        //    【优先级 1: 寻找最近的敌人】
+        // --- 优先级 1: 永远优先寻找敌人 ---
+        // (我们每一帧都执行这个搜索)
         Enemy* closestEnemy = nullptr;
-        double minEnemyDistance = tower->range + 1.0;
+        double minEnemyDistance = tower->getRange() + 1.0;
 
         for (Enemy* enemy : m_enemies) {
             double distance = QLineF(tower->pos(), enemy->pos()).length();
-            if (distance < minEnemyDistance) {
-                minEnemyDistance = distance;
-                closestEnemy = enemy;
+
+            // 检查敌人是否在塔的攻击范围内
+            if (distance <= tower->getRange()) {
+                // 如果是，再检查它是否是"最近"的敌人
+                if (distance < minEnemyDistance) {
+                    minEnemyDistance = distance;
+                    closestEnemy = enemy;
+                }
             }
         }
 
+        // --- 决策 1: 是否找到了敌人？ ---
         if (closestEnemy) {
+            // 是。敌人拥有最高优先级。
+            // 无论当前目标是什么（哪怕是障碍物），立即切换目标为敌人。
             tower->setTarget(closestEnemy);
-            continue; // 找到敌人，此塔更新完毕
+            continue; // 此塔的索敌逻辑在本帧完成
         }
 
-        // 3. 【优先级 2: 寻找最近的障碍物】
-        //    (只有在没有敌人在范围内时，才会执行到这里)
+        // --- 优先级 2: 没有敌人在范围内。检查障碍物 ---
+        // (只有在 100% 确定没有敌人在范围内时，才执行这里的逻辑)
+
+        // 2a. 检查是否已经在攻击一个有效的障碍物
+        Obstacle* currentObstacle = dynamic_cast<Obstacle*>(tower->currentTarget);
+        if (currentObstacle &&
+            m_obstacles.contains(currentObstacle) &&
+            tower->targetIsInRange()) {
+
+            // 是。保持当前目标，继续攻击障碍物。
+            continue; // 此塔的索敌逻辑在本帧完成
+        }
+
+        // 2b. 如果没有在攻击有效障碍物，则寻找一个新的障碍物
         Obstacle* closestObstacle = nullptr;
-        double minObstacleDistance = tower->range + 1.0;
+        double minObstacleDistance = tower->getRange() + 1.0;
 
         for (Obstacle* obstacle : m_obstacles) {
             double distance = QLineF(tower->pos(), obstacle->pos()).length();
-            if (distance < minObstacleDistance) {
-                minObstacleDistance = distance;
-                closestObstacle = obstacle;
+            if (distance <= tower->getRange()) {
+                if (distance < minObstacleDistance) {
+                    minObstacleDistance = distance;
+                    closestObstacle = obstacle;
+                }
             }
         }
 
+        // --- 决策 2: 是否找到了新的障碍物？ ---
         if (closestObstacle) {
+            // 是。设置新目标为障碍物。
             tower->setTarget(closestObstacle);
         } else {
-            // 4. 【优先级 3: 没有目标】
+            // 否。范围内没有敌人，也没有障碍物。
             tower->setTarget(nullptr);
         }
     }
@@ -582,17 +634,34 @@ void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
 }
 
 void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
-    // 查找对应位置的塔并出售
-    for (int i = 0; i < m_towers.size(); ++i) {
-        Tower* tower = m_towers[i];
-        QPointF towerRelPos(tower->pos().x() / m_screenSize.width(),
-                            tower->pos().y() / m_screenSize.height());
+    const QSize towerPixelSize(76, 76);
+    Tower* towerToSell = nullptr;
+
+    for (Tower* tower : m_towers) {
+        // 1a. 获取塔的 "左上角" 绝对坐标
+        QPointF towerTopLeftAbs = tower->pos();
+
+        // 1b. 计算塔的 "中心" 绝对坐标
+        QPointF towerCenterAbs(towerTopLeftAbs.x() + towerPixelSize.width() / 2.0,
+                               towerTopLeftAbs.y() + towerPixelSize.height() / 2.0);
+
+        // 1c. 将 "中心" 绝对坐标 转换回 相对坐标
+        QPointF towerRelPos(towerCenterAbs.x() / m_screenSize.width(),
+                            towerCenterAbs.y() / m_screenSize.height());
+
+        // 1d. 比较相对坐标
         if (qFuzzyCompare(towerRelPos, relativePosition)) {
-            m_entitiesToClean.append(tower);
-            m_towers.removeAt(i);
+            towerToSell = tower;
             break;
         }
     }
+
+    if (!towerToSell) {
+        // 没有找到塔
+        return;
+    }
+    m_entitiesToClean.append(towerToSell);
+    m_towers.removeAll(towerToSell);
 }
 
 void GameManager::pauseGame() {
@@ -625,8 +694,19 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     const int dmg = proto.value("damage").toInt();
     const QString pix = proto.value("pixmap").toString();
 
-    QPixmap pm(pix);
-    Enemy* e = new Enemy(hp, spd, dmg, absPath, type, pm);
+    // 【新增】1. 定义标准尺寸
+    const QSize enemyPixelSize(126, 126);
+
+    // 【修改】2. 加载并缩放贴图
+    QPixmap originalPixmap(pix);
+    QPixmap scaledPixmap = originalPixmap.scaled(enemyPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    // 【修改】3. 使用缩放后的贴图创建 Enemy
+    Enemy* e = new Enemy(hp, spd, dmg, absPath, type, scaledPixmap);
+
+    // 【新增】4. 设置偏移量，使其中心点在路径上
+    e->setOffset(-enemyPixelSize.width() / 2.0, -enemyPixelSize.height() * 0.8);
+
     if (scale != 1.0) e->setScale(scale);
 
     m_scene->addItem(e);
