@@ -30,13 +30,13 @@ namespace
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //µ÷ÊÔ¹Ø¿¨±à¼­½çÃæ
-    // LevelEditorWidget editor;
-    //
-    // editor.resize(1024, 768);
-    // editor.setWindowTitle("¹Ø¿¨±à¼­Æ÷ [µ÷ÊÔÄ£Ê½]");
-    //
-    // editor.show();
+    //è°ƒè¯•å…³å¡ç¼–è¾‘ç•Œé¢
+    LevelEditorWidget editor;
+
+    editor.resize(1024, 768);
+    editor.setWindowTitle("å…³å¡ç¼–è¾‘å™¨ [è°ƒè¯•æ¨¡å¼]");
+
+    editor.show();
 
     MainWindow w;
     w.resize(1024, 768);

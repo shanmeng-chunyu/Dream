@@ -267,6 +267,31 @@ void GameManager::updateGame() {
                 }
             }
         }
+        // ---------- 昔日幻影：半血以下减速 + 自愈（第二关 Boss） ----------
+        if (enemy->getType() == "thephantomofthepast") {
+
+            const QJsonObject proto = m_enemyPrototypes["thephantomofthepast"];
+            const int maxHp        = proto.value("health").toInt();
+            const double thr       = proto.value("selfRegenBelowHp").toDouble(0.5);
+            const int heal         = proto.value("selfRegenPerTick").toInt(40);
+            const double interval  = proto.value("selfRegenInterval").toDouble(1.5);
+            const double slowMul   = proto.value("slowMul").toDouble(0.2);  // 半血减速倍率
+
+            if (maxHp > 0 && (double)enemy->getHealth() / maxHp < thr) {
+
+                // ★★★ 移速衰减版本（不停止） ★★★
+                enemy->setBaseSpeed(proto.value("speed").toDouble() * slowMul);
+
+                // 冷却（与泪水怪共用）
+                int& cd = m_healCd[enemy];
+                if (cd <= 0) {
+                    enemy->heal(heal);
+                    cd = qMax(1, (int)std::round(interval * 60.0));
+                } else {
+                    --cd;
+                }
+            }
+        }
     }
 
     /* ========= 子弹移动 ========= */
@@ -826,7 +851,10 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     const QString pix = proto.value("pixmap").toString();
 
     // 【新增】1. 定义标准尺寸
-    const QSize enemyPixelSize(126, 126);
+    QSize enemyPixelSize(126, 126);
+    if (type == "thesis" || type == "past"  || type == "nightmare") {
+        enemyPixelSize = QSize(200,200);
+    }
 
     // 【修改】2. 加载并缩放贴图
     QPixmap originalPixmap(pix);

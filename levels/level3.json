@@ -15,8 +15,8 @@
     ],
     "available_towers": [
         "InspirationBulb",
-        "NightRadio",
         "FishingCatPillow",
+        "LiveCoffee",
         "KnowledgeTree"
     ],
     "level_name": "第三关：梦你所梦",
@@ -511,19 +511,9 @@
         {
             "enemies": [
                 {
-                    "count": 6,
+                    "count": 1,
                     "interval": 1,
-                    "type": "bug"
-                },
-                {
-                    "count": 7,
-                    "interval": 1,
-                    "type": "bug"
-                },
-                {
-                    "count": 2,
-                    "interval": 1,
-                    "type": "bug"
+                    "type": "thephantomofthepast"
                 }
             ]
         },
