@@ -169,45 +169,53 @@ void Enemy::applyAuraEffects()
 }
 
 
-
 void Enemy::paint(QPainter* painter,
                   const QStyleOptionGraphicsItem* option,
                   QWidget* widget)
 {
-    // 先画贴图
     QGraphicsPixmapItem::paint(painter, option, widget);
 
     if (m_maxHealth <= 0 || m_health <= 0) return;
 
     qreal ratio = (qreal)m_health / (qreal)m_maxHealth;
-    if (ratio < 0.0) ratio = 0.0;
-    if (ratio > 1.0) ratio = 1.0;
-    if (ratio == 0.0) return;
+    if (ratio < 0) ratio = 0;
+    if (ratio > 1) ratio = 1;
 
-    // 用物体自己的边界来算宽度和位置
-    QRectF br = boundingRect();             // 通常是 (0,0,w,h)
-    qreal barW = br.width() * 0.8;          // 血条占宽度 80%
-    qreal barH = 4.0;
-    qreal x = br.left() + (br.width() - barW) / 2.0;
-    qreal y = br.top() - barH - 2.0;        // ⬅ 在贴图“正上方”2 像素
+    // 关键：计算敌人贴图的“实际显示宽度”
+    qreal displayW = pixmap().width() * this->scale();
+    qreal displayH = pixmap().height() * this->scale();
 
-    QRectF bgRect(x, y, barW, barH);
-    QRectF fgRect(x, y, barW * ratio, barH);
+    if (displayW <= 1) displayW = 30;   // 避免意外情况
+
+    // 血条宽度 = 显示宽度的 60%，并限制最大 40
+    qreal barW = qMin(displayW * 0.6, 40.0);
+    qreal barH = 3.0;
+
+    // 显示坐标系里贴图左上角的位置 = (-displayW/2, -displayH/2)
+    qreal offsetX = -displayW / 2.0;
+    qreal offsetY = -displayH / 2.0;
+
+    // 血条位置：怪物头顶
+    qreal x = offsetX + (displayW - barW) / 2.0;
+    qreal y = offsetY - barH - 2.0;
 
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing, true);
 
+    // 背景条
+    painter->setBrush(QColor(0,0,0,150));
     painter->setPen(Qt::NoPen);
-    painter->setBrush(QColor(0, 0, 0, 160));
-    painter->drawRoundedRect(bgRect, 2, 2);
+    painter->drawRoundedRect(QRectF(x, y, barW, barH), 2, 2);
 
-    QColor front;
-    if (ratio >= 0.6)      front = QColor(76, 175, 80);
-    else if (ratio >= 0.3) front = QColor(255, 193, 7);
-    else                   front = QColor(244, 67, 54);
+    // 前景条
+    QColor front =
+        ratio >= 0.6 ? QColor(76,175,80) :
+            ratio >= 0.3 ? QColor(255,193,7) :
+            QColor(244,67,54);
 
     painter->setBrush(front);
-    painter->drawRoundedRect(fgRect, 2, 2);
+    painter->drawRoundedRect(QRectF(x, y, barW * ratio, barH), 2, 2);
 
     painter->restore();
 }
+
