@@ -1,20 +1,35 @@
 #include "widget_building_list.h"
 #include "ui_widget_building_list.h"
 
-widget_building_list::widget_building_list(int level,bool upgrade,QVector<QString> &name,QVector<QString> &pixmap,QVector<QString> &price,QWidget *parent)
+widget_building_list::widget_building_list(int level,int resource_value,bool upgrade,QVector<QString> &name,QVector<QString> &pixmap,QVector<QString> &price,QWidget *parent)
     : auto_widget(parent)
     , ui(new Ui::widget_building_list)
     ,background({":/frame/resources/frame/building1.png",":/frame/resources/frame/building2.png",":/frame/resources/frame/building3.png"})
     ,name_(name),pixmap_(pixmap),price_(price)
+    ,resource({":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Courage.png",":/resource/resources/resource/Comfort.png"})
 {
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
     ui->background->setPixmap(QPixmap(background[level]));
+    ui->resource_value->display(resource_value);
+
+    QTimer *timer=new QTimer(this);
+    timer->setInterval(1000);
+    connect(timer,&QTimer::timeout,this,[=]{
+        ui->resource_value->setStyleSheet("background-color:white;"
+            "color:black;"
+            "border-radius: 6px;"
+            "padding: 5px;            ");
+        timer->stop();
+    });
 
     QVector<QLabel*> l_name({ui->name1,ui->name2,ui->name3,ui->name4});
     QVector<QPushButton*> btn_tower({ui->tower1,ui->tower2,ui->tower3,ui->tower4});
     QVector<QPushButton*> btn_price({ui->price1,ui->price2,ui->price3,ui->price4});
+    for(auto &p:btn_price) p->setIcon(QPixmap(resource[level]));
+    ui->resource->setIcon(QPixmap(resource[level]));
+
     if(upgrade){
         for(int i=0;i<4;i++){
             l_name[i]->hide();btn_tower[i]->hide();btn_price[i]->hide();
@@ -30,10 +45,21 @@ widget_building_list::widget_building_list(int level,bool upgrade,QVector<QStrin
             btn_tower[i]->setIcon(QPixmap(pixmap_[i]));
             btn_price[i]->setText(price_[i]);
             connect(btn_price[i],&QPushButton::clicked,this,[=](){
-                emit widget_building_list::buy(i);
+                if(resource_value>=price_[i].toInt()){
+                    emit widget_building_list::buy(i);
+                    close();
+                }
+                else{
+                    timer->start();
+                    ui->resource_value->setStyleSheet("background-color:white;"
+                                                      "color:red;"
+                                                      "border-radius: 6px;"
+                                                      "padding: 5px;            ");
+                }
             });
         }
     }
+
 
     connect(ui->cancel,&QPushButton::clicked,this,&QWidget::close);
 

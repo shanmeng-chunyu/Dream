@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     // QVector<QString> n({"InspirationBulb","KnowledgeTree","FishingCatPillow","LiveCoffee"});
     // QVector<QString> t({":/towers/resources/towers/level1/InspirationBulb.png",":/towers/resources/towers/level1/KnowledgeTree.png",":/towers/resources/towers/level1/FishingCatPillow.png",":/towers/resources/towers/level1/LiveCoffee.png"});
     // QVector<QString> p({"100","200","120","80"});
-    // widget_building_list build_widget(0,0,n,t,p);
+    // widget_building_list build_widget(0,100,0,n,t,p);
     // build_widget.show();
 
     //widget_ingame
