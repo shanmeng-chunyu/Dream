@@ -33,8 +33,8 @@ public:
     signals:
         void reachedEnd(Enemy* enemy);
     void died(Enemy* enemy);
-void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
-
+protected:
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 private:
     int damage;
     std::vector<QPointF> absolutePath;
