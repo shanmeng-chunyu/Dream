@@ -248,7 +248,7 @@ void GameManager::updateGame() {
             if (maxHp > 0) {
                 const double thr      = proto.value("healBelowHp").toDouble(0.5);
                 const int heal        = proto.value("healPerTick").toInt(10);
-                const double radius   = proto.value("healRadius").toDouble(200.0);
+                const double radius   = proto.value("healRadius").toDouble(400.0);
                 const double interval = proto.value("healInterval").toDouble(2.0);
 
                 if ((double)enemy->getHealth() / maxHp < thr) {
@@ -356,6 +356,7 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     // 根据发射塔的类型查找对应的子弹贴图
     // 1. 定义子弹的固定像素大小 (按照你的要求)
     const QSize bulletPixelSize(76, 76);
+    const QSize towerPixelSize(76, 76);
 
     // 2. 获取子弹贴图原型
     QString type = tower->getType();
@@ -370,32 +371,43 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
         scaledPixmap = QPixmap(bulletPixelSize);
         scaledPixmap.fill(Qt::red);
     }
+    Bullet::DamageType damageType = Bullet::SingleTarget; // 默认
+    double aoeRadius = 0.0;
 
-    // 4. 创建子弹实例 (使用缩放后的贴图)
-    // (速度 10.0 仍然是硬编码，你可以后续从 proto 中读取)
-    auto* bullet = new Bullet(tower->getDamage(), 10.0, target, scaledPixmap);
-
-    // 5. 计算生成位置（关键：中心对齐）
-
-    // 5a. 获取塔的 top-left 位置 (这是 tower->pos() 的含义)
+    // 从 tower_data.json 读取 "KnowledgeTree" 的特殊配置
+    if (type == "KnowledgeTree") {
+        damageType = Bullet::AreaOfEffect;
+        // 你应该在 tower_data.json 中添加 "aoe_radius": 100.0 这样的字段
+        // 这里我们先硬编码一个值
+        aoeRadius = 100.0;
+    }
+    // 从 tower_data.json 读取 "NightRadio" 的特殊配置
+    else if (type == "NightRadio") {
+        damageType = Bullet::Piercing;
+        // 穿透伤害不需要半径
+    }
+    // (其他塔，如 InspirationBulb，会使用默认的 SingleTarget)
+    // 创建子弹实例 (使用缩放后的贴图)
+    // 4. [修改] 计算塔的中心点 (子弹发射点)
     QPointF towerTopLeft = tower->pos();
-
-    // 5b. 获取塔的尺寸 (必须与 buildTower 中定义的76x76一致)
-    const QSize towerPixelSize(76, 76);
-
-    // 5c. 计算塔的中心点 (即子弹的生成点)
     QPointF spawnCenterPos(towerTopLeft.x() + towerPixelSize.width() / 2.0,
                            towerTopLeft.y() + towerPixelSize.height() / 2.0);
 
-    // 5d. 根据子弹的中心点和40x40的尺寸，计算子弹的 top-left 位置
+    auto* bullet = new Bullet(tower->getDamage(), 10.0, target,
+                              damageType, spawnCenterPos, aoeRadius,
+                              scaledPixmap);
+
+    // 6. 计算子弹的 top-left 位置 (保持不变)
     QPointF bulletTopLeftPos(spawnCenterPos.x() - bulletPixelSize.width() / 2.0,
                              spawnCenterPos.y() - bulletPixelSize.height() / 2.0);
-
     bullet->setPos(bulletTopLeftPos);
 
     m_scene->addItem(bullet);
     m_bullets.append(bullet);
     connect(bullet, &Bullet::hitTarget, this, &GameManager::onBulletHitTarget);
+    if (bullet->getDamageType() == Bullet::Piercing) {
+        connect(bullet, &Bullet::hitEnemy, this, &GameManager::onBulletHitEnemy);
+    }
 }
 
 void GameManager::onEnemyReachedEnd(Enemy* enemy) {
@@ -484,19 +496,62 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
     if (!m_bullets.contains(bullet)) {
         return;
     }
-    QGraphicsPixmapItem* target = bullet->getTarget();
-    //确定子弹目标
-    if (target) {
-        Enemy *enemyTarget = dynamic_cast<Enemy*>(target);
-        if (enemyTarget && m_enemies.contains(enemyTarget)) {
-            enemyTarget->takeDamage(bullet->getDamage());
-        }else {
-            Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(target);
-            if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
-                obstacleTarget->takeDamage(bullet->getDamage());
+    // 1. 获取子弹的所有信息
+    int damage = bullet->getDamage();
+    Bullet::DamageType type = bullet->getDamageType();
+    QGraphicsPixmapItem* mainTargetItem = bullet->getTarget(); // 子弹瞄准的目标
+    // 2. 根据类型执行不同的伤害逻辑
+    switch (type) {
+
+        case Bullet::SingleTarget: {
+            // --- 逻辑 1: 单体伤害 (原逻辑) ---
+            if (mainTargetItem) {
+                Enemy *enemyTarget = dynamic_cast<Enemy*>(mainTargetItem);
+                if (enemyTarget && m_enemies.contains(enemyTarget)) {
+                    enemyTarget->takeDamage(damage);
+                } else {
+                    Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(mainTargetItem);
+                    if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
+                        obstacleTarget->takeDamage(damage);
+                    }
+                }
             }
+            break; // 结束
         }
-    }
+
+        case Bullet::AreaOfEffect: {
+            // --- 逻辑 2: 范围伤害 (KnowledgeTree) ---
+            double aoeRadius = bullet->getAoeRadius();
+            QPointF impactCenter; // 爆炸中心
+
+            // 检查目标是否还存在
+            if (mainTargetItem && m_enemies.contains(dynamic_cast<Enemy*>(mainTargetItem))) {
+                // 目标存活，在目标当前位置爆炸
+                impactCenter = mainTargetItem->pos();
+            } else {
+                // 目标已死亡，在子弹的终点 (m_lastKnownPos) 爆炸
+                impactCenter = bullet->pos() + bullet->transformOriginPoint();
+            }
+
+            // 遍历所有敌人，检查是否在爆炸半径内
+            for (Enemy* enemy : m_enemies) {
+                double distance = QLineF(impactCenter, enemy->pos()).length();
+                if (distance <= aoeRadius) {
+                    enemy->takeDamage(damage); // 范围内的所有敌人都受到伤害
+                }
+            }
+            break; // 结束
+        }
+
+        case Bullet::Piercing: {
+            // 子弹到达终点时，穿透弹什么也不做。
+            // 伤害已经在 onBulletHitEnemy 中处理了。
+            // 我们只需要让它在 switch 之后被正常清理。
+            break;
+        }
+    } // 结束 switch
+
+    // (清理逻辑保持不变)
     m_entitiesToClean.append(bullet);
     m_bullets.removeAll(bullet);
 }
@@ -529,6 +584,31 @@ void GameManager::cleanupEntities() {
 
 void GameManager::updateTowerTargets() {
     for (Tower* tower : m_towers) {
+        Enemy* closestTaunter = nullptr;
+        double minTauntDistance = tower->getRange() + 1.0;
+
+        // 第一次遍历：只寻找 "pre" 类型的敌人
+        for (Enemy* enemy : m_enemies) {
+            // 检查这个敌人是否是 "pre"
+            // 我们从 enemy_data.json 中得知其类型字符串为 "pre"
+            if (enemy->getType() == "pre") {
+                double distance = QLineF(tower->pos(), enemy->pos()).length();
+
+                if (distance <= tower->getRange()) {
+                    if (distance < minTauntDistance) {
+                        minTauntDistance = distance;
+                        closestTaunter = enemy;
+                    }
+                }
+            }
+        }
+
+        //
+        if (closestTaunter) {
+            // 找到了 "pre" 敌人。强制设为目标，并跳过所有其他逻辑。
+            tower->setTarget(closestTaunter);
+            continue; // 处理下一个塔
+        }
 
         // --- 优先级 1: 永远优先寻找敌人 ---
         // (我们每一帧都执行这个搜索)
@@ -727,4 +807,15 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     connect(e, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
     connect(e, &Enemy::died,       this, &GameManager::onEnemyDied);
     return e;
+}
+
+void GameManager::onBulletHitEnemy(Bullet* bullet, Enemy* enemy)
+{
+    // 检查子弹和敌人是否都还“存活”
+    if (!bullet || !enemy || !m_bullets.contains(bullet) || !m_enemies.contains(enemy)) {
+        return;
+    }
+
+    // 对穿透的敌人造成伤害
+    enemy->takeDamage(bullet->getDamage());
 }

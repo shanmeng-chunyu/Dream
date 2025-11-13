@@ -47,6 +47,7 @@ private:
 
     int m_stunTicksRemainimng = 0;
     double m_baseSpeed;//原始速度
+    bool m_isFlipped;//贴图是否翻转
 };
 
 #endif // ENEMY_H

@@ -63,6 +63,7 @@ private slots:
     // 游戏主循环
     void updateGame();
     void onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration);
+    void onBulletHitEnemy(Bullet* bullet, Enemy* enemy);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
 

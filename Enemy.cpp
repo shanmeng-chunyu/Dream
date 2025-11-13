@@ -16,7 +16,8 @@ Enemy::Enemy(int health, double speed, int damage,const std::vector<QPointF>& pa
       m_currentPathIndex(0),
       m_maxHealth(health),
       m_stunTicksRemainimng(0),
-      m_baseSpeed(speed)
+      m_baseSpeed(speed),
+      m_isFlipped(false)
 {
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
@@ -57,6 +58,37 @@ void Enemy::move() {
 
     double angle = atan2(targetPoint.y() - pos().y(), targetPoint.x() - pos().x());
     double dx = m_speed * cos(angle);
+    //反转贴图
+    bool shouldBeFlipped = false;
+
+    // 1. 根据类型判断 "期望的" 翻转状态
+    if (type == "bug" || type == "bugmini") {
+        // 假设 "bug" 默认朝左
+        // 当向右移动 (dx > 0.01) 时，它们 "应该被翻转"
+        shouldBeFlipped = (dx > 0.01);
+    }
+    else {
+        // 假设 "其他" 默认朝右
+        // 当向左移动 (dx < -0.01) 时，它们 "应该被翻转"
+        shouldBeFlipped = (dx < -0.01);
+    }
+
+    // 2. 检查 "期望状态" 是否与 "当前状态" (m_isFlipped) 不符
+    if (shouldBeFlipped && !m_isFlipped) {
+        // 期望翻转，但当前未翻转 -> 应用翻转
+        QTransform t = transform();
+        t.scale(-1, 1);
+        setTransform(t);
+        m_isFlipped = true;
+    }
+    else if (!shouldBeFlipped && m_isFlipped) {
+        // 期望不翻转，但当前已翻转 -> 翻转回来
+        QTransform t = transform();
+        t.scale(-1, 1); // 再次翻转以抵消
+        setTransform(t);
+        m_isFlipped = false;
+    }
+    // --- 翻转逻辑结束 ---
     double dy =m_speed * sin(angle);
     setPos(pos().x() + dx, pos().y() + dy);
 }
