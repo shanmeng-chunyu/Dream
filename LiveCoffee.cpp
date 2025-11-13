@@ -46,7 +46,10 @@ void LiveCoffee::upgrade()
         slowFactor=0.7;
         increaseFactor=0.85;
         upgraded=true;
-        setPixmap(QPixmap(":/towers/resources/towers/level1/LiveCoffee_upgrade.png"));
-
+        const QSize towerPixelSize(76, 76);
+        QPixmap originalUpgradePixmap(":/towers/resources/towers/level1/LiveCoffee_upgrade.png");
+        QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
     }
 }
+

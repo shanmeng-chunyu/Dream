@@ -16,6 +16,10 @@ void KnowledgeTree::upgrade()
         if(fireCount>fireInterval)
             fireCount=fireInterval;
         upgraded=true;
-        setPixmap(QPixmap(":/towers/resources/towers/level1/KnowledgeTree_upgrade.png"));
+        const QSize towerPixelSize(76, 76);
+        QPixmap originalUpgradePixmap(":/towers/resources/towers/level1/KnowledgeTree_upgrade.png");
+        QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
     }
 }
+
