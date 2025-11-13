@@ -39,7 +39,7 @@ public:
     virtual void upgrade();
 
 public slots:
-    void findAndAttackTarget();
+    virtual void findAndAttackTarget();
     //应对enemy功能
     void slowAttack(double slowFactor);//降低攻速
     void slowAttackStop();//停止降低攻速
