@@ -63,15 +63,31 @@ void GameManager::init(QGraphicsScene* scene) {
 }
 
 void GameManager::loadLevel(const QString& levelPath) {
+    // QFile file(levelPath);
+    // if (!file.open(QIODevice::ReadOnly)) return;
+    //
+    // QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    // QJsonObject rootObj = doc.object();
+    // file.close();
+    //
+    // // 使用LevelLoader加载核心数据
+    // LevelLoader::loadLevel(levelPath, *m_gameMap, *m_waveManager, *m_player);
+    if (!m_gameMap->loadFromFile(levelPath)) {
+        qWarning() << "GameManager failed to load map:" << levelPath;
+        return;
+    }
     QFile file(levelPath);
     if (!file.open(QIODevice::ReadOnly)) return;
-
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject rootObj = doc.object();
     file.close();
 
-    // 使用LevelLoader加载核心数据
-    LevelLoader::loadLevel(levelPath, *m_gameMap, *m_waveManager, *m_player);
+    QJsonObject playerObj = rootObj["player"].toObject();
+    m_player->setInitialState(playerObj["initial_stability"].toInt(), playerObj["initial_resource"].toInt());
+
+    QJsonArray wavesArray = rootObj["waves"].toArray();
+    m_waveManager->loadWaves(wavesArray);
+
     loadPrototypes();
 
     // 根据地图数据创建障碍物
