@@ -33,6 +33,7 @@ public:
     signals:
         void reachedEnd(Enemy* enemy);
     void died(Enemy* enemy);
+void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
 private:
     int damage;
@@ -46,8 +47,8 @@ private:
     QList<LiveCoffee*> findCoffeeInRange() const;
 
     int m_stunTicksRemainimng = 0;
-    double m_baseSpeed;//原始速度
-    bool m_isFlipped;//贴图是否翻转
+    double m_baseSpeed;//脭颅脢录脣脵露脠
+    bool m_isFlipped;//脤霉脥录脢脟路帽路颅脳陋
 };
 
 #endif // ENEMY_H
