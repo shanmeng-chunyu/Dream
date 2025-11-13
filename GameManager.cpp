@@ -290,6 +290,12 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
         enemy->setPos(absolutePath[0]);
     }
 
+    // 检查生成的敌人类型是否为 "nightmare"
+    if (type == "nightmare") {
+        // 如果是，立即调用 destroyAllTowers
+        destroyAllTowers(true);
+    }
+
 }
 
 void GameManager::buildTower(const QString& type, const QPointF& relativePosition) {
@@ -818,4 +824,19 @@ void GameManager::onBulletHitEnemy(Bullet* bullet, Enemy* enemy)
 
     // 对穿透的敌人造成伤害
     enemy->takeDamage(bullet->getDamage());
+}
+
+void GameManager::destroyAllTowers(bool withEffects)
+{
+    // (可选：你可以在这里播放一个全屏的爆炸音效或视觉特效)
+
+    // 1. 遍历当前所有的塔
+    for (Tower* tower : m_towers) {
+        // 2. 将它们全部加入到 m_entitiesToClean 队列
+        //    这能确保它们在当前帧的末尾被安全地从场景中移除和删除
+        m_entitiesToClean.append(tower);
+    }
+
+    // 3. 立即清空 m_towers 列表，这样它们就不能再进行任何索敌或攻击
+    m_towers.clear();
 }

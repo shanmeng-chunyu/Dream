@@ -833,9 +833,11 @@ void LevelEditorWidget::saveLevel() {
         file.close();
 
         QMessageBox::information(this, "保存成功", QString("关卡已成功保存到:\n%1").arg(filePath));
+        this->close();
     } else {
         QMessageBox::critical(this, "保存失败", "无法写入目标文件。");
     }
+
 }
 
 void LevelEditorWidget::loadLevel() {

@@ -30,6 +30,14 @@ namespace
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    //调试关卡编辑界面
+    // LevelEditorWidget editor;
+    //
+    // editor.resize(1024, 768);
+    // editor.setWindowTitle("关卡编辑器 [调试模式]");
+    //
+    // editor.show();
+
     MainWindow w;
     w.resize(1024, 768);
 
