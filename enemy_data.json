@@ -106,16 +106,19 @@
       "healRadius": 200,
       "healInterval": 2.0
     },
-    {
-      "type": "thephantomofthepast",
-      "name": "昔日幻影",
-      "pixmap": ":/enemies/resources/enemies/level2/thephantomofthepast.png",
-      "health": 10000,
-      "speed": 1.1,
-      "drops": 600,
-      "damage": 25,
-      "description": "昔日的幻影,生命值极高,血量降低到一定程度后会逐渐开始回血"
-    },
+   {
+    "type": "thephantomofthepast",
+    "name": "昔日幻影",
+    "pixmap": ":/enemies/resources/enemies/level2/thephantomofthepast.png",
+    "health": 10000,
+    "speed": 1.1,
+    "drops": 600,
+    "damage": 25,
+    "description": "昔日的幻影,生命值极高,血量降低到一定程度后会逐渐开始回血",
+    "selfRegenBelowHp": 0.50,
+    "selfRegenPerTick": 40,
+    "selfRegenInterval": 1.5
+},
     {
       "type": "nightmare",
       "name": "噩梦",
