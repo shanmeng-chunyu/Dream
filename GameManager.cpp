@@ -422,7 +422,7 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
         damageType = Bullet::AreaOfEffect;
         // 你应该在 tower_data.json 中添加 "aoe_radius": 100.0 这样的字段
         // 这里我们先硬编码一个值
-        aoeRadius = 100.0;
+        aoeRadius = 200.0;
     }
     // 从 tower_data.json 读取 "NightRadio" 的特殊配置
     else if (type == "NightRadio") {
@@ -846,6 +846,27 @@ void GameManager::onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration
     Enemy* enemyTarget = static_cast<Enemy*>(enemy);
     if (!enemyTarget || !m_enemies.contains(enemy)) {
         return;
+    }
+    // 1. 【新增】获取发射信号的塔
+    //    我们使用 QObject::sender() 来找出是哪座塔触发了这个信号
+    Tower* sendingTower = qobject_cast<Tower*>(sender());
+
+    // 2. 【新增】如果找到了塔，就去获取它在 tower_data.json 中定义的“子弹贴图”
+    if (sendingTower) {
+        QString towerType = sendingTower->getType(); //
+        QJsonObject proto = m_towerPrototypes[towerType]; //
+
+        // 我们利用 tower_data.json 中已有的 "bullet_pixmap" 字段
+        QString effectPath = proto.value("bullet_pixmap").toString(); //
+
+        if (!effectPath.isEmpty()) {
+            QPixmap effectPixmap(effectPath);
+            if (!effectPixmap.isNull()) {
+                // 4. 【新增】调用敌人的新函数来显示特效
+                //    (特效时长与眩晕时长一致)
+                enemyTarget->applyVisualEffect(effectPixmap, duration);
+            }
+        }
     }
 
     enemyTarget->stopFor(duration);

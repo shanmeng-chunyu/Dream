@@ -30,10 +30,9 @@ public:
     void setBaseSpeed(double v);
     int getCurrentPathIndex() const;
 
-
-
     public slots:
         void move();
+        void applyVisualEffect(const QPixmap& pixmap, double duration);
 private slots:
     void updatePixmapFromMovie(); // 更新当前帧
     signals:
@@ -57,6 +56,10 @@ private:
     int m_stunTicksRemainimng = 0;
     double m_baseSpeed;//Ô­Ê¼ËÙ¶È
     bool m_isFlipped;//ÌùÍ¼ÊÇ·ñ·­×ª
+
+    void removeVisualEffect();
+    QGraphicsPixmapItem* m_effectItem; // 指向当前特效贴图的指针
+    int m_effectTicksRemaining;
 };
 
 #endif // ENEMY_H

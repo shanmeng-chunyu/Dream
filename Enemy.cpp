@@ -21,7 +21,9 @@ Enemy::Enemy(int health, double speed, int damage, const std::vector<QPointF>& p
       m_stunTicksRemainimng(0),
       m_baseSpeed(speed),
       m_isFlipped(false),
-      m_pixelSize(pixelSize)
+      m_pixelSize(pixelSize),
+      m_effectItem(nullptr),
+      m_effectTicksRemaining(0)
 {
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
@@ -52,6 +54,12 @@ void Enemy::setAbsolutePath(const std::vector<QPointF>& path) {
 
 
 void Enemy::move() {
+    if (m_effectTicksRemaining > 0) {
+        m_effectTicksRemaining--;
+        if (m_effectTicksRemaining == 0) {
+            removeVisualEffect();
+        }
+    }
     if (m_stunTicksRemainimng > 0) {
         m_stunTicksRemainimng--;
         return;
@@ -244,4 +252,50 @@ void Enemy::updatePixmapFromMovie()
 
     // 将 QGraphicsPixmapItem 的贴图设置为这一帧
     setPixmap(scaledFrame);
+}
+
+void Enemy::applyVisualEffect(const QPixmap& pixmap, double duration)
+{
+    // 1. 如果当前已经有一个特效，先移除它
+    if (m_effectItem) {
+        removeVisualEffect();
+    }
+
+    // (移除 QTimer->stop() 的调用)
+    const double scaleFactor = 0.7; // 特效大小是敌人大小的 80%
+    const QSize targetSize(m_pixelSize.width() * scaleFactor,
+                           m_pixelSize.height() * scaleFactor);
+    QPixmap scaledPixmap = pixmap.scaled(targetSize,
+                                        Qt::KeepAspectRatio, // 保持宽高比
+                                        Qt::SmoothTransformation); // 平滑缩放
+
+    // 3. 使用【缩放后】的 pixmap 创建特效
+    m_effectItem = new QGraphicsPixmapItem(scaledPixmap, this);
+
+    // 3. 计算特效的位置（使其在敌人贴图上居中）
+    QPointF enemyCenter(0.0, -30);
+    QPointF effectTopLeft(
+        enemyCenter.x() - scaledPixmap.width() / 2.0,  // <-- 已修正
+        enemyCenter.y() - scaledPixmap.height() / 2.0  // <-- 已修正
+    );
+
+    m_effectItem->setPos(effectTopLeft);
+    m_effectItem->setZValue(1.0);
+    m_effectItem->setOpacity(0.97);
+
+    // 4. 【核心修改】将 duration 转换为 Ticks (帧数)
+    //    我们参考 WaveManager::intervalToTicks 的实现
+    //    它使用 16ms 作为一帧
+    const double gameTickIntervalMs = 16.0;
+    m_effectTicksRemaining = static_cast<int>(std::round((duration * 1000.0) / gameTickIntervalMs));
+}
+
+// --- 【修改】实现 removeVisualEffect (现在是私有函数) ---
+void Enemy::removeVisualEffect()
+{
+    if (m_effectItem) {
+        delete m_effectItem;
+        m_effectItem = nullptr;
+    }
+    m_effectTicksRemaining = 0; // 确保计数器归零
 }
