@@ -610,10 +610,28 @@ QString MainWindow::prepareRuntimeLevelFile(const QString &levelPath)
     for (int i = 0; i < obstacles.size(); ++i)
     {
         QJsonObject obstacle = obstacles.at(i).toObject();
-        if (updateField(obstacle, QStringLiteral("pixmap"), GameMap::fallbackObstaclePixmap(obstacle.value(QStringLiteral("type")).toString(), stage)))
+
+        // 1. 获取 JSON 中指定的路径
+        const QString currentPath = obstacle.value(QStringLiteral("pixmap")).toString();
+
+        // 2. 获取备选的 Fallback 路径
+        const QString fallbackPath = GameMap::fallbackObstaclePixmap(obstacle.value(QStringLiteral("type")).toString(), stage);
+
+        bool updated = false;
+
+        // 3. 优先尝试使用 JSON 中指定的路径
+        if (!currentPath.isEmpty())
         {
-            obstacles[i] = obstacle;
+            updated = updateField(obstacle, QStringLiteral("pixmap"), currentPath);
         }
+
+        // 4. 如果 JSON 路径失败了（或为空），再尝试使用 Fallback 路径
+        if (!updated && !fallbackPath.isEmpty())
+        {
+            updateField(obstacle, QStringLiteral("pixmap"), fallbackPath);
+        }
+
+        obstacles[i] = obstacle; // 将修改后的 obstacle 写回数组
     }
     if (!obstacles.isEmpty())
     {

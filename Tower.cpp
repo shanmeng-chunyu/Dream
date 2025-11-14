@@ -31,7 +31,7 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     m_rangeCircle->setZValue(-1);
 
     // 5. 将默认可见性设置为 true
-    m_rangeCircle->setVisible(true); // <-- 修改为 true
+    m_rangeCircle->setVisible(false); // <-- 修改为 true
 
     // 6. 设置范围圆的位置和大小
     qreal r = range;
