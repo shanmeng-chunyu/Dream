@@ -95,12 +95,15 @@ private:
     QList<Tower*> m_towers;
     QList<Bullet*> m_bullets;
     QList<Obstacle*> m_obstacles;
-    QSoundEffect* m_hitSoundSingle;
     QSoundEffect* m_hitSoundAOE;
     QSoundEffect* m_victorySound;
     QSoundEffect* m_defeatSound;
     QSoundEffect* m_upgradeSound;
     QSoundEffect* m_nightmareSpawnSound;
+    QSoundEffect* m_buildSound;
+    QSoundEffect* m_sellSound;
+    QSoundEffect* m_bulbatkSound;
+    QSoundEffect* m_radioatkSound;
 
     // 待删除的实体列表，用于安全删除
     QList<QGraphicsItem*> m_entitiesToClean;

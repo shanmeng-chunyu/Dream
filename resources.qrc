@@ -57,6 +57,7 @@
         <file>resources/enemies/level2/tears.png</file>
         <file>resources/enemies/level2/thephantomofthepast.png</file>
         <file>resources/enemies/level3/nightmare.png</file>
+        <file>resources/enemies/EnemyDie.gif</file>
     </qresource>
     <qresource prefix="/frame">
         <file>resources/frame/level1.png</file>
@@ -140,8 +141,12 @@
         <file>resources/music/explosion.wav</file>
         <file>resources/music/gamelose.wav</file>
         <file>resources/music/gamewin.wav</file>
-        <file>resources/music/hit.wav</file>
         <file>resources/music/nightmare.wav</file>
         <file>resources/music/upgrade.wav</file>
+        <file>resources/music/build_tower.wav</file>
+        <file>resources/music/bulb_atk.wav</file>
+        <file>resources/music/button.wav</file>
+        <file>resources/music/radio_atk.wav</file>
+        <file>resources/music/sell_tower.wav</file>
     </qresource>
 </RCC>

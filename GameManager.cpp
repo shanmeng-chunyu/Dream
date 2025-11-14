@@ -54,9 +54,22 @@ GameManager::GameManager(QObject* parent)
 {
     connect(m_gameTimer, &QTimer::timeout, this, &GameManager::updateGame);
     connect(m_waveManager, &WaveManager::spawnEnemy, this, &GameManager::onSpawnEnemy);
-    m_hitSoundSingle = new QSoundEffect(this);
-    m_hitSoundSingle->setSource(QUrl("qrc:/music/resources/music/hit.wav"));
-    m_hitSoundSingle->setVolume(0.4);
+
+    m_buildSound = new QSoundEffect(this);
+    m_buildSound->setSource(QUrl("qrc:/music/resources/music/build_tower.wav"));
+    m_buildSound->setVolume(0.5);
+
+    m_sellSound = new QSoundEffect(this);
+    m_sellSound->setSource(QUrl("qrc:/music/resources/music/sell_tower.wav"));
+    m_sellSound->setVolume(0.5);
+
+    m_bulbatkSound = new QSoundEffect(this);
+    m_bulbatkSound->setSource(QUrl("qrc:/music/resources/music/bulb_atk.wav"));
+    m_bulbatkSound->setVolume(0.5);
+
+    m_radioatkSound = new QSoundEffect(this);
+    m_radioatkSound->setSource(QUrl("qrc:/music/resources/music/radio_atk.wav"));
+    m_radioatkSound->setVolume(0.5);
 
     m_hitSoundAOE = new QSoundEffect(this);
     m_hitSoundAOE->setSource(QUrl("qrc:/music/resources/music/explosion.wav"));
@@ -404,6 +417,7 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     const QPointF towerTopLeftPos(absPos.x() - towerPixelSize.width() / 2.0,
                                   absPos.y() - towerPixelSize.height() / 2.0);
     tower->setPos(towerTopLeftPos);
+    m_buildSound->play();
     m_scene->addItem(tower);
     m_towers.append(tower);
     connect(tower,&Tower::newBullet,this,&GameManager::onNewBullet);
@@ -455,6 +469,9 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     else if (type == "NightRadio") {
         damageType = Bullet::Piercing;
         // 穿透伤害不需要半径
+        m_radioatkSound->play();
+    }else {
+        m_bulbatkSound->play();
     }
     // (其他塔，如 InspirationBulb，会使用默认的 SingleTarget)
     // 创建子弹实例 (使用缩放后的贴图)
@@ -611,12 +628,10 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
                 Enemy *enemyTarget = dynamic_cast<Enemy*>(mainTargetItem);
                 if (enemyTarget && m_enemies.contains(enemyTarget)) {
                     enemyTarget->takeDamage(damage);
-                    m_hitSoundSingle->play();
                 } else {
                     Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(mainTargetItem);
                     if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
                         obstacleTarget->takeDamage(damage);
-                        m_hitSoundSingle->play();
                     }
                 }
             }
@@ -873,6 +888,7 @@ void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
     //
     // // 3. 返还资源
     // m_player->addResource(refundAmount);
+    m_sellSound->play();
     m_entitiesToClean.append(towerToSell);
     m_towers.removeAll(towerToSell);
 }
@@ -972,7 +988,6 @@ void GameManager::onBulletHitEnemy(Bullet* bullet, Enemy* enemy)
     }
 
     // 对穿透的敌人造成伤害
-    m_hitSoundSingle->play();
     enemy->takeDamage(bullet->getDamage());
 }
 
