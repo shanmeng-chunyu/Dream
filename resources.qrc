@@ -136,4 +136,12 @@
     <qresource prefix="/font">
         <file>resources/font/font.ttf</file>
     </qresource>
+    <qresource prefix="/music">
+        <file>resources/music/explosion.wav</file>
+        <file>resources/music/gamelose.wav</file>
+        <file>resources/music/gamewin.wav</file>
+        <file>resources/music/hit.wav</file>
+        <file>resources/music/nightmare.wav</file>
+        <file>resources/music/upgrade.wav</file>
+    </qresource>
 </RCC>

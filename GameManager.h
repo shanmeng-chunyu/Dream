@@ -20,6 +20,7 @@ class Obstacle;
 class Player;
 class WaveManager;
 class GameMap;
+class QSoundEffect;
 
 class GameManager : public QObject {
     Q_OBJECT
@@ -94,6 +95,12 @@ private:
     QList<Tower*> m_towers;
     QList<Bullet*> m_bullets;
     QList<Obstacle*> m_obstacles;
+    QSoundEffect* m_hitSoundSingle;
+    QSoundEffect* m_hitSoundAOE;
+    QSoundEffect* m_victorySound;
+    QSoundEffect* m_defeatSound;
+    QSoundEffect* m_upgradeSound;
+    QSoundEffect* m_nightmareSpawnSound;
 
     // 待删除的实体列表，用于安全删除
     QList<QGraphicsItem*> m_entitiesToClean;
@@ -104,6 +111,7 @@ private:
 
     bool m_gameIsOver;
     Enemy* spawnByTypeWithPath(const QString& type, const std::vector<QPointF>& absPath,double scale = 1.0);
+
 
     void destroyAllTowers(bool withEffects = true);
 

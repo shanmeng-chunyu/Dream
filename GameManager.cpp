@@ -23,6 +23,8 @@
 #include <QtMath>
 #include <QMessageBox>
 #include <QHash>
+#include <QSoundEffect>
+#include <QUrl>
 
 #include "FriendCompanion.h"
 #include "LiveCoffee.h"
@@ -52,6 +54,30 @@ GameManager::GameManager(QObject* parent)
 {
     connect(m_gameTimer, &QTimer::timeout, this, &GameManager::updateGame);
     connect(m_waveManager, &WaveManager::spawnEnemy, this, &GameManager::onSpawnEnemy);
+    m_hitSoundSingle = new QSoundEffect(this);
+    m_hitSoundSingle->setSource(QUrl("qrc:/music/resources/music/hit.wav"));
+    m_hitSoundSingle->setVolume(0.4);
+
+    m_hitSoundAOE = new QSoundEffect(this);
+    m_hitSoundAOE->setSource(QUrl("qrc:/music/resources/music/explosion.wav"));
+    m_hitSoundAOE->setVolume(0.5); // (AOE 声音可以大一点)
+
+    m_victorySound = new QSoundEffect(this);
+    m_victorySound->setSource(QUrl("qrc:/music/resources/music/gamewin.wav"));
+    m_victorySound->setVolume(1.0); // 胜利！大声点
+
+    m_defeatSound = new QSoundEffect(this);
+    m_defeatSound->setSource(QUrl("qrc:/music/resources/music/gamelose.wav"));
+    m_defeatSound->setVolume(1.0); // 失败也大声点
+
+    m_upgradeSound = new QSoundEffect(this);
+    m_upgradeSound->setSource(QUrl("qrc:/music/resources/music/upgrade.wav"));
+    m_upgradeSound->setVolume(0.6);
+
+    m_nightmareSpawnSound = new QSoundEffect(this);
+    m_nightmareSpawnSound->setSource(QUrl("qrc:/music/resources/music/nightmare.wav"));
+    m_nightmareSpawnSound->setVolume(0.9);
+
 }
 
 GameManager::~GameManager() {
@@ -318,6 +344,7 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
     // 检查生成的敌人类型是否为 "nightmare"
     if (type == "nightmare") {
         // 如果是，立即调用 destroyAllTowers
+        m_nightmareSpawnSound->play();
         destroyAllTowers(true);
     }
 
@@ -422,7 +449,7 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
         damageType = Bullet::AreaOfEffect;
         // 你应该在 tower_data.json 中添加 "aoe_radius": 100.0 这样的字段
         // 这里我们先硬编码一个值
-        aoeRadius = 200.0;
+        aoeRadius = 100.0;
     }
     // 从 tower_data.json 读取 "NightRadio" 的特殊配置
     else if (type == "NightRadio") {
@@ -584,10 +611,12 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
                 Enemy *enemyTarget = dynamic_cast<Enemy*>(mainTargetItem);
                 if (enemyTarget && m_enemies.contains(enemyTarget)) {
                     enemyTarget->takeDamage(damage);
+                    m_hitSoundSingle->play();
                 } else {
                     Obstacle* obstacleTarget = dynamic_cast<Obstacle*>(mainTargetItem);
                     if (obstacleTarget && m_obstacles.contains(obstacleTarget)) {
                         obstacleTarget->takeDamage(damage);
+                        m_hitSoundSingle->play();
                     }
                 }
             }
@@ -608,13 +637,26 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
                 impactCenter = bullet->pos() + bullet->transformOriginPoint();
             }
 
+            const QList<Enemy*> enemiesSnapshot = m_enemies;
             // 遍历所有敌人，检查是否在爆炸半径内
-            for (Enemy* enemy : m_enemies) {
+            for (Enemy* enemy : enemiesSnapshot) {
+                if (!m_enemies.contains(enemy)) continue;
                 double distance = QLineF(impactCenter, enemy->pos()).length();
                 if (distance <= aoeRadius) {
-                    enemy->takeDamage(damage); // 范围内的所有敌人都受到伤害
+                    enemy->takeDamage(damage);
                 }
             }
+            const QList<Obstacle*> obstaclesSnapshot = m_obstacles;
+
+            for (Obstacle* obstacle : obstaclesSnapshot) {
+                if (!m_obstacles.contains(obstacle)) continue;
+
+                double distance = QLineF(impactCenter, obstacle->pos()).length();
+                if (distance <= aoeRadius) {
+                    obstacle->takeDamage(damage);
+                }
+            }
+            m_hitSoundAOE->play();
             break; // 结束
         }
 
@@ -753,6 +795,7 @@ void GameManager::checkWinLossConditions() {
     if (m_player->getStability() <= 0) {
         m_gameIsOver = true;
         m_gameTimer->stop();
+        m_defeatSound->play();
         emit gameFinished(false,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏失败的信号
     }
@@ -760,6 +803,7 @@ void GameManager::checkWinLossConditions() {
     if (m_waveManager->isFinished() && m_enemies.isEmpty()) {
         m_gameIsOver = true;
         m_gameTimer->stop();
+        m_victorySound->play();
         emit gameFinished(true,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏胜利的信号
     }
@@ -783,6 +827,7 @@ void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
             QJsonObject proto = m_towerPrototypes[tower->getType()];
             if (m_player->spendResource(proto["upgrade_cost"].toInt())) {
                 tower->upgrade();
+                m_upgradeSound->play();
             }
             break;
         }
@@ -857,7 +902,14 @@ void GameManager::onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration
         QJsonObject proto = m_towerPrototypes[towerType]; //
 
         // 我们利用 tower_data.json 中已有的 "bullet_pixmap" 字段
-        QString effectPath = proto.value("bullet_pixmap").toString(); //
+        bool isUpgraded = sendingTower->upgraded;
+        QString effectPath;
+        if (isUpgraded) {
+            effectPath = proto.value("bullet_pixmap_upgrade").toString();
+        }else {
+            effectPath = proto.value("bullet_pixmap").toString();
+        }
+
 
         if (!effectPath.isEmpty()) {
             QPixmap effectPixmap(effectPath);
@@ -920,6 +972,7 @@ void GameManager::onBulletHitEnemy(Bullet* bullet, Enemy* enemy)
     }
 
     // 对穿透的敌人造成伤害
+    m_hitSoundSingle->play();
     enemy->takeDamage(bullet->getDamage());
 }
 

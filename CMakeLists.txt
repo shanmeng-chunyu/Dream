@@ -17,7 +17,7 @@ set(CMAKE_AUTORCC ON)
 
 # ���� Qt6 �ĺ���ģ��
 # ȷ��������Ŀ��Ҫ��ģ�鶼�������г�
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 
 # ������ִ���ļ�����Դ�ļ�
 add_executable(Dream
@@ -75,4 +75,4 @@ add_executable(Dream
         # resources.qrc
 )
 
-target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
+target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia)
