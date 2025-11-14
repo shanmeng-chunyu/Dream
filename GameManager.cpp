@@ -137,8 +137,15 @@ void GameManager::loadLevel(const QString& levelPath) {
         // 1. 定义障碍物的固定像素大小
         const QSize obstaclePixelSize(152, 152);
         QPixmap scaledPixmap = pixmap.scaled(obstaclePixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        qreal relWidth = (qreal)obstaclePixelSize.width() / m_screenSize.width();
+        qreal relHeight = (qreal)obstaclePixelSize.height() / m_screenSize.height();
+        QPointF relCenter = obsData.relativePosition;
+        QRectF relativeRect(relCenter.x() - relWidth / 2.0,
+                            relCenter.y() - relHeight / 2.0,
+                            relWidth,
+                            relHeight);
 
-        auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, scaledPixmap);
+        auto* obstacle = new Obstacle(obsData.health, obsData.resourceValue, scaledPixmap, relativeRect);
 
         // 2. 将json中的坐标视为“中心点”
         QPointF absCenterPos(obsData.relativePosition.x() * m_screenSize.width(),
@@ -494,6 +501,7 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     connect(bullet, &Bullet::hitTarget, this, &GameManager::onBulletHitTarget);
     if (bullet->getDamageType() == Bullet::Piercing) {
         connect(bullet, &Bullet::hitEnemy, this, &GameManager::onBulletHitEnemy);
+        connect(bullet, &Bullet::hitObstacle, this, &GameManager::onBulletHitObstacle);
     }
 }
 
@@ -693,7 +701,7 @@ void GameManager::onObstacleDestroyed(Obstacle* obstacle, int resourceValue) {
         return;
     }
     m_player->addResource(resourceValue);
-
+    emit obstacleCleared(obstacle->getRelativeRect());
     //检查是否有塔的目标为该障碍物
     for (Tower* tower : m_towers) {
         if (tower->getCurrentTarget() == obstacle) {
@@ -989,6 +997,20 @@ void GameManager::onBulletHitEnemy(Bullet* bullet, Enemy* enemy)
 
     // 对穿透的敌人造成伤害
     enemy->takeDamage(bullet->getDamage());
+}
+
+void GameManager::onBulletHitObstacle(Bullet* bullet, Obstacle* obstacle)
+{
+    // 检查子弹和障碍物是否都还“存活”
+    if (!bullet || !obstacle || !m_bullets.contains(bullet) || !m_obstacles.contains(obstacle)) {
+        return;
+    }
+
+    // 对穿透的障碍物造成伤害
+    obstacle->takeDamage(bullet->getDamage());
+
+    // （可选）你可以在这里播放一个击中障碍物的音效
+    // m_hitSoundObstacle->play();
 }
 
 void GameManager::destroyAllTowers(bool withEffects)

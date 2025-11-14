@@ -88,6 +88,11 @@ void Bullet::move() {
                 // 标记为 "已击中"，这样我们就不会在下一帧再次伤害它
                 m_hitTargets.insert(enemy);
             }
+            Obstacle* obstacle = dynamic_cast<Obstacle*>(item);
+            if (obstacle && !m_hitTargets.contains(obstacle)) {
+                emit hitObstacle(this, obstacle);
+                m_hitTargets.insert(obstacle);
+            }
         }
     } else {
         // 非穿透弹：直接移动 (原逻辑)

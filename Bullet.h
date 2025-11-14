@@ -32,6 +32,7 @@ public:
     signals:
         void hitTarget(Bullet* bullet);
         void hitEnemy(Bullet* bullet, Enemy* enemy);
+        void hitObstacle(Bullet* bullet, Obstacle* obstacle);
 
 private:
     int damage;

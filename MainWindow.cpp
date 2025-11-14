@@ -2009,7 +2009,7 @@ void MainWindow::updateHudProgress()
                                 : 0.0;
     if (m_hudProgressLabel)
     {
-        m_hudProgressLabel->setText(QStringLiteral("%1 / %2").arg(displayedWave).arg(totalWaves));
+        m_hudProgressLabel->setText(QStringLiteral("%1 / %2").arg(QString::number(displayedWave)).arg(QString::number(totalWaves)));
     }
     if (m_hudProgressBar)
     {

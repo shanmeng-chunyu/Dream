@@ -14,6 +14,10 @@
         "thesis"
     ],
     "available_towers": [
+        "InspirationBulb",
+        "KnowledgeTree",
+        "NightRadio",
+        "FishingCatPillow"
     ],
     "level_name": "第三关：梦你所梦",
     "map": {
@@ -512,9 +516,19 @@
                     "type": "bug"
                 },
                 {
-                    "count": 4,
+                    "count": 5,
+                    "interval": 1,
+                    "type": "bug"
+                },
+                {
+                    "count": 6,
                     "interval": 1,
                     "type": "pre"
+                },
+                {
+                    "count": 5,
+                    "interval": 1,
+                    "type": "bug"
                 }
             ]
         },

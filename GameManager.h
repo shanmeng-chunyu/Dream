@@ -65,8 +65,10 @@ private slots:
     void updateGame();
     void onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration);
     void onBulletHitEnemy(Bullet* bullet, Enemy* enemy);
+    void onBulletHitObstacle(Bullet* bullet, Obstacle* obstacle);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
+    void obstacleCleared(const QRectF &relativeRect);
 
 private:
     GameManager(QObject* parent = nullptr);
