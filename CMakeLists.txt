@@ -70,6 +70,11 @@ add_executable(Dream
         WarmMemory.cpp
         FriendCompanion.h
         FriendCompanion.cpp
+        widget_ingame.cpp 
+        widget_ingame.h 
+        widget_ingame.ui
+        auto_widget.h
+        auto_widget.cpp
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

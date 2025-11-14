@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QPointer>
 #include <QStringList>
+#include <QJsonObject>
+#include <QRectF>
 
 #include "GameMap.h"
 #include "widget_post_game.h"
@@ -17,11 +19,20 @@ class QGraphicsItem;
 class QResizeEvent;
 class QKeyEvent;
 class TowerBaseItem;
+class QPushButton;
+class QLabel;
+class QProgressBar;
+class QTimer;
+class Player;
+class WaveManager;
+class widget_ingame;
 
 struct TowerBaseVisual
 {
     QPointF relativePosition;
     TowerBaseItem *graphicsItem = nullptr;
+    QRectF cellRect;
+    bool blockedByObstacle = false;
 };
 
 class MainWindow : public QMainWindow
@@ -45,6 +56,15 @@ protected:
 private slots:
     void onTowerBaseClicked(int baseIndex, const QPointF &scenePos);
     void handleGameFinished(bool win, int stability, int killCount);
+    void onHudPauseRequested();
+    void onHudResumeRequested();
+    void onHudSpeedUpRequested();
+    void onHudSpeedNormalRequested();
+    void onPlayerResourceChanged(int value);
+    void onPlayerStabilityChanged(int value);
+    void onWaveEnemySpawned();
+    void onAllWavesCompleted();
+    void onObstacleAreaCleared(const QRectF &relativeRect);
 
 private:
     void initializeScene();
@@ -79,6 +99,27 @@ private:
     bool loadLevelByIndex(int index, bool showError = true);
     void cycleLevel(int delta);
     void updateLevelSwitchStatus(int index);
+    void ensureHudWidget();
+    void destroyHudWidget();
+    void positionHudWidget();
+    void connectHudToSystems();
+    void disconnectWaveSignals();
+    void prepareWaveTrackingFromJson(const QJsonObject &levelRoot);
+    void resetWaveTracking();
+    void updateHudProgress();
+    void locateGameLoopTimer();
+    Player *resolvePlayer() const;
+    WaveManager *resolveWaveManager() const;
+    void applyGameSpeed(bool fastMode);
+    QVector<double> buildAxisCoordinates(double offset, double spacing) const;
+    double estimateGridOffset(bool horizontal, double spacing) const;
+    bool rectIntersectsAny(const QVector<QRectF> &rects, const QRectF &candidate, qreal tolerance = 0.0) const;
+    void updateBaseAvailability();
+    void spawnBaseItem(int index);
+    QRectF relativeRectToSceneRect(const QRectF &relativeRect) const;
+    qreal cellIntersectionTolerance() const;
+    void cacheHudSubControls();
+    void updateHudStability(int value);
 
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
@@ -91,9 +132,28 @@ private:
     QVector<QRectF> m_obstacleRects;
     qreal m_baseRadius;
     QSizeF m_sceneDesignSize;
+    QSizeF m_cellSize;
     QPointer<widget_post_game> m_postGameWidget;
     QStringList m_levelSources;
     int m_currentLevelIndex;
+    widget_ingame *m_hudWidget;
+    QPointer<QLabel> m_hudProgressLabel;
+    QPointer<QProgressBar> m_hudProgressBar;
+    QPointer<QLabel> m_hudStabilityLabel;
+    QPointer<QProgressBar> m_hudStabilityBar;
+    QSizeF m_hudDesignSize;
+    int m_initialStability;
+    QVector<int> m_waveEnemyTotals;
+    int m_totalEnemyCount;
+    int m_spawnedEnemyCount;
+    int m_currentWaveCounter;
+    int m_spawnedInCurrentWave;
+    QPointer<Player> m_cachedPlayer;
+    QPointer<WaveManager> m_cachedWaveManager;
+    QPointer<QTimer> m_gameLoopTimer;
+    QMetaObject::Connection m_waveSpawnConnection;
+    QMetaObject::Connection m_waveCompletionConnection;
+    bool m_fastModeActive;
 };
 
 #endif
