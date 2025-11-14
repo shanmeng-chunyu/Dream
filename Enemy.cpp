@@ -54,6 +54,7 @@ void Enemy::setAbsolutePath(const std::vector<QPointF>& path) {
 
 
 void Enemy::move() {
+    if (m_isDying) return; // <-- 如果正在死亡，则不执行任何移动
     if (m_effectTicksRemaining > 0) {
         m_effectTicksRemaining--;
         if (m_effectTicksRemaining == 0) {
@@ -120,9 +121,12 @@ void Enemy::move() {
 }
 
 void Enemy::takeDamage(int damageAmount) {
+    if (m_isDying) return; // <-- 新增：死亡时不再承受伤害
     m_health -= damageAmount;
     if (m_health <= 0) {
         m_health = 0;      // 保证血量不为负
+        m_isDying = true;         // <-- 设置死亡状态
+        playDeathAnimation();   // <-- 播放死亡动画
         emit died(this);
     } else {
         update();          // 受伤刷新血条
@@ -199,7 +203,7 @@ void Enemy::paint(QPainter* painter,
 {
     QGraphicsPixmapItem::paint(painter, option, widget);
 
-    if (m_maxHealth <= 0 || m_health <= 0) return;
+    if (m_isDying || m_maxHealth <= 0 || m_health <= 0) return;
 
     qreal ratio = (qreal)m_health / (qreal)m_maxHealth;
     if (ratio < 0) ratio = 0;
@@ -298,4 +302,68 @@ void Enemy::removeVisualEffect()
         m_effectItem = nullptr;
     }
     m_effectTicksRemaining = 0; // 确保计数器归零
+}
+
+void Enemy::pauseAnimation()
+{
+    // 检查 m_movie 是否存在，并且正在运行
+    if (m_movie && m_movie->state() == QMovie::Running) {
+        m_movie->setPaused(true);
+    }
+}
+
+void Enemy::resumeAnimation()
+{
+    // 检查 m_movie 是否存在，并且之前是暂停状态
+    if (m_movie && m_movie->state() == QMovie::Paused) {
+        m_movie->setPaused(false);
+    }
+}
+
+void Enemy::playDeathAnimation()
+{
+    if (!m_movie) return;
+
+    // 停止并断开旧的循环动画
+    m_movie->stop();
+    disconnect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
+    disconnect(m_movie, &QMovie::finished, this, &Enemy::onDeathAnimationFinished); // 断开可能的旧连接
+
+    // 加载死亡动画
+    m_movie->setFileName(":/enemies/resources/enemies/EnemyDie.gif");
+
+    // 确保动画只播放一次
+    m_movie->setCacheMode(QMovie::CacheAll);
+    m_movie->setSpeed(100);
+
+    // 重新连接 frameChanged 以显示动画
+    connect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
+
+    // !!! 核心：连接 movie 的 finished 信号到我们的槽 !!!
+    connect(m_movie, QOverload<int>::of(&QMovie::frameChanged), this, &Enemy::checkDeathFrame);
+
+    m_movie->start();
+}
+
+// --- 新增函数 ---
+void Enemy::onDeathAnimationFinished()
+{
+    // 动画播放完毕，通知 GameManager
+    emit deathAnimationFinished(this);
+}
+
+void Enemy::checkDeathFrame(int frameNumber)
+{
+    // 检查电影是否存在，以及当前帧是否是最后一帧
+    if (m_movie && frameNumber == m_movie->frameCount() - 1)
+    {
+        // 1. 立即停止电影，防止它循环
+        m_movie->stop();
+
+        // 2. 断开这个槽，防止它被意外再次触发
+        disconnect(m_movie, QOverload<int>::of(&QMovie::frameChanged), this, &Enemy::checkDeathFrame);
+
+        // 3. 手动调用你现有的“已完成”逻辑
+        onDeathAnimationFinished();
+    }
 }

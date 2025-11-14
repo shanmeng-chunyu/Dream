@@ -614,7 +614,6 @@ void GameManager::onEnemyDied(Enemy* enemy) {
     }
 
     // 6. 将原始的 "bug" 敌人添加到清理队列
-    m_entitiesToClean.append(enemy);
     m_enemies.removeAll(enemy);
 
 }
@@ -903,11 +902,21 @@ void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
 
 void GameManager::pauseGame() {
     m_gameTimer->stop();
+    for (Enemy* enemy : m_enemies) {
+        if (enemy) {
+            enemy->pauseAnimation();
+        }
+    }
 }
 
 void GameManager::resumeGame() {
     if (!m_gameIsOver) {
         m_gameTimer->start(16);
+        for (Enemy* enemy : m_enemies) {
+            if (enemy) {
+                enemy->resumeAnimation();
+            }
+        }
     }
 }
 
@@ -985,6 +994,7 @@ Enemy* GameManager::spawnByTypeWithPath(const QString& type,
     m_enemies.append(e);
     connect(e, &Enemy::reachedEnd, this, &GameManager::onEnemyReachedEnd);
     connect(e, &Enemy::died,       this, &GameManager::onEnemyDied);
+    connect(e, &Enemy::deathAnimationFinished, this, &GameManager::onEnemyDeathAnimationFinished);
     return e;
 }
 
@@ -1026,4 +1036,12 @@ void GameManager::destroyAllTowers(bool withEffects)
 
     // 3. 立即清空 m_towers 列表，这样它们就不能再进行任何索敌或攻击
     m_towers.clear();
+}
+
+void GameManager::onEnemyDeathAnimationFinished(Enemy* enemy)
+{
+    // 动画播放完毕，现在可以安全地将敌人添加到清理队列
+    if (enemy && !m_entitiesToClean.contains(enemy)) {
+        m_entitiesToClean.append(enemy);
+    }
 }

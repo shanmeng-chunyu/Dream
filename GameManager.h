@@ -59,6 +59,7 @@ public slots:
     void pauseGame();
     void resumeGame();
     const QList<Enemy*>& getEnemies() const { return m_enemies; }
+    void onEnemyDeathAnimationFinished(Enemy* enemy); // 死亡动画播放完毕后触发的槽
 
 private slots:
     // 游戏主循环
@@ -122,7 +123,7 @@ private:
 
     QSet<Enemy*> m_raged;
     QHash<Enemy*, int> m_healCd;
-
+    QSet<QGraphicsItem*> m_activeDeathAnimations; // 跟踪正在播放的死亡动画，以便清理
 };
 
 #endif // GAMEMANAGER_H

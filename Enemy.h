@@ -29,15 +29,21 @@ public:
     void heal(int amount);
     void setBaseSpeed(double v);
     int getCurrentPathIndex() const;
+    void pauseAnimation();
+    void resumeAnimation();
+    void playDeathAnimation();
 
     public slots:
         void move();
         void applyVisualEffect(const QPixmap& pixmap, double duration);
 private slots:
     void updatePixmapFromMovie(); // 更新当前帧
+    void onDeathAnimationFinished();
+    void checkDeathFrame(int frameNumber);
     signals:
         void reachedEnd(Enemy* enemy);
-    void died(Enemy* enemy);
+        void died(Enemy* enemy);
+        void deathAnimationFinished(Enemy* enemy);
 protected:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 private:
@@ -56,6 +62,7 @@ private:
     int m_stunTicksRemainimng = 0;
     double m_baseSpeed;//Ô­Ê¼ËÙ¶È
     bool m_isFlipped;//ÌùÍ¼ÊÇ·ñ·­×ª
+    bool m_isDying = false;
 
     void removeVisualEffect();
     QGraphicsPixmapItem* m_effectItem; // 指向当前特效贴图的指针
