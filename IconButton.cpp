@@ -9,8 +9,8 @@ IconButton::IconButton(QWidget *parent)
     , m_scale(1)
     , m_initialized(false)
     , m_sizePolicy(FixedRatio)
-    , m_widthRatio(1)
-    , m_heightRatio(1)
+    , m_widthRatio(0.9)
+    , m_heightRatio(0.9)
 {
     setupStyle();
 }
@@ -64,7 +64,7 @@ void IconButton::setIconHeightRatio(qreal ratio)
 
 void IconButton::enterEvent(QEnterEvent *event)
 {
-    startScaleAnimation(1.3);
+    startScaleAnimation(1.1);
     QPushButton::enterEvent(event);
 }
 
@@ -83,7 +83,7 @@ void IconButton::mousePressEvent(QMouseEvent *event)
 void IconButton::mouseReleaseEvent(QMouseEvent *event)
 {
     if (underMouse()) {
-        startScaleAnimation(1.3);
+        startScaleAnimation(1.1);
     } else {
         startScaleAnimation(1.0);
     }
