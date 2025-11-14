@@ -9,6 +9,9 @@
         <file>resources/button/win_repeat.png</file>
         <file>resources/button/lose_continue.png</file>
         <file>resources/button/lose_repeat.png</file>
+        <file>resources/button/pause.png</file>
+        <file>resources/button/continue.png</file>
+        <file>resources/button/accelerate.png</file>
     </qresource>
     <qresource prefix="/background">
         <file>resources/background/choose.png</file>
@@ -97,6 +100,7 @@
         <file>resources/resource/Courage.png</file>
         <file>resources/resource/Inspiration.png</file>
         <file>resources/resource/Dream_Stability.png</file>
+        <file>resources/resource/sleep.png</file>
     </qresource>
     <qresource prefix="/towers">
         <file>resources/towers/level1/FishingCatPillow.png</file>
