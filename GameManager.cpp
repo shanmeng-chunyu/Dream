@@ -392,7 +392,19 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     // 2. 获取子弹贴图原型
     QString type = tower->getType();
     QJsonObject proto = m_towerPrototypes[type];
-    QPixmap originalPixmap(proto["bullet_pixmap"].toString());
+    bool isUpgraded = tower->upgraded;
+    QString bulletPixmapPath;
+    // 3. 根据升级状态选择贴图路径
+    if (isUpgraded && proto.contains("bullet_pixmap_upgrade")) {
+        // 如果已升级，并且JSON中有升级版贴图
+        bulletPixmapPath = proto["bullet_pixmap_upgrade"].toString();
+    } else {
+        // 否则，使用默认贴图
+        bulletPixmapPath = proto["bullet_pixmap"].toString(); //
+    }
+
+    // 4. 使用我们选择的路径加载贴图
+    QPixmap originalPixmap(bulletPixmapPath);
 
     // 3. 缩放贴图
     QPixmap scaledPixmap = originalPixmap.scaled(bulletPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);

@@ -35,13 +35,13 @@
         <file>resources/bullet/level1/KnowledgeTree.png</file>
         <file>resources/bullet/level1/KnowledgeTree_upgrade.png</file>
         <file>resources/bullet/level1/LiveCoffee.png</file>
-        <file>resources/bullet/level1/FishingCatTime.png</file>
-        <file>resources/bullet/level1/FishingCatTime_upgrade.png</file>
+        <file>resources/bullet/level1/FishingCatPillow.png</file>
+        <file>resources/bullet/level1/FishingCatPillow_upgrade.png</file>
         <file>resources/bullet/level2/Companionship.png</file>
         <file>resources/bullet/level2/NightRadio.png</file>
         <file>resources/bullet/level2/NightRadio_upgrade.png</file>
-        <file>resources/bullet/level1/PettingCatTime.png</file>
-        <file>resources/bullet/level1/PettingCatTime_upgrade.png</file>
+        <file>resources/bullet/level2/PettingCatTime.png</file>
+        <file>resources/bullet/level2/PettingCatTime_upgrade.png</file>
     </qresource>
     <qresource prefix="/enemies">
         <file>resources/enemies/level1/bug.png</file>
