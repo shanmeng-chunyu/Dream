@@ -250,7 +250,7 @@ void MainWindow::initializeScene()
     }
     connect(this, &MainWindow::towerUpgradeRequested, manager, &GameManager::onTowerUpgradeRequested);
     connect(this, &MainWindow::towerSellRequested, manager, &GameManager::onTowerSellRequested);
-    connect(manager, &GameManager::obstacleCleared, this, &MainWindow::onObstacleAreaCleared);
+    // connect(manager, &GameManager::obstacleCleared, this, &MainWindow::onObstacleAreaCleared);
     synchronizeLogicScreenSize();
     recalculateBaseRadius();
 
