@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "WaveManager.h"
 #include "widget_ingame.h"
+#include "widget_pause_menu.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
@@ -34,6 +35,7 @@
 #include <algorithm>
 #include <functional>
 #include <cmath>
+#include <QGraphicsOpacityEffect>
 
 namespace
 {
@@ -202,6 +204,7 @@ MainWindow::MainWindow(QWidget *parent)
       m_sceneDesignSize(1024, 768),
       m_currentLevelIndex(-1),
       m_hudWidget(nullptr),
+      m_pauseMenuWidget(nullptr),
       m_initialStability(0),
       m_totalEnemyCount(0),
       m_spawnedEnemyCount(0),
@@ -1876,6 +1879,7 @@ void MainWindow::ensureHudWidget()
     connect(m_hudWidget, &widget_ingame::begin, this, &MainWindow::onHudResumeRequested);
     connect(m_hudWidget, &widget_ingame::speed_up, this, &MainWindow::onHudSpeedUpRequested);
     connect(m_hudWidget, &widget_ingame::speed_normal, this, &MainWindow::onHudSpeedNormalRequested);
+    connect(m_hudWidget, &widget_ingame::pause_menu, this, &MainWindow::onHudMenuClicked);
 }
 
 void MainWindow::destroyHudWidget()
@@ -2075,10 +2079,18 @@ void MainWindow::applyGameSpeed(bool fastMode)
 void MainWindow::onHudPauseRequested()
 {
     GameManager::instance()->pauseGame();
+    if (m_pauseMenuWidget) {
+        m_pauseMenuWidget->close(); // 我们来关闭它
+    }
 }
 
 void MainWindow::onHudResumeRequested()
 {
+    if (m_pauseMenuWidget) {
+        m_pauseMenuWidget->close();
+        // m_pauseMenuWidget->close() 会触发 destroyed() 信号，
+        // 进而调用 onPauseMenuClosed() 来清理视图效果。
+    }
     GameManager::instance()->resumeGame();
     applyGameSpeed(m_fastModeActive);
 }
@@ -2158,4 +2170,86 @@ void MainWindow::onAllWavesCompleted()
         m_currentWaveCounter = static_cast<int>(m_waveEnemyTotals.size()) - 1;
     }
     updateHudProgress();
+}
+
+void MainWindow::onHudMenuClicked()
+{
+    // 1. 暂停游戏逻辑
+    GameManager::instance()->pauseGame();
+
+    // 2. 灰化并禁用游戏视图
+    // (使用 QGraphicsOpacityEffect 是最简单的方法)
+    QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect(m_view);
+    opacityEffect->setOpacity(0.5); // 30% 不透明度
+    m_view->setGraphicsEffect(opacityEffect);
+    m_view->setEnabled(false); // 禁用视图，防止点击穿透
+
+    if (m_hudWidget) {
+        m_hudWidget->setEnabled(false);
+    }
+
+    // 3. 创建并显示暂停菜单
+    if (!m_pauseMenuWidget) {
+        m_pauseMenuWidget = new widget_pause_menu(this); // 父窗口设为 MainWindow
+        m_pauseMenuWidget->setAttribute(Qt::WA_DeleteOnClose);
+        m_pauseMenuWidget->setWindowModality(Qt::ApplicationModal);
+
+        // 4. 连接暂停菜单的信号
+
+        // "返回游戏" -> 恢复游戏 (我们已经修改了 onHudResumeRequested)
+        connect(m_pauseMenuWidget, &widget_pause_menu::back_to_game, this, &MainWindow::onHudResumeRequested);
+
+        // "返回主菜单" -> 触发 onReturnToMainMenu
+        connect(m_pauseMenuWidget, &widget_pause_menu::back_to_menu, this, &MainWindow::onReturnToMainMenu);
+
+        // (关键) 当菜单被关闭时，自动调用 onPauseMenuClosed 来清理效果
+        connect(m_pauseMenuWidget, &QWidget::destroyed, this, &MainWindow::onPauseMenuClosed);
+    }
+
+    // 5. 居中显示菜单
+    int childWidth = m_pauseMenuWidget->width();
+    int childHeight = m_pauseMenuWidget->height();
+    int x = (this->width() - childWidth) / 2;
+    int y = (this->height() - childHeight) / 2;
+    m_pauseMenuWidget->move(x, y);
+
+    m_pauseMenuWidget->show();
+    m_pauseMenuWidget->raise();
+}
+
+void MainWindow::onReturnToMainMenu()
+{
+    // 1. (重要) 先关闭暂停菜单
+    if (m_pauseMenuWidget) {
+        m_pauseMenuWidget->close();
+        // close() 会触发 destroyed，进而调用 onPauseMenuClosed() 来清理效果
+    }
+
+    // 2. 恢复游戏逻辑（以便下次进入时是正常状态）
+    GameManager::instance()->clearGameScene();
+
+    // 3. 隐藏游戏主窗口
+    this->hide();
+
+    // 4. 发出信号，通知 main.cpp 显示主菜单
+    emit mainMenuRequested();
+}
+
+void MainWindow::onPauseMenuClosed()
+{
+    // 1. 移除并删除 QGraphicsView 上的效果
+    if (m_view->graphicsEffect()) {
+        delete m_view->graphicsEffect();
+        m_view->setGraphicsEffect(nullptr);
+    }
+
+    // 2. 重新启用游戏视图
+    m_view->setEnabled(true);
+
+    if (m_hudWidget) {
+        m_hudWidget->setEnabled(true);
+    }
+
+    // 3. 重置指针 (因为 m_pauseMenuWidget 设置了 WA_DeleteOnClose)
+    m_pauseMenuWidget = nullptr;
 }

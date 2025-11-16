@@ -1053,3 +1053,51 @@ void GameManager::onEnemyDeathAnimationFinished(Enemy* enemy)
         m_entitiesToClean.append(enemy);
     }
 }
+
+void GameManager::clearGameScene()
+{
+    m_gameTimer->stop();
+    m_gameIsOver = true; // 阻止任何正在进行的 updateGame 逻辑
+
+    // 1. 收集所有场景中的实体
+    for (Tower* tower : m_towers) {
+        m_entitiesToClean.append(tower);
+    }
+    m_towers.clear();
+
+    for (Enemy* enemy : m_enemies) {
+        // (注意：如果敌人正在播放死亡动画，我们也要立即清理)
+        m_entitiesToClean.append(enemy);
+    }
+    m_enemies.clear();
+
+    for (Bullet* bullet : m_bullets) {
+        m_entitiesToClean.append(bullet);
+    }
+    m_bullets.clear();
+
+    for (Obstacle* obstacle : m_obstacles) {
+        m_entitiesToClean.append(obstacle);
+    }
+    m_obstacles.clear();
+
+    // 2. 清理所有状态追踪器
+    m_raged.clear();
+    m_healCd.clear();
+    m_activeDeathAnimations.clear();
+
+    // 3. 立即执行清理
+    cleanupEntities();
+    Q_ASSERT(m_entitiesToClean.isEmpty()); // 确保清理完成
+
+    // 4. 重置 WaveManager
+    if (m_waveManager) {
+        disconnect(m_waveManager, nullptr, this, nullptr);
+        delete m_waveManager;
+    }
+    m_waveManager = new WaveManager(m_gameMap, this);
+    connect(m_waveManager, &WaveManager::spawnEnemy, this, &GameManager::onSpawnEnemy);
+
+    // 5. (可选) 重置 Player 状态，但这通常在 loadLevel 时完成
+    // m_player->setInitialState(0, 0);
+}

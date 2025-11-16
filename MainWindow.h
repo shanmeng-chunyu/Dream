@@ -26,6 +26,7 @@ class QTimer;
 class Player;
 class WaveManager;
 class widget_ingame;
+class widget_pause_menu;
 
 struct TowerBaseVisual
 {
@@ -48,6 +49,7 @@ signals:
     void towerUpgradeRequested(const QPointF &relativePosition);
     void towerSellRequested(const QPointF &relativePosition);
     void levelSelectionRequested();
+    void mainMenuRequested();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -65,6 +67,9 @@ private slots:
     void onWaveEnemySpawned();
     void onAllWavesCompleted();
     void onObstacleAreaCleared(const QRectF &relativeRect);
+    void onHudMenuClicked();      // 响应 HUD 菜单按钮点击
+    void onReturnToMainMenu();    // 响应暂停菜单的“返回主菜单”
+    void onPauseMenuClosed();     // 响应暂停菜单关闭事件（用于清理）
 
 private:
     void initializeScene();
@@ -134,6 +139,7 @@ private:
     QSizeF m_sceneDesignSize;
     QSizeF m_cellSize;
     QPointer<widget_post_game> m_postGameWidget;
+    widget_pause_menu *m_pauseMenuWidget;
     QStringList m_levelSources;
     int m_currentLevelIndex;
     widget_ingame *m_hudWidget;

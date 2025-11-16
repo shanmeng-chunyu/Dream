@@ -736,6 +736,27 @@ QString LevelEditorWidget::getPixmapPath(const QMap<QString, QJsonObject>& proto
 
 
 void LevelEditorWidget::saveLevel() {
+
+    // 步骤 1：(新增) 在保存前检查防御塔数量
+    int selectedTowerCount = 0;
+    for (int i = 0; i < availableTowersListWidget->count(); ++i) {
+        QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
+        QString type = data.value("type").toString();
+
+        // 只有当类型不是 "None" 也不是空时，才算作一个有效的选择
+        if (!type.isEmpty() && type != "None") {
+            selectedTowerCount++;
+        }
+    }
+
+    // 步骤 2：(新增) 如果数量不足 4，则弹出提示并终止保存
+    if (selectedTowerCount < 4) {
+        QMessageBox::warning(this, "选择未完成", "请选择四座防御塔");
+        return; // 终止函数，不继续执行保存
+    }
+
+    // --- (以下是原有的保存逻辑) ---
+
     // 1. (保留) 获取用户选择的 *目标* 保存路径
     QString filePath = QFileDialog::getSaveFileName(this, "Save Level", "", "JSON Files (*.json)");
     if (filePath.isEmpty()) {
@@ -743,14 +764,7 @@ void LevelEditorWidget::saveLevel() {
     }
 
     // 2. (新增) 定义并加载 *模板* 关卡 (level3.json)
-    //
-    //    !!! 重要提示 !!!
-    //    请确保 "level3.json" 已经添加到了你的 Qt 资源文件 (.qrc) 中。
-    //    你需要将下面的路径修改为它在 .qrc 中的实际路径。
-    //
-    //    例如，如果它在 .qrc 的根目录，路径就是 ":/level3.json"
-    //    如果它在 .qrc 的 "levels" 前缀下，路径就是 ":/levels/level3.json"
-    //
+    // ... (加载模板文件的逻辑保持不变) ...
     QString templateLevelPath = ":/levels/levels/level3.json";
 
     QFile templateFile(templateLevelPath);
@@ -772,62 +786,55 @@ void LevelEditorWidget::saveLevel() {
         return;
     }
 
-    // 3. (不变) "map", "player", "level_name" 等字段已从模板加载，我们不再动它们。
 
     // 4. (修改) 从 UI 读取 "waves" 并覆盖
+    // ... (波次保存逻辑保持不变) ...
     QJsonArray wavesArray;
     for (int i = 0; i < waveListWidget->count(); ++i) {
         QJsonObject waveObj;
-        // item 的 UserRole 存储的是该波次完整的敌人数组 (QJsonArray)
         waveObj["enemies"] = waveListWidget->item(i)->data(Qt::UserRole).toJsonArray();
         wavesArray.append(waveObj);
     }
 
-    // 5. (新增) 按要求，在波次末尾附加最终的 "nightmare" boss 波次
+    // 5. (新增) 附加 Boss 波次
+    // ... (Boss 波次逻辑保持不变) ...
     QJsonObject bossWave;
     QJsonArray bossEnemies;
     QJsonObject nightmareEnemy;
     nightmareEnemy["type"] = "nightmare";
     nightmareEnemy["count"] = 1;
-
-    // 你的需求是 "刷新间隔默认为1"，但在 addEnemyToWave 中已硬编码为 1.0。
-    // 对于这个 boss 波次，你特别要求间隔为 0.0。
     nightmareEnemy["interval"] = 0.0;
-
     bossEnemies.append(nightmareEnemy);
     bossWave["enemies"] = bossEnemies;
-
-    wavesArray.append(bossWave); // 添加到所有 UI 波次之后
-
-    // 覆盖 rootObj 中的 "waves"
+    wavesArray.append(bossWave);
     rootObj["waves"] = wavesArray;
 
 
     // 6. (修改) 从 UI 读取 "available_towers" 并覆盖
+    // (因为我们已经在函数开头检查过数量，所以这里只需要重建数组)
     QJsonArray towersArray;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
         QString type = data.value("type").toString();
         if (!type.isEmpty() && type != "None") {
-            towersArray.append(type); // 只保存类型字符串
+            towersArray.append(type);
         }
     }
-    // 覆盖 rootObj 中的 "available_towers"
     rootObj["available_towers"] = towersArray;
 
 
     // 7. (修改) 从 m_enemyPrototypes 读取 "available_enemies" 并覆盖
+    // ... (敌人列表保存逻辑保持不变) ...
     QJsonArray enemiesArray;
     for (const QString& enemyType : m_enemyPrototypes.keys()) {
-        enemiesArray.append(enemyType); // 附加 "type" 字符串
+        enemiesArray.append(enemyType);
     }
-    // 覆盖 rootObj 中的 "available_enemies"
     rootObj["available_enemies"] = enemiesArray;
 
 
-
-    // 9. (保留) 将修改后的 rootObj 写入用户选择的 *目标* 文件
-    QFile file(filePath); // 'filePath' 是来自 QFileDialog 的新路径
+    // 9. (保留) 写入文件
+    // ... (写入文件的逻辑保持不变) ...
+    QFile file(filePath);
     if (file.open(QIODevice::WriteOnly)) {
         file.write(QJsonDocument(rootObj).toJson(QJsonDocument::Indented));
         file.close();
@@ -837,7 +844,6 @@ void LevelEditorWidget::saveLevel() {
     } else {
         QMessageBox::critical(this, "保存失败", "无法写入目标文件。");
     }
-
 }
 
 void LevelEditorWidget::loadLevel() {

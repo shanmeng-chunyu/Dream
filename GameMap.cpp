@@ -61,52 +61,56 @@ namespace
         return {};
     }
 
+    // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kTowerSpriteTable[] = {
-        {"KnowledgeTree", u8"美术素材（透明）/防御塔/第一关/知识古树.png", "", ""},
-        {"InspirationBulb", u8"美术素材（透明）/防御塔/第一关/灵感灯泡.png", "", ""},
-        {"LiveCoffee", u8"美术素材（透明）/防御塔/第一关/续命咖啡.png", "", ""},
-        {"FishingCatPillow", u8"美术素材（透明）/防御塔/第一关/摸鱼猫抱枕.png", "", ""},
-        {"WarmMemories", "", u8"美术素材（透明）/防御塔/第二关/温暖的记忆.png", ""},
-        {"NightRadio", "", u8"美术素材（透明）/防御塔/第二关/深夜电台.png", ""},
-        {"PettingCatTime", "", u8"美术素材（透明）/防御塔/第二关/撸猫时间.png", ""},
-        {"Companionship", "", u8"美术素材（透明）/防御塔/第二关/朋友陪伴.png", ""}};
+        {"KnowledgeTree", u8":/towers/resources/towers/level1/KnowledgeTree.png", "", ""},
+        {"InspirationBulb", u8":/towers/resources/towers/level1/InspirationBulb.png", "", ""},
+        {"LiveCoffee", u8":/towers/resources/towers/level1/LiveCoffee.png", "", ""},
+        {"FishingCatPillow", u8":/towers/resources/towers/level1/FishingCatPillow.png", "", ""},
+        {"WarmMemories", "", u8":/towers/resources/towers/level2/WarmMemories.png", ""},
+        {"NightRadio", "", u8":/towers/resources/towers/level2/NightRadio.png", ""},
+        {"PettingCatTime", "", u8":/towers/resources/towers/level2/PettingCatTime.png", ""},
+        {"Companionship", "", u8":/towers/resources/towers/level2/Companionship.png", ""}};
 
+    // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kTowerBulletTable[] = {
-        {"KnowledgeTree", u8"美术素材（透明）/防御塔子弹/第一关/知识古树子弹.png", "", ""},
-        {"InspirationBulb", u8"美术素材（透明）/防御塔子弹/第一关/灵感灯泡子弹.png", "", ""},
-        {"LiveCoffee", u8"美术素材（透明）/防御塔子弹/第一关/续命咖啡（光环特效）.png", "", ""},
-        {"NightRadio", "", u8"美术素材（透明）/防御塔子弹/第二关/深夜电台子弹.png", ""},
-        {"Companionship", "", u8"美术素材（透明）/防御塔子弹/第二关/朋友陪伴光环.png", ""}};
+        {"KnowledgeTree", u8":/bullet/resources/bullet/level1/KnowledgeTree.png", "", ""},
+        {"InspirationBulb", u8":/bullet/resources/bullet/level1/InspirationBulb.png", "", ""},
+        {"LiveCoffee", u8":/bullet/resources/bullet/level1/LiveCoffee.png", "", ""}, // 咖啡的光环
+        {"NightRadio", "", u8":/bullet/resources/bullet/level2/NightRadio.png", ""},
+        {"Companionship", "", u8":/bullet/resources/bullet/level2/Companionship.png", ""}}; // 朋友的光环
 
+    // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kEnemySpriteTable[] = {
-        {"bug", u8"美术素材（透明）/敌人/第一关/bug怪物.png", "", ""},
-        {"ddl", u8"美术素材（透明）/敌人/第一关/ddl怪物.png", "", ""},
-        {"gpa", u8"美术素材（透明）/敌人/第一关/gpa怪物.png", "", ""},
-        {"pre", u8"美术素材（透明）/敌人/第一关/pre怪物.png", "", ""},
-        {"thesis", u8"美术素材（透明）/敌人/第一关/论文boss.png", "", ""},
-        {"coldwords", "", u8"美术素材（透明）/敌人/第二关/冰冷的言语.png", ""},
-        {"loneliness", "", u8"美术素材（透明）/敌人/第二关/孤独怪物.png", ""},
-        {"lonelyness", "", u8"美术素材（透明）/敌人/第二关/孤独怪物.png", ""},
-        {"regret", "", u8"美术素材（透明）/敌人/第二关/回忆怪物.png", ""},
-        {"recall", "", u8"美术素材（透明）/敌人/第二关/回忆怪物.png", ""},
-        {"tears", "", u8"美术素材（透明）/敌人/第二关/泪水怪物.png", ""},
-        {"past", "", u8"美术素材（透明）/敌人/第二关/昔日幻影boss.png", ""},
-        {"thephantomofthepast", "", u8"美术素材（透明）/敌人/第二关/昔日幻影boss.png", ""},
-        {"nightmare", "", "", u8"美术素材（透明）/敌人/第三关/梦魇boss.png"}};
+        {"bug", u8":/enemies/resources/enemies/level1/bug.png", "", ""},
+        {"ddl", u8":/enemies/resources/enemies/level1/ddl.png", "", ""},
+        {"gpa", u8":/enemies/resources/enemies/level1/gpa.png", "", ""},
+        {"pre", u8":/enemies/resources/enemies/level1/pre.png", "", ""},
+        {"thesis", u8":/enemies/resources/enemies/level1/thesis.png", "", ""},
+        {"coldwords", "", u8":/enemies/resources/enemies/level2/coldwords.png", ""},
+        {"loneliness", "", u8":/enemies/resources/enemies/level2/lonelyness.png", ""},
+        {"lonelyness", "", u8":/enemies/resources/enemies/level2/lonelyness.png", ""}, // 别名
+        {"regret", "", u8":/enemies/resources/enemies/level2/recall.png", ""},
+        {"recall", "", u8":/enemies/resources/enemies/level2/recall.png", ""}, // 别名
+        {"tears", "", u8":/enemies/resources/enemies/level2/tears.png", ""},
+        {"past", "", u8":/enemies/resources/enemies/level2/thephantomofthepast.png", ""},
+        {"thephantomofthepast", "", u8":/enemies/resources/enemies/level2/thephantomofthepast.png", ""}, // 别名
+        {"nightmare", "", "", u8":/enemies/resources/enemies/level3/nightmare.png"}};
 
+    // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kObstacleSpriteTable[] = {
-        {"BookStack", u8"美术素材（透明）/地图方块/第一关/书本障碍方块.png", "", ""},
-        {"Book", u8"美术素材（透明）/地图方块/第一关/书本障碍方块.png", "", ""},
-        {"Scratchpaper", u8"美术素材（透明）/地图方块/第一关/草稿障碍方块.png", "", ""},
-        {"Cable", u8"美术素材（透明）/地图方块/第一关/数据线障碍方块.png", "", ""},
-        {"Stationery", u8"美术素材（透明）/地图方块/第一关/文具障碍方块.png", "", ""},
-        {"MemoryBox", "", u8"美术素材（透明）/地图方块/第二关/尘封记忆障碍物.png", ""},
-        {"WitheredFlowers", "", u8"美术素材（透明）/地图方块/第二关/凋落的花障碍物.png", ""},
-        {"BrokenRing", "", u8"美术素材（透明）/地图方块/第二关/破碎戒指障碍物.png", ""},
-        {"BrokenFreindship", "", u8"美术素材（透明）/地图方块/第二关/破碎友谊障碍物.png", ""},
-        {"BrokenFriendship", "", u8"美术素材（透明）/地图方块/第二关/破碎友谊障碍物.png", ""}};
+        {"BookStack", u8":/map_items/resources/map_items/first/book.png", "", ""},
+        {"Book", u8":/map_items/resources/map_items/first/book.png", "", ""},
+        {"Scratchpaper", u8":/map_items/resources/map_items/first/scratchpaper.png", "", ""},
+        {"Cable", u8":/map_items/resources/map_items/first/cable.png", "", ""},
+        {"Stationery", u8":/map_items/resources/map_items/first/stationery.png", "", ""},
+        {"MemoryBox", "", u8":/map_items/resources/map_items/second/memory_box.png", ""},
+        {"WitheredFlowers", "", u8":/map_items/resources/map_items/second/withered_flowers.png", ""},
+        {"BrokenRing", "", u8":/map_items/resources/map_items/second/broken_ring.png", ""},
+        {"BrokenFreindship", "", u8":/map_items/resources/map_items/second/broken_friendship.png", ""},
+        {"BrokenFriendship", "", u8":/map_items/resources/map_items/second/broken_friendship.png", ""}};
 
-}
+} // (匿名命名空间结束)
 
 GameMap::GameMap()
     : pathWidthRatio(0.08),
@@ -155,6 +159,7 @@ bool GameMap::loadFromFile(const QString &filePath)
     }
     if (projectRootPath.isEmpty())
     {
+        // 【注意】：我们保留这个函数，但由于所有路径都改成了QRC，它现在不那么重要了
         projectRootPath = locateProjectRootPath(levelDirectory);
     }
 
@@ -259,6 +264,9 @@ bool GameMap::loadFromFile(const QString &filePath)
     return true;
 }
 
+// ... (setPath, getPath, setTowerPositions, getTowerPositions, 等函数保持不变) ...
+// (这里是 GameMap.cpp 中未显示的所有 getter/setter，它们不需要修改)
+
 void GameMap::setPath(const std::vector<QPointF> &path)
 {
     enemyPath = path;
@@ -345,6 +353,9 @@ double GameMap::getGridSpacingY() const
 {
     return gridSpacingY;
 }
+
+// ... (parseJsonWithEncodingFallback 函数保持不变) ...
+// (这个函数对于加载 JSON 本身很重要，不需要修改)
 
 int GameMap::guessStageFromName(const QString &name)
 {
@@ -443,6 +454,7 @@ QJsonDocument GameMap::parseJsonWithEncodingFallback(const QString &filePath, co
     return doc;
 }
 
+
 QString GameMap::normalizeAssetPath(const QString &rawPath, const QStringList &fallbackCandidates) const
 {
     QStringList candidates;
@@ -459,6 +471,8 @@ QString GameMap::normalizeAssetPath(const QString &rawPath, const QStringList &f
             continue;
         }
 
+        // --- 【关键】 ---
+        // 我们的逻辑永远优先检查 Qt 资源 (:/)
         if (candidate.startsWith(":/"))
         {
             QFile resourceFile(candidate);
@@ -466,9 +480,10 @@ QString GameMap::normalizeAssetPath(const QString &rawPath, const QStringList &f
             {
                 return candidate;
             }
-            continue;
+            continue; // QRC 路径无效，尝试下一个
         }
 
+        // --- (以下是旧的外部文件逻辑，保留作为备用) ---
         QFileInfo info(candidate);
         if (info.isRelative() && !levelDirectory.isEmpty())
         {
@@ -512,39 +527,45 @@ QString GameMap::fallbackTowerBaseFrame()
     return defaultTowerBaseFrame();
 }
 
+// --- 【已修改】 使用 QRC 路径 ---
 QString GameMap::stageSpecificBackgroundPath(int stageIndex)
 {
     switch (stageIndex)
     {
     case 1:
-        return QStringLiteral("美术素材（透明）/画面背景/第一关背景.png");
+        return QStringLiteral(":/background/resources/background/first_background.png");
     case 2:
-        return QStringLiteral("美术素材（透明）/画面背景/第二关背景.png");
+        return QStringLiteral(":/background/resources/background/second_background.png");
     case 3:
-        return QStringLiteral("美术素材（透明）/画面背景/第三关背景.png");
+        return QStringLiteral(":/background/resources/background/third_background.png");
     default:
         return {};
     }
 }
 
+// --- 【已修改】 使用 QRC 路径 ---
 QString GameMap::stageSpecificPathTexture(int stageIndex)
 {
     switch (stageIndex)
     {
     case 1:
-        return QStringLiteral("美术素材（透明）/地图方块/第一关/第一关道路方块.png");
+        return QStringLiteral(":/map_items/resources/map_items/first/path_block.png");
     case 2:
-        return QStringLiteral("美术素材（透明）/地图方块/第二关/第二关道路方块.png");
+        return QStringLiteral(":/map_items/resources/map_items/second/path_block.png");
     case 3:
-        return QStringLiteral("美术素材（透明）/地图方块/第三关/第三关道路方块.png");
+        return QStringLiteral(":/map_items/resources/map_items/third/path_block.png");
     default:
         return {};
     }
 }
 
+// --- 【已修改】 路径在 QRC 中不存在，返回空 ---
 QString GameMap::defaultTowerBaseFrame()
 {
-    return QStringLiteral("美术素材（透明）/框/防御塔选择框.png");
+    // 这个资源 (防御塔选择框.png) 并没有在 resources.qrc 中定义。
+    // 并且 MainWindow.cpp 似乎也没有实际使用它。
+    // 返回空字符串是安全的，可以断开对外部文件的依赖。
+    return QStringLiteral("");
 }
 
 double GameMap::fallbackPathWidthRatio(int stageIndex)
@@ -578,6 +599,9 @@ int GameMap::detectStageFromName(const QString &name)
     }
     return 0;
 }
+
+// ... (updateGridSpacing, extractSpacing, locateProjectRootPath, computeHorizontalCenterOffset, applyHorizontalOffset 等) ...
+// (这些是纯逻辑函数，保持 100% 不变)
 
 void GameMap::updateGridSpacing()
 {
@@ -645,6 +669,7 @@ QString GameMap::locateProjectRootPath(const QString &startDir)
     QDir dir(startDir);
     for (int depth = 0; depth < 8 && dir.exists(); ++depth)
     {
+        // 【注意】：我们仍然保留这个检测，以防万一
         if (dir.exists(QStringLiteral("美术素材（透明）")))
         {
             return dir.absolutePath();

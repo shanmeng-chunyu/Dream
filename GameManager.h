@@ -40,6 +40,7 @@ public:
 
     // 建造防御塔
     void buildTower(const QString& type, const QPointF& relativePosition);
+    void clearGameScene();
 
 public slots:
     // 响应WaveManager的信号来生成敌人

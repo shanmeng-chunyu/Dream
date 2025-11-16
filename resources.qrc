@@ -35,6 +35,7 @@
         <file>resources/background/second_background.png</file>
         <file>resources/background/third_background.png</file>
         <file>resources/background/title.png</file>
+        <file>resources/background/label_pause.png</file>
     </qresource>
     <qresource prefix="/bullet">
         <file>resources/bullet/level1/InspirationBulb.png</file>
@@ -77,6 +78,7 @@
         <file>resources/frame/defeat.png</file>
         <file>resources/frame/victory.png</file>
         <file>resources/frame/time.png</file>
+        <file>resources/frame/pause_menu.png</file>
     </qresource>
     <qresource prefix="/map">
         <file>resources/map/brief_first.png</file>

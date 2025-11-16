@@ -11,11 +11,9 @@ widget_pause_menu::widget_pause_menu(QWidget *parent)
 
     connect(ui->back_to_game,&QPushButton::clicked,this,[=](){
         emit widget_pause_menu::back_to_game();
-        close();
     });
     connect(ui->back_to_menu,&QPushButton::clicked,this,[=](){
         emit widget_pause_menu::back_to_menu();
-        close();
     });
 
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
