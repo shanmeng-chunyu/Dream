@@ -76,6 +76,7 @@
         <file>resources/frame/level3.png</file>
         <file>resources/frame/defeat.png</file>
         <file>resources/frame/victory.png</file>
+        <file>resources/frame/time.png</file>
     </qresource>
     <qresource prefix="/map">
         <file>resources/map/brief_first.png</file>
