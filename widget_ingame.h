@@ -37,6 +37,7 @@ signals:
     void begin();//开始信号
     void speed_up();//加速信号
     void speed_normal();//正常速度信号
+    void pause_menu();//打开暂停菜单栏
 
     void clicked(double x,double y);//点击的信号，传出相对坐标，用于建造防御塔
 
