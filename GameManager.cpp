@@ -905,6 +905,11 @@ void GameManager::pauseGame() {
             enemy->pauseAnimation();
         }
     }
+    for (Tower* tower : m_towers) {
+        if (tower) {
+            tower->pauseAnimation(); //
+        }
+    }
 }
 
 void GameManager::resumeGame() {
@@ -913,6 +918,11 @@ void GameManager::resumeGame() {
         for (Enemy* enemy : m_enemies) {
             if (enemy) {
                 enemy->resumeAnimation();
+            }
+        }
+        for (Tower* tower : m_towers) {
+            if (tower) {
+                tower->resumeAnimation(); //
             }
         }
     }
