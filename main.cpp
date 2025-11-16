@@ -1,8 +1,9 @@
 #include <QApplication>
-#include <ui_widget_menu.h>
+#include <QTimer>
+#include <QStringList>
 
-#include "MainWindow.h"
 #include "LevelEditorWidget.h"
+#include "MainWindow.h"
 #include "widget_choose_level.h"
 #include "widget_level_loading.h"
 #include "widget_building_list.h"
@@ -11,54 +12,107 @@
 #include "widget_pause_menu.h"
 #include "widget_reference_book.h"
 
-int main(int argc, char *argv[]) {
+namespace
+{
+    QString commandLineLevelCandidate()
+    {
+        const QStringList args = QCoreApplication::arguments();
+        for (int i = 1; i < args.size(); ++i)
+        {
+            const QString &arg = args.at(i);
+            if (arg.startsWith(QStringLiteral("--level="), Qt::CaseInsensitive))
+            {
+                return arg.section('=', 1).trimmed();
+            }
+            if (arg.compare(QStringLiteral("--level"), Qt::CaseInsensitive) == 0 && i + 1 < args.size())
+            {
+                return args.at(i + 1).trimmed();
+            }
+        }
+        return {};
+    }
+}
+
+int main(int argc, char *argv[])
+{
     QApplication a(argc, argv);
+    //è°ƒè¯•å…³å¡ç¼–è¾‘ç•Œé¢
+    LevelEditorWidget editor;
+
+    editor.resize(1024, 768);
+    editor.setWindowTitle("å…³å¡ç¼–è¾‘å™¨ [è°ƒè¯•æ¨¡å¼]");
+
+    editor.show();
+
     MainWindow w;
-    w.resize(1024,768);
-    w.show();
+    w.resize(1024, 768);
 
-    //ÓÃÓÚµ÷ÊÔÖ÷²Ëµ¥µÄ´úÂë
-    // widget_menu menu_widget;
-    // menu_widget.setWindowTitle("Level3 Main Menu (Menu Debug)");
-    // menu_widget.resize(800, 600); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óÐ¡
-    // menu_widget.show();
+    widget_choose_level levelChooser;
+    levelChooser.setWindowTitle(QStringLiteral("Choose Level"));
+    levelChooser.resize(1024, 768);
 
+    auto focusWindow = [](QWidget *widget)
+    {
+        if (!widget)
+        {
+            return;
+        }
+        widget->show();
+        widget->raise();
+        widget->activateWindow();
+    };
 
-    //ÓÃÓÚµ÷ÊÔ¹Ø¿¨Ñ¡Ôñ½çÃæµÄ´úÂë
-    // widget_choose_level choose_level_widget;
-    // choose_level_widget.setWindowTitle("Level3 Choose Level (Choose Level Debug)");
-    // choose_level_widget.resize(1024, 768); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óÐ¡
-    // choose_level_widget.show();
+    auto startLevel = [&](const QString &candidatePath)
+    {
+        if (!w.startLevelFromSource(candidatePath, true))
+        {
+            focusWindow(&levelChooser);
+            return;
+        }
 
-    // --- ÓÃÓÚµ÷ÊÔ±à¼­Æ÷µÄÐÂ´úÂë ---
-    // LevelEditorWidget editor;
-    // editor.setWindowTitle("Level3 Editor (Level Editor Debug)");
-    // editor.resize(1024, 768); // µ÷ÕûÎªÄãÈÏÎªºÏÊÊµÄ´óÐ¡
-    // editor.show();
-    // --- ½áÊø ---
+        levelChooser.hide();
+        if (!w.isVisible())
+        {
+            w.show();
+        }
+        w.raise();
+        w.activateWindow();
+    };
 
-    //¹Ø¿¨¼ÓÔØ½çÃæ
-    // widget_level_loading level_loading_widget(0);
-    // level_loading_widget.show();
+    QObject::connect(&levelChooser, &widget_choose_level::level1, &a, [&]()
+                     { startLevel(QStringLiteral("levels/level1.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::level2, &a, [&]()
+                     { startLevel(QStringLiteral("levels/level2.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]()
+                     { startLevel(QStringLiteral("levels/level3.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::back, &a, [&]()
+                     {
+                         levelChooser.hide();
+                         if (w.isVisible())
+                         {
+                             focusWindow(&w);
+                         }
+                         else
+                         {
+                             a.quit();
+                         } });
 
-    //½¨ÔìÁÐ±í½çÃæ
-    // QVector<QString> n({"InspirationBulb","KnowledgeTree","FishingCatPillow","LiveCoffee"});
-    // QVector<QString> t({":/towers/resources/towers/level1/InspirationBulb.png",":/towers/resources/towers/level1/KnowledgeTree.png",":/towers/resources/towers/level1/FishingCatPillow.png",":/towers/resources/towers/level1/LiveCoffee.png"});
-    // QVector<QString> p({"100","200","120","80"});
-    // widget_building_list build_widget(0,100,0,n,t,p);
-    // build_widget.show();
+    QObject::connect(&w, &MainWindow::levelSelectionRequested, &levelChooser, [&]()
+                     { focusWindow(&levelChooser); });
 
-    //ÔÝÍ£²Ëµ¥À¸
-    // widget_pause_menu pause_menu_widget;
-    // pause_menu_widget.show();
+    const QString cmdCandidate = commandLineLevelCandidate();
+    const QString envCandidate = QString::fromLocal8Bit(qgetenv("DREAM_LEVEL_PATH")).trimmed();
+    const bool hasExplicitLevel = !cmdCandidate.isEmpty() || !envCandidate.isEmpty();
 
-    //Í¼¼ø
-    widget_reference_book ref;
-    ref.show();
-
-    //widget_ingame
-    widget_ingame ingame(0);
-    ingame.show();
+    if (hasExplicitLevel)
+    {
+        w.show();
+    }
+    else
+    {
+        QTimer::singleShot(0, &levelChooser, [&]()
+                           { focusWindow(&levelChooser); });
+    }
 
     return a.exec();
 }

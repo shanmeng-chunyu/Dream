@@ -470,7 +470,7 @@
   },
   "player": {
     "initial_stability": 100,
-    "initial_resource": 150
+    "initial_resource": 1000
   },
   "available_towers": ["InspirationBulb", "KnowledgeTree", "FishingCatPillow", "LiveCoffee"],
   "available_enemies": ["bug", "gpa", "ddl", "pre", "thesis"],

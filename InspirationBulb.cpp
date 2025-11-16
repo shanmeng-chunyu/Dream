@@ -1,7 +1,8 @@
 #include "InspirationBulb.h"
 #include<QPixmap>
+#include<QMovie>
 
-InspirationBulb::InspirationBulb(double range,QGraphicsItem* parent):Tower(40,range,0.8,100,150,QPixmap(":/towers/resources/towers/level1/InspirationBulb.png"),parent) {
+InspirationBulb::InspirationBulb(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent):Tower(40,range,0.8,100,150,gif_path,pixelSize,parent) {
     type = "InspirationBulb";
 }
 void InspirationBulb::upgrade()
@@ -9,7 +10,6 @@ void InspirationBulb::upgrade()
     if(!upgraded)
     {
         damage=60;
-        range=3.5;
         fireRate=0.6;
         upgraded=true;
         fireInterval=fireRate*60;
@@ -17,6 +17,17 @@ void InspirationBulb::upgrade()
         originalDamage=damage;
         if(fireCount>fireInterval)
             fireCount=fireInterval;
-        setPixmap(QPixmap(":/towers/resources/towers/level1/InspirationBulb_upgrade.png"));
+        const QString upgradedGifPath = ":/towers/resources/towers/level1/InspirationBulb_upgrade.gif"; // <--- 假设的 .gif 路径
+        // 2. 停止当前正在播放的 QMovie
+        m_movie->stop();
+        // 3. (重要) 给 m_movie 设置新的GIF文件路径
+        m_movie->setFileName(upgradedGifPath);
+        // 4. 重新启动 QMovie
+        m_movie->start();
+        // 5. (可选但推荐) 立即更新一帧，防止短暂的空白或旧帧残留
+        if (m_movie->isValid()) {
+            // updatePixmapFromMovie() 是 Tower 基类中更新贴图的槽函数
+            updatePixmapFromMovie();
+        }
     }
 }

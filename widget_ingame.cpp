@@ -70,7 +70,7 @@ widget_ingame::~widget_ingame()
 }
 
 void widget_ingame::set_progress(int now,int total){
-    progress->setText(QString("%1/%2").arg(now).arg(total));
+    progress->setText(QString("%1/%2").arg(QString::number(now)).arg(QString::number(total)));
     progress_bar->setValue(100*now/total);
 }
 

@@ -17,7 +17,7 @@ set(CMAKE_AUTORCC ON)
 
 # ���� Qt6 �ĺ���ģ��
 # ȷ��������Ŀ��Ҫ��ģ�鶼�������г�
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 
 # ������ִ���ļ�����Դ�ļ�
 add_executable(Dream
@@ -55,6 +55,7 @@ add_executable(Dream
         widget_ingame.h widget_ingame.cpp widget_ingame.ui
         IconButton.h IconButton.cpp
         widget_post_game.h widget_post_game.cpp widget_post_game.ui
+        InspirationBulb.h
         widget_building_list.cpp widget_building_list.h widget_building_list.ui
         InspirationBulb.h
         InspirationBulb.cpp
@@ -72,6 +73,23 @@ add_executable(Dream
         PettingCatTime.cpp
         WarmMemory.h
         WarmMemory.cpp
+        FriendCompanion.h
+        FriendCompanion.cpp
+        widget_ingame.cpp
+        widget_ingame.h
+        widget_ingame.ui
+        auto_widget.h
+        auto_widget.cpp
+        AbilitiesImpl.h
+        EnemyAbility.h
+        LiveCoffee.h
+        LiveCoffee.cpp
+        NightRadio.h
+        NightRadio.cpp
+        PettingCatTime.h
+        PettingCatTime.cpp
+        WarmMemory.h
+        WarmMemory.cpp
         widget_pause_menu.h widget_pause_menu.cpp widget_pause_menu.ui
         widget_reference_book.h widget_reference_book.cpp widget_reference_book.ui
         # ������ .ui �� .qrc �ļ���Ҳ����������
@@ -79,4 +97,4 @@ add_executable(Dream
         # resources.qrc
 )
 
-target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
+target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia)
