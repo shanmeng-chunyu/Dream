@@ -5,6 +5,12 @@
 #include <QVector>
 #include <QPushButton>
 #include <QLabel>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QDebug>
 
 namespace Ui {
 class widget_reference_book;
@@ -24,9 +30,14 @@ signals:
 private:
     Ui::widget_reference_book *ui;
     bool tower=0;
+    QVector<QPushButton*> items;
+    int chosen=-1;
+    QJsonArray towers;
+    QJsonArray enemies;
 
-    void switch_to_tower(const QVector<QPushButton*> &items);
-    void switch_to_monster(const QVector<QPushButton*> &items);
+    QJsonArray get_json_array(QString path,QString name_array);
+    void switch_to_tower();
+    void switch_to_enemy();
 };
 
 #endif // WIDGET_REFERENCE_BOOK_H

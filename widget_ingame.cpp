@@ -10,10 +10,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     progress=ui->progress;
     progress_bar=ui->progressbar;
     resource_value=ui->resource_value;
-    // connect(this, &widget_ingame::clicked,
-    //                  [](double x,double y) {
-    //                      qDebug() << "点击位置（相对窗口）：x=" << x << ", y=" << y;
-    //                  });
+
     connect(ui->pause,&QPushButton::clicked,this,[=](){
         if(Pause){
             Pause=0;

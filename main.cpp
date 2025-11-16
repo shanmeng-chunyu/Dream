@@ -10,6 +10,7 @@
 #include "widget_menu.h"
 #include "widget_ingame.h"
 #include "widget_pause_menu.h"
+#include "widget_reference_book.h"
 
 namespace
 {

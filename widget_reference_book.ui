@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>45</width>
-     <height>45</height>
+     <width>65</width>
+     <height>65</height>
     </rect>
    </property>
    <property name="text">
@@ -31,8 +31,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>50</width>
-     <height>50</height>
+     <width>70</width>
+     <height>70</height>
     </size>
    </property>
   </widget>
@@ -80,6 +80,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item2">
    <property name="geometry">
@@ -109,6 +112,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item3">
    <property name="geometry">
@@ -138,6 +144,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item4">
    <property name="geometry">
@@ -167,6 +176,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item5">
    <property name="geometry">
@@ -196,6 +208,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item6">
    <property name="geometry">
@@ -225,6 +240,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item7">
    <property name="geometry">
@@ -254,6 +272,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item8">
    <property name="geometry">
@@ -283,6 +304,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item9">
    <property name="geometry">
@@ -312,6 +336,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item10">
    <property name="geometry">
@@ -341,6 +368,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item11">
    <property name="geometry">
@@ -370,6 +400,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="IconButton" name="item12">
    <property name="geometry">
@@ -399,6 +432,9 @@
      <height>100</height>
     </size>
    </property>
+   <attribute name="buttonGroup">
+    <string notr="true">buttonGroup</string>
+   </attribute>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
@@ -445,15 +481,15 @@ hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'幼圆'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;而热热&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLCDNumber" name="value1">
    <property name="geometry">
     <rect>
-     <x>520</x>
+     <x>530</x>
      <y>370</y>
-     <width>61</width>
+     <width>51</width>
      <height>23</height>
     </rect>
    </property>
@@ -486,15 +522,15 @@ padding: 5px;            </string>
     <enum>QLCDNumber::SegmentStyle::Flat</enum>
    </property>
    <property name="intValue" stdset="0">
-    <number>100</number>
+    <number>0</number>
    </property>
   </widget>
   <widget class="QLCDNumber" name="value2">
    <property name="geometry">
     <rect>
-     <x>650</x>
+     <x>660</x>
      <y>370</y>
-     <width>61</width>
+     <width>51</width>
      <height>23</height>
     </rect>
    </property>
@@ -526,8 +562,11 @@ padding: 5px;            </string>
    <property name="segmentStyle">
     <enum>QLCDNumber::SegmentStyle::Flat</enum>
    </property>
+   <property name="value" stdset="0">
+    <double>0.000000000000000</double>
+   </property>
    <property name="intValue" stdset="0">
-    <number>100</number>
+    <number>0</number>
    </property>
   </widget>
   <widget class="QLabel" name="label1">
@@ -542,7 +581,7 @@ padding: 5px;            </string>
    <property name="font">
     <font>
      <family>幼圆</family>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
      <bold>true</bold>
     </font>
    </property>
@@ -550,7 +589,7 @@ padding: 5px;            </string>
     <string notr="true">color:white;</string>
    </property>
    <property name="text">
-    <string>价格：</string>
+    <string>价 格</string>
    </property>
   </widget>
   <widget class="QLabel" name="label2">
@@ -565,7 +604,7 @@ padding: 5px;            </string>
    <property name="font">
     <font>
      <family>幼圆</family>
-     <pointsize>14</pointsize>
+     <pointsize>12</pointsize>
      <bold>true</bold>
     </font>
    </property>
@@ -573,16 +612,16 @@ padding: 5px;            </string>
     <string notr="true">color:white;</string>
    </property>
    <property name="text">
-    <string>范围：</string>
+    <string>伤 害</string>
    </property>
   </widget>
   <widget class="IconButton" name="upgrade">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>360</y>
-     <width>45</width>
-     <height>45</height>
+     <x>400</x>
+     <y>350</y>
+     <width>65</width>
+     <height>65</height>
     </rect>
    </property>
    <property name="text">
@@ -594,18 +633,18 @@ padding: 5px;            </string>
    </property>
    <property name="iconSize">
     <size>
-     <width>50</width>
-     <height>50</height>
+     <width>70</width>
+     <height>70</height>
     </size>
    </property>
   </widget>
   <widget class="IconButton" name="next">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>490</y>
-     <width>45</width>
-     <height>45</height>
+     <x>400</x>
+     <y>480</y>
+     <width>65</width>
+     <height>65</height>
     </rect>
    </property>
    <property name="text">
@@ -617,8 +656,8 @@ padding: 5px;            </string>
    </property>
    <property name="iconSize">
     <size>
-     <width>50</width>
-     <height>50</height>
+     <width>70</width>
+     <height>70</height>
     </size>
    </property>
   </widget>
@@ -656,4 +695,7 @@ padding: 5px;            </string>
   <include location="resources.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
