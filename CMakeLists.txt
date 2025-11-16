@@ -72,6 +72,8 @@ add_executable(Dream
         PettingCatTime.cpp
         WarmMemory.h
         WarmMemory.cpp
+        widget_pause_menu.h widget_pause_menu.cpp widget_pause_menu.ui
+        widget_reference_book.h widget_reference_book.cpp widget_reference_book.ui
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

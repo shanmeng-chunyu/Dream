@@ -37,6 +37,19 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
         ui->name0->setText(name[0]);
         ui->tower0->setIcon(QPixmap(pixmap[0]));
         ui->price0->setText(price_[0]);
+        connect(ui->price0,&QPushButton::clicked,this,[=]{
+            if(resource_value>=price_[0].toInt()){
+                emit widget_building_list::buy(0);
+                close();
+            }
+            else{
+                timer->start();
+                ui->resource_value->setStyleSheet("background-color:white;"
+                                                  "color:red;"
+                                                  "border-radius: 6px;"
+                                                  "padding: 5px;            ");
+            }
+        });
     }
     else{
         ui->name0->hide();ui->tower0->hide();ui->price0->hide();

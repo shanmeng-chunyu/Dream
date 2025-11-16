@@ -15,6 +15,7 @@
         <file>resources/button/speed.png</file>
         <file>resources/button/speed_pressed.png</file>
         <file>resources/button/win_close.png</file>
+        <file>resources/button/upgrade.png</file>
     </qresource>
     <qresource prefix="/background">
         <file>resources/background/choose.png</file>
@@ -31,6 +32,7 @@
         <file>resources/background/second_background.png</file>
         <file>resources/background/third_background.png</file>
         <file>resources/background/title.png</file>
+        <file>resources/background/label_pause.png</file>
     </qresource>
     <qresource prefix="/bullet">
         <file>resources/bullet/level1/InspirationBulb.png</file>
@@ -65,6 +67,7 @@
         <file>resources/frame/building1.png</file>
         <file>resources/frame/building2.png</file>
         <file>resources/frame/building3.png</file>
+        <file>resources/frame/pause_menu.png</file>
     </qresource>
     <qresource prefix="/map">
         <file>resources/map/first.png</file>

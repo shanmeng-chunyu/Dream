@@ -8,6 +8,7 @@
 #include "widget_building_list.h"
 #include "widget_menu.h"
 #include "widget_ingame.h"
+#include "widget_pause_menu.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -45,6 +46,10 @@ int main(int argc, char *argv[]) {
     // QVector<QString> p({"100","200","120","80"});
     // widget_building_list build_widget(0,100,0,n,t,p);
     // build_widget.show();
+
+    //ÔÝÍ£²Ëµ¥À¸
+    widget_pause_menu pause_menu_widget;
+    pause_menu_widget.show();
 
     //widget_ingame
     // widget_ingame ingame(0);
