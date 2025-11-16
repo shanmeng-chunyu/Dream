@@ -10,10 +10,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     progress=ui->progress;
     progress_bar=ui->progressbar;
     resource_value=ui->resource_value;
-    // connect(this, &widget_ingame::clicked,
-    //                  [](double x,double y) {
-    //                      qDebug() << "点击位置（相对窗口）：x=" << x << ", y=" << y;
-    //                  });
+
     connect(ui->pause,&QPushButton::clicked,this,[=](){
         if(Pause){
             Pause=0;
@@ -43,7 +40,6 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
 
     // 保存各个组件的初始几何信息
-    initialGeometries[ui->background] = ui->background->geometry();
     initialGeometries[ui->description] = ui->description->geometry();
     initialGeometries[ui->pause] = ui->pause->geometry();
     initialGeometries[ui->speed] = ui->speed->geometry();

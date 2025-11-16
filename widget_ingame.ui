@@ -13,22 +13,6 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="background">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>600</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/background/resources/background/first_map.png</pixmap>
-   </property>
-  </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
@@ -153,7 +137,7 @@ QProgressBar::chunk {
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/button/resources/button/pause.png</normaloff>:/button/resources/button/pause.png</iconset>
+     <normaloff>:/button/resources/button/begin.png</normaloff>:/button/resources/button/begin.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -408,7 +392,6 @@ padding: 5px;            </string>
     <number>100</number>
    </property>
   </widget>
-  <zorder>background</zorder>
   <zorder>label</zorder>
   <zorder>description</zorder>
   <zorder>progressbar</zorder>

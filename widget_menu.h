@@ -19,6 +19,7 @@ public:
 signals:
     //按钮按下触发的信号
     void choose_level(); //选择关卡
+    void reference_book(); //图鉴
     void exit_game(); //退出游戏
 
 private:

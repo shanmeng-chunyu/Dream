@@ -9,6 +9,7 @@
 #include "widget_menu.h"
 #include "widget_ingame.h"
 #include "widget_pause_menu.h"
+#include "widget_reference_book.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -48,12 +49,16 @@ int main(int argc, char *argv[]) {
     // build_widget.show();
 
     //ÔÝÍ£²Ëµ¥À¸
-    widget_pause_menu pause_menu_widget;
-    pause_menu_widget.show();
+    // widget_pause_menu pause_menu_widget;
+    // pause_menu_widget.show();
+
+    //Í¼¼ø
+    widget_reference_book ref;
+    ref.show();
 
     //widget_ingame
-    // widget_ingame ingame(0);
-    // ingame.show();
+    widget_ingame ingame(0);
+    ingame.show();
 
     return a.exec();
 }

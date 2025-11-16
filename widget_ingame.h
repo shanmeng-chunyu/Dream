@@ -42,7 +42,7 @@ signals:
 
 private:
     Ui::widget_ingame *ui;
-    bool Pause=0;
+    bool Pause=1;
     bool speed=0;
     QLabel *progress;
     QProgressBar *progress_bar;

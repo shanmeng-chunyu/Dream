@@ -4,6 +4,7 @@
       "type": "bug",
       "name": "BUG",
       "pixmap": ":/enemies/resources/enemies/level1/bug.png",
+      "gif_path": ":/enemies/resources/enemies/level1/bug.gif",
       "health": 150,
       "speed": 1.0,
       "drops": 10,
@@ -11,9 +12,21 @@
       "description": "程序中的错误，被击杀后会分裂成两只小bug"
     },
     {
+      "type": "bugmini",
+      "name": "小BUG",
+      "pixmap": ":/enemies/resources/enemies/level1/bug.png",
+      "gif_path": ":/enemies/resources/enemies/level1/bug.gif",
+      "health": 75,
+      "speed": 1.2,
+      "drops": 5,
+      "damage": 1,
+      "description": "由BUG分裂而成，体型更小，速度更快"
+    },
+    {
       "type": "gpa",
       "name": "GPA",
       "pixmap": ":/enemies/resources/enemies/level1/gpa.png",
+      "gif_path": ":/enemies/resources/enemies/level1/gpa.gif",
       "health": 300,
       "speed": 0.8,
       "drops": 15,
@@ -24,6 +37,7 @@
       "type": "ddl",
       "name": "DDL",
       "pixmap": ":/enemies/resources/enemies/level1/ddl.png",
+      "gif_path": ":/enemies/resources/enemies/level1/ddl.gif",
       "health": 80,
       "speed": 1.5,
       "drops": 8,
@@ -34,6 +48,7 @@
       "type": "pre",
       "name": "PRE",
       "pixmap": ":/enemies/resources/enemies/level1/pre.png",
+      "gif_path": ":/enemies/resources/enemies/level1/pre.gif",
       "health": 500,
       "speed": 1.0,
       "drops": 50,
@@ -44,6 +59,7 @@
       "type": "thesis",
       "name": "论文",
       "pixmap": ":/enemies/resources/enemies/level1/thesis.png",
+       "gif_path": ":/enemies/resources/enemies/level1/thesis.gif",
       "health": 8000,
       "speed": 1.2,
       "drops": 500,
@@ -63,7 +79,7 @@
       "description": "刺骨的冷言冷语,生命值较低但会频繁出现"
     },
     {
-      "type": "lonelyness",
+      "type": "loneliness",
       "name": "无尽的孤独",
       "pixmap": ":/enemies/resources/enemies/level2/lonelyness.png",
       "health": 200,
@@ -73,7 +89,7 @@
       "description": "无尽的孤独感,生命值适中,请小心应对"
     },
     {
-      "type": "recall",
+      "type": "regret",
       "name": "悲伤的回忆",
       "pixmap": ":/enemies/resources/enemies/level2/recall.png",
       "health": 400,
@@ -86,6 +102,7 @@
       "type": "tears",
       "name": "伤心的泪水",
       "pixmap": ":/enemies/resources/enemies/level2/tears.png",
+      "gif_path": ":/enemies/resources/enemies/level2/tears.gif",
       "health": 600,
       "speed": 1.0,
       "drops": 60,
@@ -97,14 +114,18 @@
       "healInterval": 2.0
     },
     {
-      "type": "thephantomofthepast",
-      "name": "昔日幻影",
-      "pixmap": ":/enemies/resources/enemies/level2/thephantomofthepast.png",
-      "health": 10000,
-      "speed": 1.1,
-      "drops": 600,
-      "damage": 25,
-      "description": "昔日的幻影,生命值极高,血量降低到一定程度后会逐渐开始回血"
+    "type": "past",
+    "name": "昔日幻影",
+    "pixmap": ":/enemies/resources/enemies/level2/thephantomofthepast.png",
+    "health": 10000,
+    "speed": 1.1,
+    "drops": 600,
+    "damage": 25,
+    "description": "昔日的幻影,生命值极高,血量降低到一定程度后会逐渐开始回血",
+    "selfRegenBelowHp": 0.50,
+    "selfRegenPerTick": 40,
+    "selfRegenInterval": 1.5,
+    "slowMul": 0.50
     },
     {
       "type": "nightmare",
@@ -116,16 +137,5 @@
       "damage": 30,
       "description": "“只要还有梦境，我就不可能被战胜，防御我？做梦！！！！！”"
     }
-    {
-  "type": "bugmini",
-  "name": "小BUG",
-  "pixmap": ":/enemies/resources/enemies/level1/bug.png",
-  "health": 75,
-  "speed": 1.2,
-  "drops": 5,
-  "damage": 1,
-  "description": "由BUG分裂而成，体型更小，速度更快"
-}
-
   ]
 }
