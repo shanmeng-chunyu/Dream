@@ -11,6 +11,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     progress_bar=ui->progressbar;
     resource_value=ui->resource_value;
 
+    connect(ui->menu,&QPushButton::clicked,this,&widget_ingame::pause_menu);
     connect(ui->pause,&QPushButton::clicked,this,[=](){
         if(Pause){
             Pause=0;
