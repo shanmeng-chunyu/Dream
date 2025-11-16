@@ -1,7 +1,7 @@
 #include "PettingCatTime.h"
 
-PettingCatTime::PettingCatTime(QGraphicsItem* parent)
-    : Tower(60, 1.5, 0.5, 180, 220, QPixmap(":/towers/resources/towers/level2/PettingCatTime.png"), parent)
+PettingCatTime::PettingCatTime(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent)
+    : Tower(60, range, 0.5, 180, 220, gif_path,pixelSize, parent)
 {
     type = "PettingCatTime";
 }
@@ -18,6 +18,10 @@ void PettingCatTime::upgrade()
         if(fireCount > fireInterval)
             fireCount = fireInterval;
         upgraded = true;
-        setPixmap(QPixmap(":/towers/resources/towers/level2/PettingCatTime_upgrade.png"));
+        const QSize towerPixelSize(76, 76);
+        QPixmap originalUpgradePixmap(":/towers/resources/towers/level2/PettingCatTime_upgrade.png");
+        QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
     }
 }
+

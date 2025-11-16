@@ -1,11 +1,13 @@
 #include "Obstacle.h"
 
-Obstacle::Obstacle(int health, int resourceValue, const QPixmap& pixmap, QGraphicsItem* parent)
+Obstacle::Obstacle(int health, int resourceValue, const QPixmap& pixmap, const QRectF& relativeRect, QGraphicsItem* parent)
     : QObject(nullptr), // QObject的父对象关系由场景管理，这里设为nullptr
       QGraphicsPixmapItem(pixmap, parent),
       maxHealth(health),
       currentHealth(health),
-      resourceValue(resourceValue) {}
+      resourceValue(resourceValue),
+      m_relativeRect(relativeRect)
+{}
 
 void Obstacle::takeDamage(int damage) {
     currentHealth -= damage;
@@ -18,4 +20,8 @@ void Obstacle::takeDamage(int damage) {
 
 int Obstacle::getResourceValue() const {
     return resourceValue;
+}
+
+QRectF Obstacle::getRelativeRect() const {
+    return m_relativeRect;
 }

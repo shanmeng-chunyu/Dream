@@ -26,7 +26,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="resources.qrc">:/frame/resources/frame/time.png</pixmap>
+    <pixmap>:/frame/resources/frame/time.png</pixmap>
    </property>
   </widget>
   <widget class="QLabel" name="description">

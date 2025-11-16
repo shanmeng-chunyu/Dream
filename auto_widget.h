@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QRect>
 #include <QLabel>
+#include <QFont>
 #include "IconButton.h"
 
 class auto_widget : public QWidget
@@ -25,6 +26,8 @@ protected:
     QMap<QWidget*, QRect> initialGeometries;
     // 存储图标按钮的初始图标大小
     QMap<QPushButton*, QSize> initialIconSizes;
+    // 存储需要缩放字体的控件初始字体
+    QMap<QWidget*, QFont> initialFonts;
 };
 
 #endif // AUTO_WIDGET_H

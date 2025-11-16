@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QSizeF>
 #include <QGraphicsItem>
+#include <QHash>
 
 // 前向声明，避免在头文件中引入过多依赖
 class QGraphicsScene;
@@ -19,6 +20,7 @@ class Obstacle;
 class Player;
 class WaveManager;
 class GameMap;
+class QSoundEffect;
 
 class GameManager : public QObject {
     Q_OBJECT
@@ -56,13 +58,18 @@ public slots:
     void onTowerSellRequested(const QPointF& relativePosition);
     void pauseGame();
     void resumeGame();
+    const QList<Enemy*>& getEnemies() const { return m_enemies; }
+    void onEnemyDeathAnimationFinished(Enemy* enemy); // 死亡动画播放完毕后触发的槽
 
 private slots:
     // 游戏主循环
     void updateGame();
     void onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration);
+    void onBulletHitEnemy(Bullet* bullet, Enemy* enemy);
+    void onBulletHitObstacle(Bullet* bullet, Obstacle* obstacle);
 signals:
     void gameFinished(bool win,int finalStability, int enemiesKilled);
+    void obstacleCleared(const QRectF &relativeRect);
 
 private:
     GameManager(QObject* parent = nullptr);
@@ -91,6 +98,15 @@ private:
     QList<Tower*> m_towers;
     QList<Bullet*> m_bullets;
     QList<Obstacle*> m_obstacles;
+    QSoundEffect* m_hitSoundAOE;
+    QSoundEffect* m_victorySound;
+    QSoundEffect* m_defeatSound;
+    QSoundEffect* m_upgradeSound;
+    QSoundEffect* m_nightmareSpawnSound;
+    QSoundEffect* m_buildSound;
+    QSoundEffect* m_sellSound;
+    QSoundEffect* m_bulbatkSound;
+    QSoundEffect* m_radioatkSound;
 
     // 待删除的实体列表，用于安全删除
     QList<QGraphicsItem*> m_entitiesToClean;
@@ -102,11 +118,12 @@ private:
     bool m_gameIsOver;
     Enemy* spawnByTypeWithPath(const QString& type, const std::vector<QPointF>& absPath,double scale = 1.0);
 
+
     void destroyAllTowers(bool withEffects = true);
 
     QSet<Enemy*> m_raged;
     QHash<Enemy*, int> m_healCd;
-
+    QSet<QGraphicsItem*> m_activeDeathAnimations; // 跟踪正在播放的死亡动画，以便清理
 };
 
 #endif // GAMEMANAGER_H

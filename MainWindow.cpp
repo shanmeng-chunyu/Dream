@@ -1,6 +1,9 @@
 #include "MainWindow.h"
 #include "GameManager.h"
 #include "Tower.h"
+#include "Player.h"
+#include "WaveManager.h"
+#include "widget_ingame.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
@@ -23,6 +26,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QProgressBar>
 
 #include <QSet>
 #include <algorithm>
@@ -138,8 +144,10 @@ public:
         setAcceptHoverEvents(false);
         setAcceptedMouseButtons(Qt::LeftButton);
         setFlag(QGraphicsItem::ItemIsSelectable, false);
-        setPen(Qt::NoPen);
-        setBrush(Qt::NoBrush);
+        // setPen(Qt::NoPen);
+        // setBrush(Qt::NoBrush);
+        setPen(QPen(Qt::red, 2));        // 设置一个2像素宽的红色边框
+        setBrush(QColor(255, 0, 0, 80)); // 设置一个半透明的红色填充 (R, G, B, Alpha)
         setCenter(center);
     }
 
@@ -170,12 +178,12 @@ protected:
         event->accept();
     }
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
-    {
-        Q_UNUSED(painter);
-        Q_UNUSED(option);
-        Q_UNUSED(widget);
-    }
+    // void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
+    // {
+    //     Q_UNUSED(painter);
+    //     Q_UNUSED(option);
+    //     Q_UNUSED(widget);
+    // }
 
 private:
     int m_index;
@@ -191,7 +199,16 @@ MainWindow::MainWindow(QWidget *parent)
       m_view(new QGraphicsView(m_scene, this)),
       m_backgroundItem(nullptr),
       m_baseRadius(26.0),
-      m_sceneDesignSize(1024, 768)
+      m_sceneDesignSize(1024, 768),
+      m_currentLevelIndex(-1),
+      m_hudWidget(nullptr),
+      m_initialStability(0),
+      m_totalEnemyCount(0),
+      m_spawnedEnemyCount(0),
+      m_currentWaveCounter(0),
+      m_spawnedInCurrentWave(0),
+      m_gameLoopTimer(nullptr),
+      m_fastModeActive(false)
 {
 
     setWindowTitle("Dream Guardian");
@@ -231,6 +248,9 @@ void MainWindow::initializeScene()
     {
         qWarning() << "GameManager::gameFinished 信号尚未可用，无法自动弹出结算界面。";
     }
+    connect(this, &MainWindow::towerUpgradeRequested, manager, &GameManager::onTowerUpgradeRequested);
+    connect(this, &MainWindow::towerSellRequested, manager, &GameManager::onTowerSellRequested);
+    // connect(manager, &GameManager::obstacleCleared, this, &MainWindow::onObstacleAreaCleared);
     synchronizeLogicScreenSize();
     recalculateBaseRadius();
 
@@ -269,13 +289,13 @@ void MainWindow::initializeScene()
 
     appendCandidate(commandLineLevelCandidate);
     appendCandidate(envLevelCandidate);
-    appendCandidate(QStringLiteral("levels/level1.json"));
-    appendCandidate(QStringLiteral("levels/level2.json"));
-    appendCandidate(QStringLiteral("level.json"));
-    appendCandidate(QStringLiteral("levels/stage1.json"));
     appendCandidate(QStringLiteral("levels/level3.json"));
+    appendCandidate(QStringLiteral("levels/level2.json"));
+    // appendCandidate(QStringLiteral("level.json"));
+    // appendCandidate(QStringLiteral("levels/stage1.json"));
+    appendCandidate(QStringLiteral("levels/level1.json"));
 
-    QString preparedLevelPath;
+    m_levelSources.clear();
     for (const QString &candidate : levelSearchOrder)
     {
         const QString resolved = resolveLevelPath(candidate);
@@ -283,30 +303,30 @@ void MainWindow::initializeScene()
         {
             continue;
         }
-
-        const QString preparedCandidate = prepareRuntimeLevelFile(resolved);
-        if (preparedCandidate.isEmpty())
+        if (m_levelSources.contains(resolved))
         {
             continue;
         }
-
-        if (loadVisualLevel(preparedCandidate))
-        {
-            preparedLevelPath = preparedCandidate;
-            break;
-        }
-
-        qWarning() << "Level candidate rejected during loading:" << resolved;
+        m_levelSources.append(resolved);
     }
 
-    if (preparedLevelPath.isEmpty())
-    {
-        QMessageBox::critical(this, tr("Level Missing"), tr("Cannot find a usable level.json in the workspace."));
-        return;
-    }
+    // bool loaded = false;
+    // for (int idx = 0; idx < m_levelSources.size(); ++idx)
+    // {
+    //     if (loadLevelByIndex(idx, false))
+    //     {
+    //         loaded = true;
+    //         break;
+    //     }
+    // }
+    //
+    // if (!loaded)
+    // {
+    //     QMessageBox::critical(this, tr("Level Missing"), tr("Cannot find a usable level.json in the workspace."));
+    //     return;
+    // }
 
-    manager->loadLevel(preparedLevelPath);
-    manager->startGame();
+    connectHudToSystems();
 }
 
 QString MainWindow::resolveLevelPath(const QString &candidate) const
@@ -374,6 +394,7 @@ QString MainWindow::prepareRuntimeLevelFile(const QString &levelPath)
 {
     if (levelPath.isEmpty())
     {
+        resetWaveTracking();
         return {};
     }
 
@@ -381,6 +402,7 @@ QString MainWindow::prepareRuntimeLevelFile(const QString &levelPath)
     if (!file.open(QIODevice::ReadOnly))
     {
         qWarning() << "Unable to open level for preprocessing:" << levelPath;
+        resetWaveTracking();
         return {};
     }
 
@@ -391,6 +413,7 @@ QString MainWindow::prepareRuntimeLevelFile(const QString &levelPath)
     if (!doc.isObject())
     {
         qWarning() << "Invalid json during preprocessing:" << parseError.errorString();
+        resetWaveTracking();
         return levelPath;
     }
 
@@ -587,10 +610,28 @@ QString MainWindow::prepareRuntimeLevelFile(const QString &levelPath)
     for (int i = 0; i < obstacles.size(); ++i)
     {
         QJsonObject obstacle = obstacles.at(i).toObject();
-        if (updateField(obstacle, QStringLiteral("pixmap"), GameMap::fallbackObstaclePixmap(obstacle.value(QStringLiteral("type")).toString(), stage)))
+
+        // 1. 获取 JSON 中指定的路径
+        const QString currentPath = obstacle.value(QStringLiteral("pixmap")).toString();
+
+        // 2. 获取备选的 Fallback 路径
+        const QString fallbackPath = GameMap::fallbackObstaclePixmap(obstacle.value(QStringLiteral("type")).toString(), stage);
+
+        bool updated = false;
+
+        // 3. 优先尝试使用 JSON 中指定的路径
+        if (!currentPath.isEmpty())
         {
-            obstacles[i] = obstacle;
+            updated = updateField(obstacle, QStringLiteral("pixmap"), currentPath);
         }
+
+        // 4. 如果 JSON 路径失败了（或为空），再尝试使用 Fallback 路径
+        if (!updated && !fallbackPath.isEmpty())
+        {
+            updateField(obstacle, QStringLiteral("pixmap"), fallbackPath);
+        }
+
+        obstacles[i] = obstacle; // 将修改后的 obstacle 写回数组
     }
     if (!obstacles.isEmpty())
     {
@@ -615,6 +656,8 @@ QString MainWindow::prepareRuntimeLevelFile(const QString &levelPath)
     ensureAbsoluteField(QStringLiteral("tower_base"), GameMap::fallbackTowerBaseFrame());
 
     root.insert(QStringLiteral("map"), mapObj);
+
+    prepareWaveTrackingFromJson(root);
 
     const QString cacheName = QStringLiteral("dream_level_%1.json").arg(QFileInfo(levelPath).completeBaseName());
     const QString targetPath = QDir(QDir::tempPath()).filePath(cacheName);
@@ -687,16 +730,13 @@ void MainWindow::handleGameFinished(bool win, int stability, int killCount)
 
 void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
 {
-    if (m_postGameWidget)
-    {
-        m_postGameWidget->close();
-        m_postGameWidget->deleteLater();
-    }
+    dismissPostGameWidget();
     m_postGameWidget = new widget_post_game(win, stability, killCount, this);
     m_postGameWidget->setAttribute(Qt::WA_DeleteOnClose);
+
     // 2. 获取父窗口 (MainWindow) 和子窗口 (结算界面) 的大小
     //    (根据 widget_post_game.ui，我们知道它的固定大小是 400x400)
-    int childWidth = m_postGameWidget->width(); // 应该是 400
+    int childWidth = m_postGameWidget->width();   // 应该是 400
     int childHeight = m_postGameWidget->height(); // 应该是 400
 
     // 3. 计算中心点的 X 和 Y 坐标
@@ -705,7 +745,161 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
 
     // 4. 将子窗口移动到计算出的位置
     m_postGameWidget->move(x, y);
+
+    connect(m_postGameWidget, &widget_post_game::repeat, this, [this]()
+            {
+                const int targetIndex = m_currentLevelIndex;
+                dismissPostGameWidget();
+                if (targetIndex >= 0)
+                {
+                    loadLevelByIndex(targetIndex, true);
+                } });
+
+    connect(m_postGameWidget, &widget_post_game::next, this, [this]()
+            {
+                const int nextIndex = m_currentLevelIndex + 1;
+                dismissPostGameWidget();
+                if (nextIndex < m_levelSources.size())
+                {
+                    loadLevelByIndex(nextIndex, true);
+                }
+                else
+                {
+                    QMessageBox::information(this,
+                                             tr("Level Switch"),
+                                             tr("No further level is available. Please select a level manually."));
+                } });
+
     m_postGameWidget->show();
+}
+
+void MainWindow::dismissPostGameWidget()
+{
+    if (!m_postGameWidget)
+    {
+        return;
+    }
+    m_postGameWidget->close();
+    m_postGameWidget->deleteLater();
+    m_postGameWidget = nullptr;
+}
+
+void MainWindow::updateLevelSwitchStatus(int index)
+{
+    if (index < 0 || index >= m_levelSources.size())
+    {
+        setWindowTitle(QStringLiteral("Dream Guardian"));
+        return;
+    }
+
+    QFileInfo info(m_levelSources.at(index));
+    setWindowTitle(QStringLiteral("Dream Guardian - %1").arg(info.fileName()));
+}
+
+bool MainWindow::loadLevelByIndex(int index, bool showError)
+{
+    if (index < 0 || index >= m_levelSources.size())
+    {
+        if (showError)
+        {
+            QMessageBox::information(this,
+                                     tr("Level Switch"),
+                                     tr("No level mapped to shortcut %1.").arg(QString::number(index + 1)));
+        }
+        return false;
+    }
+
+    const QString sourcePath = m_levelSources.at(index);
+    const QString preparedPath = prepareRuntimeLevelFile(sourcePath);
+    if (preparedPath.isEmpty())
+    {
+        if (showError)
+        {
+            QMessageBox::warning(this,
+                                 tr("Level Switch"),
+                                 tr("Failed to preprocess:\n%1").arg(sourcePath));
+        }
+        return false;
+    }
+
+    if (!loadVisualLevel(preparedPath))
+    {
+        if (showError)
+        {
+            QMessageBox::warning(this,
+                                 tr("Level Switch"),
+                                 tr("Unable to render level:\n%1").arg(sourcePath));
+        }
+        return false;
+    }
+
+    GameManager *manager = GameManager::instance();
+    manager->loadLevel(preparedPath);
+    manager->startGame();
+
+    destroyHudWidget();
+    ensureHudWidget();
+    connectHudToSystems();
+    if (m_hudWidget)
+    {
+        m_hudWidget->show();
+        m_hudWidget->raise();
+        if (m_cachedPlayer)
+        {
+            m_hudWidget->set_resource_value(m_cachedPlayer->getResource());
+            updateHudStability(m_cachedPlayer->getStability());
+        }
+        updateHudProgress();
+    }
+    positionHudWidget();
+
+    m_currentLevelIndex = index;
+    updateLevelSwitchStatus(index);
+    return true;
+}
+
+bool MainWindow::startLevelFromSource(const QString &candidatePath, bool showError)
+{
+    const QString resolved = resolveLevelPath(candidatePath);
+    if (resolved.isEmpty())
+    {
+        if (showError)
+        {
+            QMessageBox::warning(this,
+                                 tr("Level Switch"),
+                                 tr("Cannot locate level file:\n%1").arg(candidatePath));
+        }
+        return false;
+    }
+
+    int index = m_levelSources.indexOf(resolved);
+    if (index < 0)
+    {
+        m_levelSources.append(resolved);
+        index = m_levelSources.size() - 1;
+    }
+
+    return loadLevelByIndex(index, showError);
+}
+
+void MainWindow::cycleLevel(int delta)
+{
+    if (m_levelSources.isEmpty() || delta == 0)
+    {
+        return;
+    }
+
+    int nextIndex = m_currentLevelIndex;
+    if (nextIndex < 0)
+    {
+        nextIndex = delta > 0 ? 0 : m_levelSources.size() - 1;
+    }
+    else
+    {
+        nextIndex = (nextIndex + delta + m_levelSources.size()) % m_levelSources.size();
+    }
+
+    loadLevelByIndex(nextIndex, true);
 }
 
 bool MainWindow::loadVisualLevel(const QString &levelPath)
@@ -988,6 +1182,8 @@ void MainWindow::drawObstacles()
 
         m_obstacleRects.append(rect);
     }
+
+    updateBaseAvailability();
 }
 
 bool MainWindow::isScenePointBlocked(const QPointF &scenePos) const
@@ -1017,35 +1213,88 @@ void MainWindow::createTowerBaseItems()
         {
             m_scene->removeItem(base.graphicsItem);
             delete base.graphicsItem;
+            base.graphicsItem = nullptr;
         }
     }
     m_towerBases.clear();
 
-    const auto &bases = m_visualMap.getTowerPositions();
-
-    m_towerBases.reserve(static_cast<int>(bases.size()));
-
-    for (int i = 0; i < static_cast<int>(bases.size()); ++i)
+    const QRectF sceneRect = m_scene->sceneRect();
+    if (sceneRect.isEmpty())
     {
-        const QPointF relative = bases[static_cast<size_t>(i)];
-        const QPointF center = toAbsolutePosition(relative);
-        if (isScenePointBlocked(center))
+        return;
+    }
+
+    const double spacingX = std::max<double>(1e-4, m_visualMap.getGridSpacingX());
+    const double spacingY = std::max<double>(1e-4, m_visualMap.getGridSpacingY());
+    const double fallbackSpacing = 0.08;
+    const double effectiveSpacingX = spacingX > 1e-4 ? spacingX : fallbackSpacing;
+    const double effectiveSpacingY = spacingY > 1e-4 ? spacingY : fallbackSpacing;
+    m_cellSize = QSizeF(sceneRect.width() * effectiveSpacingX,
+                        sceneRect.height() * effectiveSpacingY);
+    if (m_cellSize.isEmpty())
+    {
+        return;
+    }
+
+    recalculateBaseRadius();
+
+    const double offsetX = estimateGridOffset(true, effectiveSpacingX);
+    const double offsetY = estimateGridOffset(false, effectiveSpacingY);
+    const QVector<double> columns = buildAxisCoordinates(offsetX, effectiveSpacingX);
+    const QVector<double> rows = buildAxisCoordinates(offsetY, effectiveSpacingY);
+    const qreal intersectionTolerance = cellIntersectionTolerance();
+
+    auto withinUnit = [](double value)
+    {
+        return value >= -1e-4 && value <= 1.0 + 1e-4;
+    };
+
+    for (double relY : rows)
+    {
+        if (!withinUnit(relY))
         {
             continue;
         }
-
-        auto handler = [this](int index, const QPointF &pos)
+        for (double relX : columns)
         {
-            onTowerBaseClicked(index, pos);
-        };
-        auto *baseItem = new TowerBaseItem(static_cast<int>(m_towerBases.size()), m_baseRadius, center, handler);
-        m_scene->addItem(baseItem);
+            if (!withinUnit(relX))
+            {
+                continue;
+            }
 
-        TowerBaseVisual visual;
-        visual.relativePosition = relative;
-        visual.graphicsItem = baseItem;
-        m_towerBases.append(visual);
+            QPointF relative(relX, relY);
+            QPointF center = toAbsolutePosition(relative);
+            QRectF cellRect(center.x() - m_cellSize.width() / 2.0,
+                            center.y() - m_cellSize.height() / 2.0,
+                            m_cellSize.width(),
+                            m_cellSize.height());
+
+            if (!sceneRect.contains(cellRect))
+            {
+                continue;
+            }
+
+            if (rectIntersectsAny(m_pathTileRects, cellRect, intersectionTolerance))
+            {
+                continue;
+            }
+
+            TowerBaseVisual base;
+            base.relativePosition = relative;
+            base.cellRect = cellRect;
+            base.blockedByObstacle = rectIntersectsAny(m_obstacleRects, cellRect, intersectionTolerance);
+            base.graphicsItem = nullptr;
+            const int index = m_towerBases.size();
+            m_towerBases.append(base);
+
+            if (!m_towerBases[index].blockedByObstacle)
+            {
+                spawnBaseItem(index);
+            }
+        }
     }
+
+    refreshAllBaseStates();
 }
 
 void MainWindow::updateTowerBaseGeometry()
@@ -1099,6 +1348,11 @@ void MainWindow::recalculateBaseRadius()
     const qreal pixelStepY = size.height() * std::max<qreal>(1e-4, m_visualMap.getGridSpacingY());
     const qreal tile = std::max(pixelStepX, pixelStepY);
     m_baseRadius = std::max<qreal>(24.0, tile * 0.4);
+    if (!m_cellSize.isEmpty())
+    {
+        const qreal halfCell = 0.5 * std::min(m_cellSize.width(), m_cellSize.height());
+        m_baseRadius = std::min(m_baseRadius, halfCell * 0.85);
+    }
 }
 
 void MainWindow::applySceneRectFromMap()
@@ -1224,12 +1478,12 @@ void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
     if (selected == upgradeAction)
     {
         emit towerUpgradeRequested(relativePos);
-        QMessageBox::information(this, tr("Upgrade"), tr("Upgrade logic not implemented yet."));
+        // QMessageBox::information(this, tr("Upgrade"), tr("Upgrade logic not implemented yet."));
     }
     else if (selected == sellAction)
     {
         emit towerSellRequested(relativePos);
-        QMessageBox::information(this, tr("Sell"), tr("Sell logic not implemented yet."));
+        // QMessageBox::information(this, tr("Sell"), tr("Sell logic not implemented yet."));
     }
 }
 
@@ -1298,14 +1552,62 @@ void MainWindow::onTowerBaseClicked(int baseIndex, const QPointF &scenePos)
     }
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (!event)
+    {
+        QMainWindow::keyPressEvent(event);
+        return;
+    }
+
+    const int key = event->key();
+    const Qt::KeyboardModifiers mods = event->modifiers();
+    const bool noModifier = (mods == Qt::NoModifier);
+
+    if (noModifier && key >= Qt::Key_1 && key <= Qt::Key_9)
+    {
+        const int targetIndex = key - Qt::Key_1;
+        if (loadLevelByIndex(targetIndex, true))
+        {
+            event->accept();
+            return;
+        }
+    }
+
+    if (noModifier && key == Qt::Key_BracketLeft)
+    {
+        cycleLevel(-1);
+        event->accept();
+        return;
+    }
+
+    if (noModifier && key == Qt::Key_BracketRight)
+    {
+        cycleLevel(1);
+        event->accept();
+        return;
+    }
+
+    if (noModifier && key == Qt::Key_M)
+    {
+        emit levelSelectionRequested();
+        event->accept();
+        return;
+    }
+
+    QMainWindow::keyPressEvent(event);
+}
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
 
     QTimer::singleShot(0, this, [this]()
                        { fitViewToScene(); });
-    //调整结算窗口位置
-    if (m_postGameWidget && m_postGameWidget->isVisible()) {
+    positionHudWidget();
+    // 调整结算窗口位置
+    if (m_postGameWidget && m_postGameWidget->isVisible())
+    {
         int childWidth = m_postGameWidget->width();
         int childHeight = m_postGameWidget->height();
 
@@ -1314,4 +1616,546 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
         m_postGameWidget->move(x, y);
     }
+}
+
+QVector<double> MainWindow::buildAxisCoordinates(double offset, double spacing) const
+{
+    QVector<double> coords;
+    if (spacing <= 1e-6)
+    {
+        coords.append(0.5);
+        return coords;
+    }
+
+    auto appendIfValid = [&](double value)
+    {
+        if (value < -spacing || value > 1.0 + spacing)
+        {
+            return;
+        }
+        coords.append(value);
+    };
+
+    for (double value = offset; value <= 1.0 + spacing; value += spacing)
+    {
+        appendIfValid(value);
+    }
+    for (double value = offset - spacing; value >= -spacing; value -= spacing)
+    {
+        appendIfValid(value);
+    }
+
+    if (coords.isEmpty())
+    {
+        coords.append(0.5);
+    }
+
+    std::sort(coords.begin(), coords.end());
+    auto almostEqual = [](double lhs, double rhs)
+    {
+        return std::abs(lhs - rhs) < 1e-4;
+    };
+    coords.erase(std::unique(coords.begin(), coords.end(), almostEqual), coords.end());
+    return coords;
+}
+
+double MainWindow::estimateGridOffset(bool horizontal, double spacing) const
+{
+    if (spacing <= 1e-6)
+    {
+        return spacing * 0.5;
+    }
+
+    const auto &pathData = m_visualMap.getPath();
+    if (pathData.empty())
+    {
+        return spacing * 0.5;
+    }
+
+    double sum = 0.0;
+    int count = 0;
+    for (const QPointF &pt : pathData)
+    {
+        const double value = horizontal ? pt.x() : pt.y();
+        double ratio = value / spacing;
+        double frac = ratio - std::floor(ratio);
+        if (frac < 0.0)
+        {
+            frac += 1.0;
+        }
+        sum += frac * spacing;
+        ++count;
+    }
+
+    if (count == 0)
+    {
+        return spacing * 0.5;
+    }
+
+    double offset = sum / static_cast<double>(count);
+    offset = std::fmod(offset + spacing, spacing);
+    if (offset < 1e-5)
+    {
+        offset = 0.0;
+    }
+    return offset;
+}
+
+bool MainWindow::rectIntersectsAny(const QVector<QRectF> &rects, const QRectF &candidate, qreal tolerance) const
+{
+    if (candidate.isNull())
+    {
+        return false;
+    }
+    QRectF expanded = candidate.adjusted(-tolerance, -tolerance, tolerance, tolerance);
+    for (const QRectF &rect : rects)
+    {
+        if (rect.intersects(expanded))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void MainWindow::spawnBaseItem(int index)
+{
+    if (!m_scene || index < 0 || index >= m_towerBases.size())
+    {
+        return;
+    }
+
+    TowerBaseVisual &base = m_towerBases[index];
+    if (base.graphicsItem || base.blockedByObstacle)
+    {
+        return;
+    }
+
+    auto handler = [this](int idx, const QPointF &pos)
+    {
+        onTowerBaseClicked(idx, pos);
+    };
+    auto *item = new TowerBaseItem(index, m_baseRadius, toAbsolutePosition(base.relativePosition), handler);
+    m_scene->addItem(item);
+    base.graphicsItem = item;
+    updateSingleBaseState(index);
+}
+
+void MainWindow::updateBaseAvailability()
+{
+    if (!m_scene)
+    {
+        return;
+    }
+    const qreal intersectionTolerance = cellIntersectionTolerance();
+    for (int i = 0; i < m_towerBases.size(); ++i)
+    {
+        TowerBaseVisual &base = m_towerBases[i];
+        const bool blocked = rectIntersectsAny(m_obstacleRects, base.cellRect, intersectionTolerance);
+        if (blocked == base.blockedByObstacle)
+        {
+            continue;
+        }
+        base.blockedByObstacle = blocked;
+        if (blocked)
+        {
+            if (base.graphicsItem)
+            {
+                m_scene->removeItem(base.graphicsItem);
+                delete base.graphicsItem;
+                base.graphicsItem = nullptr;
+            }
+        }
+        else
+        {
+            spawnBaseItem(i);
+        }
+    }
+}
+
+QRectF MainWindow::relativeRectToSceneRect(const QRectF &relativeRect) const
+{
+    if (!m_scene)
+    {
+        return {};
+    }
+    const QRectF sceneRect = m_scene->sceneRect();
+    return QRectF(sceneRect.left() + relativeRect.left() * sceneRect.width(),
+                  sceneRect.top() + relativeRect.top() * sceneRect.height(),
+                  relativeRect.width() * sceneRect.width(),
+                  relativeRect.height() * sceneRect.height());
+}
+
+qreal MainWindow::cellIntersectionTolerance() const
+{
+    if (m_cellSize.width() > 0.0 && m_cellSize.height() > 0.0)
+    {
+        return std::min(m_cellSize.width(), m_cellSize.height()) * 0.15;
+    }
+    if (m_scene)
+    {
+        const QSizeF size = m_scene->sceneRect().size();
+        if (!size.isEmpty())
+        {
+            return std::min(size.width(), size.height()) * 0.01;
+        }
+    }
+    return 5.0;
+}
+
+void MainWindow::cacheHudSubControls()
+{
+    if (!m_hudWidget)
+    {
+        m_hudProgressLabel.clear();
+        m_hudProgressBar.clear();
+        m_hudStabilityLabel.clear();
+        m_hudStabilityBar.clear();
+        return;
+    }
+    m_hudProgressLabel = m_hudWidget->findChild<QLabel *>(QStringLiteral("progress"));
+    m_hudProgressBar = m_hudWidget->findChild<QProgressBar *>(QStringLiteral("progressbar"));
+    m_hudStabilityLabel = m_hudWidget->findChild<QLabel *>(QStringLiteral("stability_value"));
+    m_hudStabilityBar = m_hudWidget->findChild<QProgressBar *>(QStringLiteral("stability_progressbar"));
+}
+
+void MainWindow::updateHudStability(int value)
+{
+    if (!m_hudWidget)
+    {
+        return;
+    }
+    if (m_hudStabilityLabel)
+    {
+        m_hudStabilityLabel->setText(QString::number(std::max(0, value)));
+    }
+    if (m_hudStabilityBar)
+    {
+        const int baseline = (m_initialStability > 0) ? m_initialStability : std::max(1, std::max(value, 1));
+        const double ratio = std::clamp(static_cast<double>(std::max(0, value)) / static_cast<double>(baseline), 0.0, 1.0);
+        m_hudStabilityBar->setValue(static_cast<int>(std::round(ratio * 100.0)));
+    }
+}
+
+void MainWindow::onObstacleAreaCleared(const QRectF &relativeRect)
+{
+    if (!m_scene)
+    {
+        return;
+    }
+    const QRectF absoluteRect = relativeRectToSceneRect(relativeRect);
+    for (int i = 0; i < m_obstacleRects.size();)
+    {
+        if (absoluteRect.intersects(m_obstacleRects[i]))
+        {
+            m_obstacleRects.removeAt(i);
+        }
+        else
+        {
+            ++i;
+        }
+    }
+    updateBaseAvailability();
+}
+
+void MainWindow::ensureHudWidget()
+{
+    if (m_hudWidget)
+    {
+        return;
+    }
+    m_hudWidget = new widget_ingame(0, this);
+    m_hudWidget->hide();
+    m_hudDesignSize = m_hudWidget->size();
+    if (m_hudDesignSize.isEmpty())
+    {
+        m_hudDesignSize = QSize(800, 600);
+    }
+    cacheHudSubControls();
+    connect(m_hudWidget, &widget_ingame::pause, this, &MainWindow::onHudPauseRequested);
+    connect(m_hudWidget, &widget_ingame::begin, this, &MainWindow::onHudResumeRequested);
+    connect(m_hudWidget, &widget_ingame::speed_up, this, &MainWindow::onHudSpeedUpRequested);
+    connect(m_hudWidget, &widget_ingame::speed_normal, this, &MainWindow::onHudSpeedNormalRequested);
+}
+
+void MainWindow::destroyHudWidget()
+{
+    if (!m_hudWidget)
+    {
+        return;
+    }
+    m_hudWidget->hide();
+    delete m_hudWidget;
+    m_hudWidget = nullptr;
+    m_hudProgressLabel.clear();
+    m_hudProgressBar.clear();
+    m_hudStabilityLabel.clear();
+    m_hudStabilityBar.clear();
+    m_initialStability = 0;
+}
+
+void MainWindow::positionHudWidget()
+{
+    if (!m_hudWidget)
+    {
+        return;
+    }
+
+    const int margin = 16;
+    const QSizeF designSize = m_hudDesignSize.isEmpty() ? QSize(800, 600) : m_hudDesignSize;
+    constexpr qreal aspectRatio = 4.0 / 3.0;
+
+    const qreal maxScaleByWidth = static_cast<qreal>(this->width() - margin * 2) / designSize.width();
+    const qreal maxScaleByHeight = static_cast<qreal>(this->height() - margin * 2) / designSize.height();
+    const qreal maxScale = std::min(std::max<qreal>(0.3, maxScaleByWidth), std::max<qreal>(0.3, maxScaleByHeight));
+    const qreal preferredScale = 0.9; // target ~90% of original HUD size
+    const qreal minScale = 0.7;
+    const qreal scale = std::clamp(preferredScale, minScale, maxScale);
+
+    const qreal width = designSize.width() * scale;
+    const qreal height = designSize.height() * scale;
+    const qreal xPos = std::max<qreal>(static_cast<qreal>(margin), static_cast<qreal>(this->width()) - width - margin);
+    m_hudWidget->setGeometry(static_cast<int>(xPos), margin, static_cast<int>(width), static_cast<int>(height));
+    m_hudWidget->raise();
+}
+
+void MainWindow::connectHudToSystems()
+{
+    Player *player = resolvePlayer();
+    if (player != m_cachedPlayer)
+    {
+        if (m_cachedPlayer)
+        {
+            disconnect(m_cachedPlayer, nullptr, this, nullptr);
+        }
+        m_cachedPlayer = player;
+        if (player)
+        {
+            connect(player, &Player::resourceChanged, this, &MainWindow::onPlayerResourceChanged);
+            connect(player, &Player::stabilityChanged, this, &MainWindow::onPlayerStabilityChanged);
+            m_initialStability = player->getStability();
+            updateHudStability(m_initialStability);
+        }
+    }
+
+    WaveManager *waveManager = resolveWaveManager();
+    if (waveManager != m_cachedWaveManager)
+    {
+        disconnectWaveSignals();
+        m_cachedWaveManager = waveManager;
+        if (waveManager)
+        {
+            m_waveSpawnConnection = connect(waveManager, &WaveManager::spawnEnemy, this, &MainWindow::onWaveEnemySpawned);
+            m_waveCompletionConnection = connect(waveManager, &WaveManager::allWavesCompleted, this, &MainWindow::onAllWavesCompleted);
+        }
+    }
+
+    locateGameLoopTimer();
+}
+
+void MainWindow::disconnectWaveSignals()
+{
+    if (m_waveSpawnConnection)
+    {
+        disconnect(m_waveSpawnConnection);
+        m_waveSpawnConnection = QMetaObject::Connection();
+    }
+    if (m_waveCompletionConnection)
+    {
+        disconnect(m_waveCompletionConnection);
+        m_waveCompletionConnection = QMetaObject::Connection();
+    }
+}
+
+void MainWindow::prepareWaveTrackingFromJson(const QJsonObject &levelRoot)
+{
+    m_waveEnemyTotals.clear();
+    m_totalEnemyCount = 0;
+    m_spawnedEnemyCount = 0;
+    m_currentWaveCounter = 0;
+    m_spawnedInCurrentWave = 0;
+
+    const QJsonArray wavesArray = levelRoot.value(QStringLiteral("waves")).toArray();
+    m_waveEnemyTotals.reserve(wavesArray.size());
+    for (const QJsonValue &waveValue : wavesArray)
+    {
+        const QJsonObject waveObj = waveValue.toObject();
+        int waveCount = 0;
+        const QJsonArray enemyList = waveObj.value(QStringLiteral("enemies")).toArray();
+        for (const QJsonValue &enemyValue : enemyList)
+        {
+            const QJsonObject enemyObj = enemyValue.toObject();
+            waveCount += std::max(0, enemyObj.value(QStringLiteral("count")).toInt());
+        }
+        m_waveEnemyTotals.append(waveCount);
+        m_totalEnemyCount += waveCount;
+    }
+
+    updateHudProgress();
+}
+
+void MainWindow::resetWaveTracking()
+{
+    m_waveEnemyTotals.clear();
+    m_totalEnemyCount = 0;
+    m_spawnedEnemyCount = 0;
+    m_currentWaveCounter = 0;
+    m_spawnedInCurrentWave = 0;
+    if (m_hudProgressLabel)
+    {
+        m_hudProgressLabel->setText(QStringLiteral("0 / 0"));
+    }
+    if (m_hudProgressBar)
+    {
+        m_hudProgressBar->setValue(0);
+    }
+}
+
+void MainWindow::updateHudProgress()
+{
+    if (!m_hudWidget)
+    {
+        return;
+    }
+
+    const int totalWaves = static_cast<int>(m_waveEnemyTotals.size());
+    const int displayedWave = (totalWaves == 0 || m_currentWaveCounter < 0)
+                                  ? 0
+                                  : std::clamp(m_currentWaveCounter + 1, 1, totalWaves);
+    const double progress = (m_totalEnemyCount > 0)
+                                ? static_cast<double>(std::min(m_spawnedEnemyCount, m_totalEnemyCount)) / static_cast<double>(m_totalEnemyCount)
+                                : 0.0;
+    if (m_hudProgressLabel)
+    {
+        m_hudProgressLabel->setText(QStringLiteral("%1 / %2").arg(QString::number(displayedWave)).arg(QString::number(totalWaves)));
+    }
+    if (m_hudProgressBar)
+    {
+        m_hudProgressBar->setValue(static_cast<int>(std::round(std::clamp(progress, 0.0, 1.0) * 100.0)));
+    }
+}
+
+void MainWindow::locateGameLoopTimer()
+{
+    if (m_gameLoopTimer)
+    {
+        return;
+    }
+    GameManager *manager = GameManager::instance();
+    if (!manager)
+    {
+        return;
+    }
+    m_gameLoopTimer = manager->findChild<QTimer *>(QString(), Qt::FindDirectChildrenOnly);
+}
+
+Player *MainWindow::resolvePlayer() const
+{
+    GameManager *manager = GameManager::instance();
+    return manager ? manager->findChild<Player *>() : nullptr;
+}
+
+WaveManager *MainWindow::resolveWaveManager() const
+{
+    GameManager *manager = GameManager::instance();
+    return manager ? manager->findChild<WaveManager *>() : nullptr;
+}
+
+void MainWindow::applyGameSpeed(bool fastMode)
+{
+    locateGameLoopTimer();
+    if (!m_gameLoopTimer)
+    {
+        return;
+    }
+    const int targetInterval = fastMode ? 8 : 16;
+    m_gameLoopTimer->setInterval(targetInterval);
+}
+
+void MainWindow::onHudPauseRequested()
+{
+    GameManager::instance()->pauseGame();
+}
+
+void MainWindow::onHudResumeRequested()
+{
+    GameManager::instance()->resumeGame();
+    applyGameSpeed(m_fastModeActive);
+}
+
+void MainWindow::onHudSpeedUpRequested()
+{
+    m_fastModeActive = true;
+    applyGameSpeed(true);
+}
+
+void MainWindow::onHudSpeedNormalRequested()
+{
+    m_fastModeActive = false;
+    applyGameSpeed(false);
+}
+
+void MainWindow::onPlayerResourceChanged(int value)
+{
+    if (m_hudWidget)
+    {
+        m_hudWidget->set_resource_value(value);
+    }
+}
+
+void MainWindow::onPlayerStabilityChanged(int value)
+{
+    if (value > 0 && (m_initialStability <= 0 || value > m_initialStability))
+    {
+        m_initialStability = value;
+    }
+    updateHudStability(value);
+}
+
+void MainWindow::onWaveEnemySpawned()
+{
+    if (m_totalEnemyCount > 0)
+    {
+        m_spawnedEnemyCount = std::min(m_spawnedEnemyCount + 1, m_totalEnemyCount);
+    }
+    else
+    {
+        ++m_spawnedEnemyCount;
+    }
+
+    if (!m_waveEnemyTotals.isEmpty())
+    {
+        const int waveCount = static_cast<int>(m_waveEnemyTotals.size());
+        if (m_currentWaveCounter < 0)
+        {
+            m_currentWaveCounter = 0;
+        }
+        if (m_currentWaveCounter >= waveCount)
+        {
+            m_currentWaveCounter = waveCount - 1;
+        }
+
+        ++m_spawnedInCurrentWave;
+        const int currentWaveTotal = m_waveEnemyTotals[m_currentWaveCounter];
+        if (currentWaveTotal > 0 && m_spawnedInCurrentWave >= currentWaveTotal && m_currentWaveCounter + 1 < waveCount)
+        {
+            ++m_currentWaveCounter;
+            m_spawnedInCurrentWave = 0;
+        }
+    }
+
+    updateHudProgress();
+}
+
+void MainWindow::onAllWavesCompleted()
+{
+    if (m_totalEnemyCount > 0)
+    {
+        m_spawnedEnemyCount = m_totalEnemyCount;
+    }
+    if (!m_waveEnemyTotals.isEmpty())
+    {
+        m_currentWaveCounter = static_cast<int>(m_waveEnemyTotals.size()) - 1;
+    }
+    updateHudProgress();
 }

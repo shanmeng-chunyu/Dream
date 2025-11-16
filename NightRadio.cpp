@@ -1,6 +1,6 @@
 #include "NightRadio.h"
 
-NightRadio::NightRadio(QGraphicsItem* parent):Tower(100,4.5,1.5,150,200,QPixmap(":/Tower/resources/towers/level2/NightRadio.png"),parent)
+NightRadio::NightRadio(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent):Tower(100,range,1.5,150,200,gif_path,pixelSize,parent)
 {
     type="NightRadio";
 }
@@ -16,6 +16,10 @@ void NightRadio::upgrade()
         if(fireCount > fireInterval)
             fireCount = fireInterval;
         upgraded = true;
-        setPixmap(QPixmap(":/towers/resources/towers/level2/NightRadio_upgrade.png"));
+        const QSize towerPixelSize(76, 76);
+        QPixmap originalUpgradePixmap(":/towers/resources/towers/level2/NightRadio_upgrade.png");
+        QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
     }
 }
+

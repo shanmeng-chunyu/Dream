@@ -45,6 +45,7 @@ void auto_widget::updateComponentsSize()
     // 计算缩放比例
     qreal widthRatio = static_cast<qreal>(width()) / initialSize.width();
     qreal heightRatio = static_cast<qreal>(height()) / initialSize.height();
+    const qreal fontRatio = std::min(widthRatio, heightRatio);
 
     // 遍历更新所有组件的几何信息
     for (auto it = initialGeometries.constBegin(); it != initialGeometries.constEnd(); ++it) {
@@ -76,6 +77,21 @@ void auto_widget::updateComponentsSize()
         }
         QLabel *label=qobject_cast<QLabel*>(widget);
         if(label) label->setScaledContents(1);
+
+        if (initialFonts.contains(widget))
+        {
+            QFont baseFont = initialFonts.value(widget);
+            QFont scaledFont = baseFont;
+            if (baseFont.pointSizeF() > 0)
+            {
+                scaledFont.setPointSizeF(std::max(1.0, baseFont.pointSizeF() * fontRatio));
+            }
+            else if (baseFont.pixelSize() > 0)
+            {
+                scaledFont.setPixelSize(std::max(1, static_cast<int>(baseFont.pixelSize() * fontRatio)));
+            }
+            widget->setFont(scaledFont);
+        }
     }
 }
 
