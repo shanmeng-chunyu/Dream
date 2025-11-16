@@ -47,11 +47,16 @@ add_executable(Dream
         resources.qrc
         enemy_data.json
         tower_data.json
+        auto_widget.cpp
+        auto_widget.h
         widget_menu.h widget_menu.cpp widget_menu.ui
         widget_choose_level.h widget_choose_level.cpp widget_choose_level.ui
         widget_level_loading.h widget_level_loading.cpp widget_level_loading.ui
+        widget_ingame.h widget_ingame.cpp widget_ingame.ui
         IconButton.h IconButton.cpp
         widget_post_game.h widget_post_game.cpp widget_post_game.ui
+        InspirationBulb.h
+        widget_building_list.cpp widget_building_list.h widget_building_list.ui
         InspirationBulb.h
         InspirationBulb.cpp
         KnowledgeTree.h
@@ -70,11 +75,23 @@ add_executable(Dream
         WarmMemory.cpp
         FriendCompanion.h
         FriendCompanion.cpp
-        widget_ingame.cpp 
-        widget_ingame.h 
+        widget_ingame.cpp
+        widget_ingame.h
         widget_ingame.ui
         auto_widget.h
         auto_widget.cpp
+        AbilitiesImpl.h
+        EnemyAbility.h
+        LiveCoffee.h
+        LiveCoffee.cpp
+        NightRadio.h
+        NightRadio.cpp
+        PettingCatTime.h
+        PettingCatTime.cpp
+        WarmMemory.h
+        WarmMemory.cpp
+        widget_pause_menu.h widget_pause_menu.cpp widget_pause_menu.ui
+        widget_reference_book.h widget_reference_book.cpp widget_reference_book.ui
         # ������ .ui �� .qrc �ļ���Ҳ����������
         # MainWindow.ui
         # resources.qrc

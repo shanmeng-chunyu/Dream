@@ -59,8 +59,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>192</width>
-     <height>108</height>
+     <width>200</width>
+     <height>100</height>
     </size>
    </property>
   </widget>
@@ -110,18 +110,18 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>192</width>
-     <height>108</height>
+     <width>200</width>
+     <height>100</height>
     </size>
    </property>
   </widget>
   <widget class="IconButton" name="title">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>550</width>
-     <height>550</height>
+     <x>60</x>
+     <y>70</y>
+     <width>450</width>
+     <height>450</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -173,8 +173,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>192</width>
-     <height>108</height>
+     <width>200</width>
+     <height>100</height>
     </size>
    </property>
   </widget>

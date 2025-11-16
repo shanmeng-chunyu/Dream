@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <QProgressBar>
+#include <QLCDNumber>
 
 namespace Ui {
 class widget_ingame;
@@ -45,7 +46,7 @@ private:
     bool speed=0;
     QLabel *progress;
     QProgressBar *progress_bar;
-    QLabel *resource_value;
+    QLCDNumber *resource_value;
 };
 
 #endif // WIDGET_INGAME_H

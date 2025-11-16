@@ -2,13 +2,13 @@
 #include "ui_widget_choose_level.h"
 
 widget_choose_level::widget_choose_level(QWidget *parent)
-    : QWidget(parent)
+    : auto_widget(parent)
     , ui(new Ui::widget_choose_level)
     ,titles({"第 一 关","第 二 关","第 三 关"})
     ,descriptions(3,"Description")
-    ,map({":/map/resources/map/brief_first.png",":/map/resources/map/brief_second.png",":/map/resources/map/brief_third.png"})
+    ,map({":/map/resources/map/first.png",":/map/resources/map/second.png",":/map/resources/map/third.png"})
     ,frames({":/frame/resources/frame/level1.png",":/frame/resources/frame/level2.png",":/frame/resources/frame/level3.png"})
-    ,icons({":/map_items/resources/map_items/first/books_100_100.png",":/map_items/resources/map_items/second/photo_100_100.png",":/map_items/resources/map_items/third/third_start_100_100.png"})
+    ,icons({":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/third/start_block.png"})
 {
     ui->setupUi(this);
     title=ui->btn_level;
@@ -28,6 +28,25 @@ widget_choose_level::widget_choose_level(QWidget *parent)
         }
     });
     connect(ui->btn_back,&QPushButton::clicked,this,&widget_choose_level::back);
+
+    initialSize = this->size(); // 从ui文件中获取的初始尺寸
+
+    // 保存各个组件的初始几何信息
+    initialGeometries[ui->background] = ui->background->geometry();
+    initialGeometries[ui->btn_back] = ui->btn_back->geometry();
+    initialGeometries[ui->btn_level] = ui->btn_level->geometry();
+    initialGeometries[ui->description] = ui->description->geometry();
+    initialGeometries[ui->icon] = ui->icon->geometry();
+    initialGeometries[ui->label] = ui->label->geometry();
+    initialGeometries[ui->map_picture] = ui->map_picture->geometry();
+    initialGeometries[ui->next] = ui->next->geometry();
+
+    // 保存图标按钮的初始图标大小
+    initialIconSizes[ui->icon] = ui->icon->iconSize();
+    initialIconSizes[ui->btn_back] = ui->btn_back->iconSize();
+    initialIconSizes[ui->btn_level] = ui->btn_level->iconSize();
+    initialIconSizes[ui->next] = ui->next->iconSize();
+
 }
 
 widget_choose_level::~widget_choose_level()

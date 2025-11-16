@@ -12,6 +12,13 @@
         <file>resources/button/pause.png</file>
         <file>resources/button/continue.png</file>
         <file>resources/button/accelerate.png</file>
+        <file>resources/button/begin.png</file>
+        <file>resources/button/menu.png</file>
+        <file>resources/button/pause.png</file>
+        <file>resources/button/speed.png</file>
+        <file>resources/button/speed_pressed.png</file>
+        <file>resources/button/win_close.png</file>
+        <file>resources/button/upgrade.png</file>
     </qresource>
     <qresource prefix="/background">
         <file>resources/background/choose.png</file>
@@ -74,6 +81,9 @@
         <file>resources/map/brief_first.png</file>
         <file>resources/map/brief_second.png</file>
         <file>resources/map/brief_third.png</file>
+        <file>resources/map/first.png</file>
+        <file>resources/map/second.png</file>
+        <file>resources/map/third.png</file>
     </qresource>
     <qresource prefix="/map_items">
         <file>resources/map_items/first/books_100_100.png</file>

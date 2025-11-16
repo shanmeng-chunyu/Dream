@@ -94,3 +94,4 @@ void auto_widget::updateComponentsSize()
         }
     }
 }
+
