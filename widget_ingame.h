@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QLCDNumber>
+#include <QVector>
 
 namespace Ui {
 class widget_ingame;
