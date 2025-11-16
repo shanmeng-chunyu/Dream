@@ -53,10 +53,12 @@
         <file>resources/enemies/level1/pre.png</file>
         <file>resources/enemies/level1/pre.gif</file>
         <file>resources/enemies/level1/thesis.png</file>
+        <file>resources/enemies/level1/thesis.gif</file>
         <file>resources/enemies/level2/coldwords.png</file>
         <file>resources/enemies/level2/lonelyness.png</file>
         <file>resources/enemies/level2/recall.png</file>
         <file>resources/enemies/level2/tears.png</file>
+        <file>resources/enemies/level2/tears.gif</file>
         <file>resources/enemies/level2/thephantomofthepast.png</file>
         <file>resources/enemies/level3/nightmare.png</file>
         <file>resources/enemies/EnemyDie.gif</file>
@@ -117,6 +119,7 @@
         <file>resources/towers/level1/InspirationBulb_upgrade.png</file>
         <file>resources/towers/level1/InspirationBulb_upgrade.gif</file>
         <file>resources/towers/level1/KnowledgeTree.png</file>
+        <file>resources/towers/level1/KnowledgeTree.gif</file>
         <file>resources/towers/level1/KnowledgeTree_upgrade.png</file>
         <file>resources/towers/level1/LiveCoffee.png</file>
         <file>resources/towers/level1/LiveCoffee_upgrade.png</file>

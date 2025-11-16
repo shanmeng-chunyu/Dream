@@ -513,22 +513,27 @@
                 {
                     "count": 1,
                     "interval": 1,
+                    "type": "thesis"
+                },
+                {
+                    "count": 1,
+                    "interval": 1,
+                    "type": "tears"
+                },
+                {
+                    "count": 1,
+                    "interval": 1,
                     "type": "bug"
                 },
                 {
                     "count": 1,
                     "interval": 1,
-                    "type": "pre"
+                    "type": "bug"
                 },
                 {
                     "count": 1,
                     "interval": 1,
-                    "type": "gpa"
-                },
-                {
-                    "count": 1,
-                    "interval": 1,
-                    "type": "ddl"
+                    "type": "bug"
                 }
             ]
         },

@@ -20,6 +20,7 @@
       "cost": 200,
       "upgrade_cost": 250,
       "pixmap": ":/towers/resources/towers/level1/KnowledgeTree.png",
+      "gif_path": ":/towers/resources/towers/level1/KnowledgeTree.gif",
       "bullet_pixmap": ":/bullet/resources/bullet/level1/KnowledgeTree.png",
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/KnowledgeTree_upgrade.png",
       "damage": 160,
