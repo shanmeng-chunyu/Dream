@@ -16,8 +16,8 @@
     "available_towers": [
         "InspirationBulb",
         "KnowledgeTree",
-        "NightRadio",
-        "FishingCatPillow"
+        "FishingCatPillow",
+        "LiveCoffee"
     ],
     "level_name": "第三关：梦你所梦",
     "map": {
@@ -511,24 +511,24 @@
         {
             "enemies": [
                 {
-                    "count": 3,
+                    "count": 1,
                     "interval": 1,
                     "type": "bug"
                 },
                 {
-                    "count": 5,
-                    "interval": 1,
-                    "type": "bug"
-                },
-                {
-                    "count": 6,
+                    "count": 1,
                     "interval": 1,
                     "type": "pre"
                 },
                 {
-                    "count": 5,
+                    "count": 1,
                     "interval": 1,
-                    "type": "bug"
+                    "type": "gpa"
+                },
+                {
+                    "count": 1,
+                    "interval": 1,
+                    "type": "ddl"
                 }
             ]
         },

@@ -7,7 +7,7 @@ class WarmMemory:public Tower
 {
     Q_OBJECT
 public:
-   explicit WarmMemory(double range,QGraphicsItem* parent = nullptr);
+   explicit WarmMemory(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent = nullptr);
     void upgrade()override;
     void attack()override;//没有子弹
 signals:

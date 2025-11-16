@@ -13,11 +13,12 @@ class LiveCoffee;
 class FriendCompanion;
 class Obstacle;
 class QGraphicsSceneHoverEvent;
+class QMovie;
 class Tower : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    explicit Tower(int damage, double range, double fireRate,int cost,int upgradeCost, const QPixmap& pixmap, QGraphicsItem* parent = nullptr);
+    explicit Tower(int damage, double range, double fireRate,int cost,int upgradeCost, const QString &gif_path, const QSize& pixelSize, QGraphicsItem* parent = nullptr);
     virtual ~Tower()=default;
     //获取塔属性
     int getDamage()const{return damage;}
@@ -35,6 +36,8 @@ public:
     void setTarget(QGraphicsPixmapItem* target);
     void setRange(double newrange);
     void showRange(bool show);
+    void pauseAnimation();
+    void resumeAnimation();
     //升级
     virtual void upgrade();
 
@@ -44,7 +47,7 @@ public slots:
     void slowAttack(double slowFactor);//降低攻速
     void slowAttackStop();//停止降低攻速
     void destroy();//摧毁tower，接收到信号直接删除对象
-
+    void updatePixmapFromMovie();
 signals:
     void newBullet(Tower* tower, QGraphicsPixmapItem* target);
     void towerDestroyed(Tower* tower);  //由GameManager处理实际删除
@@ -76,6 +79,8 @@ protected:
     int originalDamage;
 
     QGraphicsEllipseItem* m_rangeCircle;
+    QMovie* m_movie;
+    QSize m_pixelSize;
     // 鼠标悬停进入事件
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     // 鼠标悬停离开事件

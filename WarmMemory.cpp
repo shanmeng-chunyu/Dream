@@ -1,6 +1,6 @@
 #include "WarmMemory.h"
 
-WarmMemory::WarmMemory(double range,QGraphicsItem* parent):Tower(200,range,10,120,150,QPixmap(":/towers/resources/towers/level2/WarmMemories.png"),parent)
+WarmMemory::WarmMemory(double range,const QString &gif_path,const QSize pixelSize, QGraphicsItem* parent):Tower(200,range,10,120,150,gif_path,pixelSize,parent)
 {
     //通过fireRate来表示充能的时间
     type="WarmMemory";

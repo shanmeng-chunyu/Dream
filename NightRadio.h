@@ -6,7 +6,7 @@
 class NightRadio:public Tower
 {
 public:
-    explicit NightRadio(double range,QGraphicsItem* parent = nullptr);
+    explicit NightRadio(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent = nullptr);
     void upgrade()override;
     //穿透攻击的逻辑应该在对应的Bullet类中实现
 };

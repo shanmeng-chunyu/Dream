@@ -375,7 +375,10 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
 
     QJsonObject proto = m_towerPrototypes[type];
     int cost = proto["cost"].toInt();
-    QString pixmap_path = proto["pixmap"].toString();
+    QString pixmap_path = proto["gif_path"].toString();
+    if (pixmap_path == "") {
+        pixmap_path = proto["pixmap"].toString();
+    }
 
     // 1. 检查资源
     if (!m_player->spendResource(cost)) {
@@ -392,34 +395,29 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     double pixelRange = relativeRange * gridPixelWidth;
 
     Tower* tower = nullptr;
+    const QSize towerPixelSize(76, 76);
 
     if (type == "InspirationBulb") {
-        tower = new InspirationBulb(pixelRange);
+        tower = new InspirationBulb(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "KnowledgeTree") {
-        tower = new KnowledgeTree(pixelRange);
+        tower = new KnowledgeTree(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "FishingCatPillow") {
-        tower = new FishingCatPillow(pixelRange);
+        tower = new FishingCatPillow(pixelRange,pixmap_path,towerPixelSize);
         FishingCatPillow* pillow = qobject_cast<FishingCatPillow*>(tower);
         connect(pillow,&FishingCatPillow::applyControl,this,&GameManager::onApplyEnemyControl);
     }else if (type == "LiveCoffee") {
-        tower = new LiveCoffee(pixelRange);
+        tower = new LiveCoffee(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "WarmMemories") {
-        tower = new WarmMemory(pixelRange);
+        tower = new WarmMemory(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "NightRadio") {
-        tower = new NightRadio(pixelRange);
+        tower = new NightRadio(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "PettingCatTime") {
-        tower = new PettingCatTime(pixelRange);
+        tower = new PettingCatTime(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "Companionship") {
-        tower = new FriendCompanion(pixelRange);
+        tower = new FriendCompanion(pixelRange,pixmap_path,towerPixelSize);
     }
 
-    const QSize towerPixelSize(76, 76);
 
-    QPixmap originalPixmap = QPixmap(pixmap_path); // 获取构造函数设置的pixmap
-    // 缩放 pixmap
-    QPixmap scaledPixmap = originalPixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    // 替换掉原来的 pixmap
-    tower->setPixmap(scaledPixmap);
     // 设置偏移量，将 (0,0) 点移动到中心
     const QPointF towerTopLeftPos(absPos.x() - towerPixelSize.width() / 2.0,
                                   absPos.y() - towerPixelSize.height() / 2.0);

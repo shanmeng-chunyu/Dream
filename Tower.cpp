@@ -2,13 +2,14 @@
 #include "Bullet.h"
 #include "Enemy.h"
 #include <QLineF>
+#include <QMovie>
 #include <QGraphicsScene>
 #include "LiveCoffee.h"
 #include "FriendCompanion.h"
 
-Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,const QPixmap& pixmap, QGraphicsItem* parent)
+Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,const QString &gif_path, const QSize& pixelSize, QGraphicsItem* parent)
     : QObject(nullptr),
-    QGraphicsPixmapItem(pixmap, parent),
+    QGraphicsPixmapItem(parent),
     damage(damage),
     range(range),
     fireRate(fireRate),
@@ -17,8 +18,16 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     upgraded(false),
     currentTarget(nullptr),
     fireInterval(static_cast<int>(fireRate * 60)),fireCount(fireInterval),
-    originalFireInterval(fireInterval),originalDamage(damage) {
-    setPixmap(pixmap);
+    originalFireInterval(fireInterval),originalDamage(damage),
+    m_pixelSize(pixelSize){
+
+    m_movie = new QMovie(gif_path, QByteArray(), this);
+    m_movie->setCacheMode(QMovie::CacheAll);
+    connect(m_movie, &QMovie::frameChanged, this, &Tower::updatePixmapFromMovie);
+    m_movie->start();
+    if (m_movie->isValid()) {
+        updatePixmapFromMovie();
+    }
     // 3. 启用鼠标悬停事件
     setAcceptHoverEvents(true);
     m_rangeCircle = new QGraphicsEllipseItem(this);
@@ -174,4 +183,30 @@ void Tower::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     showRange(false); // 隐藏范围
     QGraphicsPixmapItem::hoverLeaveEvent(event);
+}
+
+void Tower::updatePixmapFromMovie()
+{
+    // 关键：从 QMovie 获取当前帧，并 *缩放* 到我们期望的尺寸
+    QPixmap scaledFrame = m_movie->currentPixmap().scaled(m_pixelSize,
+                                                        Qt::KeepAspectRatio,
+                                                        Qt::SmoothTransformation);
+    // 将 QGraphicsPixmapItem 的贴图设置为这一帧
+    setPixmap(scaledFrame);
+}
+
+void Tower::pauseAnimation()
+{
+    // 检查 m_movie 是否存在，并且正在运行
+    if (m_movie && m_movie->state() == QMovie::Running) {
+        m_movie->setPaused(true);
+    }
+}
+
+void Tower::resumeAnimation()
+{
+    // 检查 m_movie 是否存在，并且之前是暂停状态
+    if (m_movie && m_movie->state() == QMovie::Paused) {
+        m_movie->setPaused(false);
+    }
 }

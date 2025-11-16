@@ -6,7 +6,7 @@
 class InspirationBulb:public Tower
 {
 public:
-    explicit InspirationBulb(double range,QGraphicsItem* parent = nullptr);
+    explicit InspirationBulb(double range,const QString &gif_path, QSize pexelSize,QGraphicsItem* parent = nullptr);
     void upgrade()override;
 };
 

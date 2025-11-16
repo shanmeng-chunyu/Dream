@@ -6,6 +6,7 @@
       "cost": 100,
       "upgrade_cost": 150,
       "pixmap": ":/towers/resources/towers/level1/InspirationBulb.png",
+      "gif_path": ":/towers/resources/towers/level1/InspirationBulb.gif",
       "bullet_pixmap": ":/bullet/resources/bullet/level1/InspirationBulb.png",
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/InspirationBulb_upgrade.png",
       "damage": 40,

@@ -113,7 +113,9 @@
         <file>resources/towers/level1/FishingCatPillow.png</file>
         <file>resources/towers/level1/FishingCatPillow_upgrade.png</file>
         <file>resources/towers/level1/InspirationBulb.png</file>
+        <file>resources/towers/level1/InspirationBulb.gif</file>
         <file>resources/towers/level1/InspirationBulb_upgrade.png</file>
+        <file>resources/towers/level1/InspirationBulb_upgrade.gif</file>
         <file>resources/towers/level1/KnowledgeTree.png</file>
         <file>resources/towers/level1/KnowledgeTree_upgrade.png</file>
         <file>resources/towers/level1/LiveCoffee.png</file>

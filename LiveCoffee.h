@@ -7,7 +7,7 @@ class LiveCoffee:public Tower
 {
     Q_OBJECT
 public:
-    explicit LiveCoffee(double range,QGraphicsItem* parent = nullptr);
+    explicit LiveCoffee(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent = nullptr);
     void attack()override;
     void upgrade()override;
     double getTowerBuffFactor() const { return increaseFactor; }; // 给塔用的

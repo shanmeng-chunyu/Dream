@@ -6,7 +6,7 @@
 class FriendCompanion:public Tower
 {
 public:
-    explicit FriendCompanion(double range,QGraphicsItem* parent = nullptr);
+    explicit FriendCompanion(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent = nullptr);
     void upgrade() override;
     void attack()override;
     double getFactor(){return increaseDamage;};

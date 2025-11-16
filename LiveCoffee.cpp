@@ -4,7 +4,7 @@
 #include <QGraphicsPixmapItem>
 
 // --- 构造函数 (和我们之前修复的一样，保持不变) ---
-LiveCoffee::LiveCoffee(double range,QGraphicsItem* parent):Tower(0,range,1,80,120,QPixmap(":/towers/resources/towers/level1/LiveCoffee.png"),parent)
+LiveCoffee::LiveCoffee(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent):Tower(0,range,1,80,120,gif_path,pixelSize,parent)
 {
     slowFactor=0.8;
     increaseFactor=0.9;
