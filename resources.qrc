@@ -87,6 +87,9 @@
         <file>resources/frame/victory.png</file>
         <file>resources/frame/time.png</file>
         <file>resources/frame/pause_menu.png</file>
+        <file>resources/frame/building1.png</file>
+        <file>resources/frame/building2.png</file>
+        <file>resources/frame/building3.png</file>
     </qresource>
     <qresource prefix="/map">
         <file>resources/map/brief_first.png</file>

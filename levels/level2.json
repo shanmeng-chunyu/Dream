@@ -184,7 +184,7 @@
   },
   "player": {
     "initial_stability": 100,
-    "initial_resource": 150
+    "initial_resource": 1000
   },
   "available_towers": ["WarmMemories", "NightRadio", "PettingCatTime", "Companionship"],
   "available_enemies": ["coldwords", "lonelyness", "recall", "tears", "thephantomofthepast"],
