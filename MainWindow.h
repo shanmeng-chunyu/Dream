@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QJsonObject>
 #include <QRectF>
+#include <QShowEvent>
 
 #include "GameMap.h"
 #include "widget_post_game.h"
@@ -54,6 +55,7 @@ signals:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private slots:
     void onTowerBaseClicked(int baseIndex, const QPointF &scenePos);

@@ -11,7 +11,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     progress_bar=ui->progressbar;
     resource_value=ui->resource_value;
 
-    QVector<QString> resources={":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Courage.png",":/resource/resources/resource/Comfort.png"};
+    QVector<QString> resources={":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Comfort.png",":/resource/resources/resource/Courage.png"};
     ui->resourse->setIcon(QPixmap(resources[level]));
 
     connect(ui->menu,&QPushButton::clicked,this,&widget_ingame::pause_menu);

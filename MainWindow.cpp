@@ -292,11 +292,9 @@ void MainWindow::initializeScene()
 
     appendCandidate(commandLineLevelCandidate);
     appendCandidate(envLevelCandidate);
-    appendCandidate(QStringLiteral("levels/level3.json"));
-    appendCandidate(QStringLiteral("levels/level2.json"));
-    // appendCandidate(QStringLiteral("level.json"));
-    // appendCandidate(QStringLiteral("levels/stage1.json"));
     appendCandidate(QStringLiteral("levels/level1.json"));
+    appendCandidate(QStringLiteral("levels/level2.json"));
+    appendCandidate(QStringLiteral("levels/level3.json"));
 
     m_levelSources.clear();
     for (const QString &candidate : levelSearchOrder)
@@ -841,6 +839,7 @@ bool MainWindow::loadLevelByIndex(int index, bool showError)
     manager->startGame();
 
     destroyHudWidget();
+    m_currentLevelIndex = index;
     ensureHudWidget();
     connectHudToSystems();
     if (m_hudWidget)
@@ -856,7 +855,7 @@ bool MainWindow::loadLevelByIndex(int index, bool showError)
     }
     positionHudWidget();
 
-    m_currentLevelIndex = index;
+
     updateLevelSwitchStatus(index);
     return true;
 }
@@ -1607,16 +1606,15 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
     QTimer::singleShot(0, this, [this]()
                        { fitViewToScene(); });
-    positionHudWidget();
-    // 调整结算窗口位置
+
+    QTimer::singleShot(0, this, &MainWindow::positionHudWidget);
+
     if (m_postGameWidget && m_postGameWidget->isVisible())
     {
         int childWidth = m_postGameWidget->width();
         int childHeight = m_postGameWidget->height();
-
         int x = (this->width() - childWidth) / 2;
         int y = (this->height() - childHeight) / 2;
-
         m_postGameWidget->move(x, y);
     }
 }
@@ -1867,7 +1865,7 @@ void MainWindow::ensureHudWidget()
     {
         return;
     }
-    m_hudWidget = new widget_ingame(0, this);
+    m_hudWidget = new widget_ingame(m_currentLevelIndex, this);
     m_hudWidget->hide();
     m_hudDesignSize = m_hudWidget->size();
     if (m_hudDesignSize.isEmpty())
@@ -1900,26 +1898,33 @@ void MainWindow::destroyHudWidget()
 
 void MainWindow::positionHudWidget()
 {
-    if (!m_hudWidget)
+    // 1. 确保 HUD 控件、视图和视口都已准备就绪
+    if (!m_hudWidget || !m_view || !m_view->viewport())
     {
         return;
     }
 
-    const int margin = 16;
-    const QSizeF designSize = m_hudDesignSize.isEmpty() ? QSize(800, 600) : m_hudDesignSize;
-    constexpr qreal aspectRatio = 4.0 / 3.0;
+    // 2. 获取 QGraphicsView 的视口（viewport）
+    QWidget* viewport = m_view->viewport();
 
-    const qreal maxScaleByWidth = static_cast<qreal>(this->width() - margin * 2) / designSize.width();
-    const qreal maxScaleByHeight = static_cast<qreal>(this->height() - margin * 2) / designSize.height();
-    const qreal maxScale = std::min(std::max<qreal>(0.3, maxScaleByWidth), std::max<qreal>(0.3, maxScaleByHeight));
-    const qreal preferredScale = 0.9; // target ~90% of original HUD size
-    const qreal minScale = 0.7;
-    const qreal scale = std::clamp(preferredScale, minScale, maxScale);
+    // 3. 获取场景的逻辑矩形 (例如 0, 0, 1024, 768)
+    QRectF logicalSceneRect = m_view->sceneRect();
+    if (logicalSceneRect.isEmpty()) return;
 
-    const qreal width = designSize.width() * scale;
-    const qreal height = designSize.height() * scale;
-    const qreal xPos = std::max<qreal>(static_cast<qreal>(margin), static_cast<qreal>(this->width()) - width - margin);
-    m_hudWidget->setGeometry(static_cast<int>(xPos), margin, static_cast<int>(width), static_cast<int>(height));
+    // 4. 【核心】将逻辑场景矩形 映射为 视口中的像素矩形
+    //    这会返回 fitInView(..., Qt::KeepAspectRatio) 计算出的那个 4:3 区域
+    //    例如，在 1920x1080 的屏幕上，它可能返回 (240, 0, 1440, 1080)
+    QRect viewportGameRect = m_view->mapFromScene(logicalSceneRect).boundingRect();
+
+    // 5. 将这个 视口矩形 映射到 MainWindow 的坐标系中
+    //    因为 m_hudWidget 是 MainWindow 的子控件 (parent == this)
+    QPoint hudTopLeft = viewport->mapTo(this, viewportGameRect.topLeft());
+    QRect hudGeometry(hudTopLeft, viewportGameRect.size());
+
+    // 6. 将 HUD 控件的大小和位置设置为这个 4:3 的区域
+    m_hudWidget->setGeometry(hudGeometry);
+
+    // 7. 确保 HUD 浮在最上层
     m_hudWidget->raise();
 }
 
@@ -2252,4 +2257,14 @@ void MainWindow::onPauseMenuClosed()
 
     // 3. 重置指针 (因为 m_pauseMenuWidget 设置了 WA_DeleteOnClose)
     m_pauseMenuWidget = nullptr;
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    // 1. 调用父类的实现
+    QMainWindow::showEvent(event);
+
+    // 2. 使用 QTimer::singleShot(0, ...) 延迟调用。
+    //    这能确保在首次显示时，视口（viewport）的尺寸已经计算完毕。
+    QTimer::singleShot(0, this, &MainWindow::positionHudWidget);
 }
