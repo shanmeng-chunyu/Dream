@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QTimer>
 #include <QStringList>
+#include <QIcon>
 
 #include "LevelEditorWidget.h"
 #include "MainWindow.h"
@@ -37,6 +38,8 @@ namespace
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    a.setWindowIcon(QIcon(":/background/resources/background/title.png"));
 
     // (调试用的关卡编辑器保持注释状态)
     /*
