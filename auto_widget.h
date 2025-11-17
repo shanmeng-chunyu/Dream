@@ -7,7 +7,10 @@
 #include <QRect>
 #include <QLabel>
 #include <QFont>
+#include <QPixmap>
+#include <QPainter>
 #include "IconButton.h"
+
 
 class auto_widget : public QWidget
 {
@@ -18,6 +21,8 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void updateComponentsSize();
+    void paintEvent(QPaintEvent *event) override;
+    void generateBlurredBackground();
 
 protected:
     // 存储初始尺寸，用于计算缩放比例
@@ -28,6 +33,10 @@ protected:
     QMap<QPushButton*, QSize> initialIconSizes;
     // 存储需要缩放字体的控件初始字体
     QMap<QWidget*, QFont> initialFonts;
+    QPixmap m_rawBg;             // 原始（清晰）的背景图
+    QPixmap m_blurredBg;         // 存储模糊后的背景图
+    int m_blurRadius;
+
 };
 
 #endif // AUTO_WIDGET_H

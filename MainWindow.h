@@ -7,6 +7,8 @@
 #include <QVector>
 #include <QDebug>
 #include <QPointer>
+#include <QPixmap>
+#include <QPainter>
 #include <QStringList>
 #include <QJsonObject>
 #include <QRectF>
@@ -55,6 +57,7 @@ signals:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
     void showEvent(QShowEvent *event) override;
 
 private slots:
@@ -75,6 +78,7 @@ private slots:
 
 private:
     void initializeScene();
+    void generateBlurredBackground();
     QString resolveLevelPath(const QString &candidate) const;
     bool loadVisualLevel(const QString &levelPath);
     void populateSceneFromMap();
@@ -162,6 +166,9 @@ private:
     QMetaObject::Connection m_waveSpawnConnection;
     QMetaObject::Connection m_waveCompletionConnection;
     bool m_fastModeActive;
+    QPixmap m_rawBg;
+    QPixmap m_blurredBg;
+    int m_blurRadius;
 };
 
 #endif

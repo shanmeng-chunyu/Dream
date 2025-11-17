@@ -1,6 +1,12 @@
 // Dream - 副本/auto_widget.cpp
 
 #include "auto_widget.h"
+#include <QPainter>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsBlurEffect>
+#include <QImage>
+#include <QDebug>
 
 auto_widget::auto_widget(QWidget *parent)
     : QWidget{parent}
@@ -9,16 +15,37 @@ auto_widget::auto_widget(QWidget *parent)
     // 我们才设置黑色背景来实现 Pillarbox。
     if (parent == nullptr) 
     {
-        this->setAutoFillBackground(true);
-        QPalette pal = this->palette();
-        pal.setColor(QPalette::Window, Qt::white);
-        this->setPalette(pal);
+        // 1. 这是一个顶级窗口 (Menu, ChooseLevel, etc.)
+        //    加载你指定的原始背景图
+        if (!m_rawBg.load(":/background/resources/background/choose_.png")) { //
+            qWarning() << "Failed to load blurred background source image.";
+        }
+
+        // 2. 创建模糊效果器
+        m_blurRadius = 20;
+
+        // 3. 立即生成一次背景 (使用默认尺寸)
+        generateBlurredBackground();
+
+        // 4. 确保 paintEvent 被调用
+        this->setAutoFillBackground(false);
+
+    } else {
+        // 这是一个子控件 (widget_ingame HUD)
+        // 保持透明
+        this->setAutoFillBackground(false);
+        setAttribute(Qt::WA_TranslucentBackground, true);
     }
 }
+
 
 void auto_widget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
+    if (parent() == nullptr && m_blurRadius > 0)
+    {
+        generateBlurredBackground();
+    }
     updateComponentsSize();
 }
 
@@ -113,4 +140,52 @@ void auto_widget::updateComponentsSize()
             widget->setFont(scaledFont);
         }
     }
+}
+
+void auto_widget::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+
+    if (parent() == nullptr && !m_blurredBg.isNull())
+    {
+        // 这是一个顶级窗口
+        // 绘制我们生成的、铺满全屏的模糊背景
+        painter.drawPixmap(this->rect(), m_blurredBg);
+    }
+    else
+    {
+        // 这是一个子控件 (HUD)，让它保持透明
+        QWidget::paintEvent(event);
+    }
+}
+
+void auto_widget::generateBlurredBackground()
+{
+    if (m_rawBg.isNull() || m_blurRadius <= 0 || this->size().isEmpty()) {
+        return;
+    }
+
+    // 1. 将原始图像缩放到当前窗口大小（高质量缩放）
+    QPixmap scaledRaw = m_rawBg.scaled(this->size(),
+                                       Qt::KeepAspectRatioByExpanding, // 保证填满，可能会裁剪
+                                       Qt::SmoothTransformation);
+
+    // 2. 使用 QGraphicsEffect 来施加模糊
+    QGraphicsScene scene;
+    QGraphicsPixmapItem item(scaledRaw);
+    QGraphicsBlurEffect blurEffect;
+    blurEffect.setBlurRadius(m_blurRadius);
+    item.setGraphicsEffect(&blurEffect);
+
+    scene.addItem(&item);
+
+    // 3. 将模糊后的场景渲染到 QImage
+    QImage image(scaledRaw.size(), QImage::Format_ARGB32_Premultiplied);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    scene.render(&painter, QRectF(), scaledRaw.rect());
+    painter.end();
+
+    // 4. 保存最终的 QPixmap
+    m_blurredBg = QPixmap::fromImage(image);
 }

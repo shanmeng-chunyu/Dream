@@ -229,6 +229,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     setCentralWidget(m_view);
 
+    m_blurRadius = 20; // 模糊半径
+    if (!m_rawBg.load(":/background/resources/background/choose_.png")) {
+        qWarning() << "MainWindow: Failed to load blurred background source image.";
+    }
+
+    // 1. 设置 MainWindow 自身为不自动填充 (我们将手动绘制)
+    this->setAutoFillBackground(false);
+
+    // 2. 【关键】设置 QGraphicsView 和它的视口(viewport)透明
+    // 这样才能看到 MainWindow 绘制的模糊背景
+    m_view->setAttribute(Qt::WA_TranslucentBackground);
+    m_view->viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    m_view->setStyleSheet("background: transparent; border: none;");
+
     initializeScene();
 
     QTimer::singleShot(0, this, [this]()
@@ -1617,6 +1631,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         int y = (this->height() - childHeight) / 2;
         m_postGameWidget->move(x, y);
     }
+
+    generateBlurredBackground();
 }
 
 QVector<double> MainWindow::buildAxisCoordinates(double offset, double spacing) const
@@ -2267,4 +2283,53 @@ void MainWindow::showEvent(QShowEvent *event)
     // 2. 使用 QTimer::singleShot(0, ...) 延迟调用。
     //    这能确保在首次显示时，视口（viewport）的尺寸已经计算完毕。
     QTimer::singleShot(0, this, &MainWindow::positionHudWidget);
+}
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+
+    if (!m_blurredBg.isNull())
+    {
+        // 绘制我们生成的、铺满全屏的模糊背景
+        painter.drawPixmap(this->rect(), m_blurredBg);
+    }
+    else
+    {
+        // 如果图片加载失败，回退到纯黑背景
+        painter.fillRect(this->rect(), Qt::black);
+        QMainWindow::paintEvent(event);
+    }
+}
+
+void MainWindow::generateBlurredBackground()
+{
+    if (m_rawBg.isNull() || m_blurRadius <= 0 || this->size().isEmpty()) {
+        return;
+    }
+
+    // 1. 将原始图像缩放到当前窗口大小（高质量缩放）
+    QPixmap scaledRaw = m_rawBg.scaled(this->size(),
+                                       Qt::KeepAspectRatioByExpanding, // 保证填满，可能会裁剪
+                                       Qt::SmoothTransformation);
+
+    // 2. 使用 QGraphicsEffect 来施加模糊
+    QGraphicsScene scene;
+    QGraphicsPixmapItem item(scaledRaw);
+
+    QGraphicsBlurEffect blurEffect; // 在栈上创建
+    blurEffect.setBlurRadius(m_blurRadius); // 使用成员变量设置
+    item.setGraphicsEffect(&blurEffect); // 传递栈对象的地址
+
+    scene.addItem(&item);
+
+    // 3. 将模糊后的场景渲染到 QImage
+    QImage image(scaledRaw.size(), QImage::Format_ARGB32_Premultiplied);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    scene.render(&painter, QRectF(), scaledRaw.rect());
+    painter.end();
+
+    // 4. 保存最终的 QPixmap
+    m_blurredBg = QPixmap::fromImage(image);
 }
