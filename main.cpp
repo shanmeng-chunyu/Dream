@@ -73,22 +73,66 @@ int main(int argc, char *argv[])
         widget->activateWindow();
     };
 
+    auto switchWindow = [](QWidget *from, QWidget *to)
+    {
+        if (!from || !to)
+        {
+            return;
+        }
+
+        // 1. 从 "from" 窗口获取当前的几何信息和窗口状态
+        const QRect geometry = from->geometry();
+        const Qt::WindowStates state = from->windowState();
+
+        // 2. 隐藏 "from" 窗口
+        from->hide();
+
+        // 3. 将状态应用到 "to" 窗口
+        if (state.testFlag(Qt::WindowFullScreen))
+        {
+            // 如果是全屏，则全屏显示 "to" 窗口
+            to->setWindowState(Qt::WindowFullScreen);
+            to->showFullScreen();
+        }
+        else if (state.testFlag(Qt::WindowMaximized))
+        {
+            // 如果是最大化，则最大化显示
+            to->setWindowState(Qt::WindowMaximized);
+            to->showMaximized();
+        }
+        else
+        {
+            // 否则，是普通窗口，恢复其精确的几何位置和大小
+            to->setGeometry(geometry);
+            to->setWindowState(Qt::WindowNoState); // 确保移除了任何最大化/最小化/全屏标志
+            to->showNormal();
+        }
+
+        // 4. (可选但推荐) 确保新窗口在前台
+        to->raise();
+        to->activateWindow();
+    };
+
     auto startLevel = [&](const QString &candidatePath)
     {
         // ... (内容保持不变) ...
         if (!w.startLevelFromSource(candidatePath, true))
         {
-            focusWindow(&levelChooser);
+            focusWindow(&levelChooser); // 失败时保持旧逻辑
             return;
         }
 
-        levelChooser.hide();
-        if (!w.isVisible())
-        {
-            w.show();
-        }
-        w.raise();
-        w.activateWindow();
+        // 【修改】使用新的 switchWindow 函数
+        switchWindow(&levelChooser, &w);
+
+        // 【删除】以下逻辑已由 switchWindow 处理
+        // levelChooser.hide();
+        // if (!w.isVisible())
+        // {
+        //     w.show();
+        // }
+        // w.raise();
+        // w.activateWindow();
     };
 
     // --- 信号槽连接 ---
@@ -104,18 +148,17 @@ int main(int argc, char *argv[])
     // (保留) 从关卡选择器 -> 返回主菜单
     QObject::connect(&levelChooser, &widget_choose_level::back, &a, [&]()
                      {
-                         levelChooser.hide();
-                         focusWindow(&menu);
+                         switchWindow(&levelChooser, &menu); // <-- 修改
                      });
 
     // (保留) 从游戏窗口 -> 返回关卡选择器
     QObject::connect(&w, &MainWindow::levelSelectionRequested, &levelChooser, [&]()
-                     { focusWindow(&levelChooser); });
-
+                      {
+                          switchWindow(&w, &levelChooser); // <-- 修改
+                      });
     // <--- 新增连接：从游戏窗口 -> 返回主菜单 --->
     QObject::connect(&w, &MainWindow::mainMenuRequested, &a, [&]() {
-        // 'w' 已经在 onReturnToMainMenu 中隐藏了
-        focusWindow(&menu);
+        switchWindow(&w, &menu); // <-- 修改
     });
 
     // --- 主菜单的三个按钮连接 ---
@@ -123,15 +166,13 @@ int main(int argc, char *argv[])
     // 1. (保留) 主菜单 -> 关卡选择器
     QObject::connect(&menu, &widget_menu::choose_level, &a, [&]()
                      {
-                         menu.hide();
-                         focusWindow(&levelChooser);
+                         switchWindow(&menu, &levelChooser); // <-- 修改
                      });
 
     // 2. 步骤 2：(新增) 主菜单 -> 图鉴
     QObject::connect(&menu, &widget_menu::reference_book, &a, [&]()
                      {
-                         menu.hide();
-                         focusWindow(&refBook);
+                         switchWindow(&menu, &refBook); // <-- 修改
                      });
 
     // 3. (保留) 主菜单 -> 退出游戏
@@ -143,8 +184,7 @@ int main(int argc, char *argv[])
     // 步骤 3：(新增) 从图鉴 -> 返回主菜单
     QObject::connect(&refBook, &widget_reference_book::back_to_menu, &a, [&]()
                      {
-                         refBook.hide();
-                         focusWindow(&menu);
+                         switchWindow(&refBook, &menu); // <-- 修改
                      });
 
 
