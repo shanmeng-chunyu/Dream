@@ -12,7 +12,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     resource_value=ui->resource_value;
 
     QVector<QString> resources={":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Comfort.png",":/resource/resources/resource/Courage.png"};
-    ui->resourse->setIcon(QPixmap(resources[level]));
+    ui->resource->setPixmap(resources[level]);
 
     connect(ui->menu,&QPushButton::clicked,this,&widget_ingame::pause_menu);
     connect(ui->pause,&QPushButton::clicked,this,[=](){
@@ -61,7 +61,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     initialGeometries[ui->pause] = ui->pause->geometry();
     initialGeometries[ui->speed] = ui->speed->geometry();
     initialGeometries[ui->menu] = ui->menu->geometry();
-    initialGeometries[ui->resourse] = ui->resourse->geometry();
+    initialGeometries[ui->resource] = ui->resource->geometry();
     initialGeometries[ui->stability] = ui->stability->geometry();
     initialGeometries[ui->label] = ui->label->geometry();
     initialGeometries[ui->label_2] = ui->label_2->geometry();
@@ -76,8 +76,6 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     initialIconSizes[ui->pause] = ui->pause->iconSize();
     initialIconSizes[ui->speed] = ui->speed->iconSize();
     initialIconSizes[ui->menu] = ui->menu->iconSize();
-    initialIconSizes[ui->resourse] = ui->resourse->iconSize();
-    initialIconSizes[ui->stability] = ui->stability->iconSize();
 }
 
 widget_ingame::~widget_ingame()

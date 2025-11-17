@@ -55,7 +55,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+     <normaloff>:/button/resources/button/button_level_choose.png</normaloff>:/button/resources/button/button_level_choose.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -106,43 +106,12 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+     <normaloff>:/button/resources/button/button_exit.png</normaloff>:/button/resources/button/button_exit.png</iconset>
    </property>
    <property name="iconSize">
     <size>
      <width>200</width>
      <height>100</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="IconButton" name="title">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>70</y>
-     <width>450</width>
-     <height>450</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-        background: transparent;       /* 背景透明 */
-        border: none;                  /* 无边框 */
-    }
-
-</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/background/resources/background/title.png</normaloff>:/background/resources/background/title.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>600</width>
-     <height>600</height>
     </size>
    </property>
   </widget>
@@ -169,7 +138,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+     <normaloff>:/button/resources/button/button_reference.png</normaloff>:/button/resources/button/button_reference.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -178,12 +147,28 @@
     </size>
    </property>
   </widget>
+  <widget class="QLabel" name="title">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>80</y>
+     <width>450</width>
+     <height>450</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/background/resources/background/title.png</pixmap>
+   </property>
+  </widget>
   <zorder>background</zorder>
   <zorder>label</zorder>
   <zorder>btn_choose_level</zorder>
   <zorder>btn_exit_game</zorder>
-  <zorder>title</zorder>
   <zorder>btn_reference_book</zorder>
+  <zorder>title</zorder>
  </widget>
  <customwidgets>
   <customwidget>
