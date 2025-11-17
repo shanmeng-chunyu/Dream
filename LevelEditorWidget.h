@@ -30,11 +30,13 @@ class LevelEditorWidget : public QWidget {
 public:
     explicit LevelEditorWidget(QWidget* parent = nullptr);
     ~LevelEditorWidget() override = default;
+    void loadLevelForEditing(const QString& filePath);
 
 protected:
     // 重写 paintEvent 以绘制自定义背景
     void paintEvent(QPaintEvent* event) override;
-
+signals:
+    void levelEditingFinished(const QString& savedLevelPath);
 private slots:
     // --- 通用 ---
     void saveLevel();
@@ -55,6 +57,7 @@ private slots:
     // --- 防御塔选择器 (下半部分) ---
     void onTowerSlotSelectionChanged();
     void onTowerTypeChanged(int index);
+
 
 
 private:

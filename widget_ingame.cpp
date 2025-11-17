@@ -40,6 +40,19 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
         }
     });
 
+    ui->label->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->description->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->progress->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->progressbar->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    ui->label_2->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->stability->setAttribute(Qt::WA_TransparentForMouseEvents, true); // (这是个图标)
+    ui->stability_progressbar->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->stability_value->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+    ui->resourse->setAttribute(Qt::WA_TransparentForMouseEvents, true); // (这是个图标)
+    ui->resource_value->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
 
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
 
@@ -80,3 +93,4 @@ void widget_ingame::set_progress(int now,int total){
 void widget_ingame::set_resource_value(int value){
     resource_value->display(value);
 }
+

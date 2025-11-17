@@ -6,7 +6,7 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
     , ui(new Ui::widget_building_list)
     ,background({":/frame/resources/frame/building1.png",":/frame/resources/frame/building2.png",":/frame/resources/frame/building3.png"})
     ,name_(name),pixmap_(pixmap),price_(price)
-    ,resource({":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Courage.png",":/resource/resources/resource/Comfort.png"})
+    ,resource({":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Comfort.png",":/resource/resources/resource/Courage.png"})
 {
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);

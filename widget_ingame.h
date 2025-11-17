@@ -28,9 +28,21 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override {
-        QWidget::mousePressEvent(event);
-        auto p=event->pos();
-        emit clicked((double)p.x()/width(),(double)p.y()/height());
+        // 1. 检查鼠标点击的位置是否有子控件（如按钮）
+        QWidget* child = childAt(event->pos());
+
+        // 2. 如果 child 不是 nullptr (即点击了按钮)
+        if (child) {
+            // 3. 让 Qt 正常处理这个按钮点击
+            QWidget::mousePressEvent(event);
+        }
+        else {
+            // 4. 如果点击的是“空白”区域
+            // 5. 【关键修复】告诉 Qt 忽略这个事件
+            event->ignore();
+            //    这会让事件“穿透”到 HUD 下方的 QGraphicsView，
+            //    从而允许 QGraphicsView 处理它并将其发送给你的 TowerBaseItem。
+        }
     }
 
 signals:

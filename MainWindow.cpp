@@ -5,6 +5,7 @@
 #include "WaveManager.h"
 #include "widget_ingame.h"
 #include "widget_pause_menu.h"
+#include "widget_building_list.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
@@ -17,6 +18,9 @@
 #include <QAction>
 #include <QResizeEvent>
 #include <QFileInfo>
+#include <QFile>
+#include <QGraphicsBlurEffect>
+#include <QImage>
 #include <QCoreApplication>
 #include <QDir>
 #include <QMessageBox>
@@ -1443,6 +1447,7 @@ QPoint MainWindow::sceneToGlobalPoint(const QPointF &scenePos) const
 
 void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
 {
+    // --- 1. 准备数据 ---
     const auto &towerChoices = m_visualMap.getAvailableTowers();
     if (towerChoices.empty())
     {
@@ -1450,56 +1455,180 @@ void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
         return;
     }
 
-    QMenu menu(this);
-    for (const auto &proto : towerChoices)
-    {
-        QString label = proto.name.isEmpty() ? proto.type : proto.name;
-        label.append(QStringLiteral(" (%1)").arg(QString::number(proto.cost)));
-        QAction *action = menu.addAction(label);
-        action->setData(proto.type);
+    // 确保 m_cachedPlayer 是最新的
+    if (!m_cachedPlayer) {
+         m_cachedPlayer = resolvePlayer();
+    }
+    int currentResources = m_cachedPlayer ? m_cachedPlayer->getResource() : 0;
+    int currentLevel = m_currentLevelIndex;
+
+    QVector<QString> names, pixmaps, prices;
+    for (const auto &proto : towerChoices) {
+        names.append(proto.name);
+        pixmaps.append(proto.pixmapPath);
+        prices.append(QString::number(proto.cost));
     }
 
-    QAction *selected = menu.exec(globalPos);
-    if (!selected)
-    {
-        return;
+    // --- 2. 创建 widget_building_list ---
+    // (false = 不是升级菜单)
+    widget_building_list *buildMenu = new widget_building_list(
+        currentLevel,
+        currentResources,
+        false,
+        names,
+        pixmaps,
+        prices,
+        this // <-- 设为 this (MainWindow) 的子控件
+    );
+    buildMenu->setAttribute(Qt::WA_DeleteOnClose); // 关键：关闭时自动删除
+
+    // --- 3. 【Bug 修复核心】使用 Lambda 捕获 baseIndex ---
+    connect(buildMenu, &widget_building_list::buy, this,
+        [this, baseIndex, towerChoices](int towerTypeIndex) { // <-- 捕获 baseIndex
+
+        if (towerTypeIndex < 0 || (size_t)towerTypeIndex >= towerChoices.size()) return;
+
+        // 从 towerChoices 获取被点击的塔的 "type"
+        QString towerType = towerChoices[towerTypeIndex].type;
+
+        // 使用被捕获的 baseIndex 获取正确的坐标
+        const QPointF relativePos = m_towerBases[baseIndex].relativePosition;
+
+        // 发送建造请求
+        GameManager::instance()->buildTower(towerType, relativePos);
+
+        // 立即更新塔基状态
+        QTimer::singleShot(0, this, [this, baseIndex]() {
+            updateSingleBaseState(baseIndex);
+        });
+    });
+
+    // --- 4. 显示菜单 ---
+    // (将其显示为 "Application Modal" 模态窗口，会阻止点击其他地方)
+    buildMenu->setWindowModality(Qt::ApplicationModal);
+    buildMenu->show();
+
+    // 居中显示
+    int x = (this->width() - buildMenu->width()) / 2;
+    int y = (this->height() - buildMenu->height()) / 2;
+    buildMenu->move(x, y);
+}
+
+Tower* MainWindow::findTowerAtBase(int baseIndex) const
+{
+    if (baseIndex < 0 || baseIndex >= m_towerBases.size()) return nullptr;
+
+    // (这里的代码就是之前 lambda 的内部代码，现在它们可以合法访问成员了)
+    const QPointF center = toAbsolutePosition(m_towerBases[baseIndex].relativePosition);
+    const QRectF area(center.x() - m_baseRadius, center.y() - m_baseRadius, m_baseRadius * 2.0, m_baseRadius * 2.0);
+
+    const QList<QGraphicsItem *> items = m_scene->items(area);
+    for (QGraphicsItem *item : items) {
+        if (auto tower = dynamic_cast<Tower *>(item)) {
+            return tower; // 找到了
+        }
     }
-
-    const QString towerType = selected->data().toString();
-    if (towerType.isEmpty())
-    {
-        return;
-    }
-
-    const QPointF relativePos = m_towerBases[baseIndex].relativePosition;
-    GameManager::instance()->buildTower(towerType, relativePos);
-
-    QTimer::singleShot(0, this, [this, baseIndex]()
-                       { updateSingleBaseState(baseIndex); });
+    return nullptr; // 没找到
 }
 
 void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
 {
-    QMenu menu(this);
-    QAction *upgradeAction = menu.addAction(tr("Upgrade Tower"));
-    QAction *sellAction = menu.addAction(tr("Sell Tower"));
-
-    QAction *selected = menu.exec(globalPos);
-    if (!selected)
-    {
+    Tower* tower = findTowerAtBase(baseIndex);
+    if (!tower) {
+        qWarning() << "showUpgradeMenu: Could not find tower at base index" << baseIndex;
         return;
     }
 
-    const QPointF relativePos = m_towerBases[baseIndex].relativePosition;
-    if (selected == upgradeAction)
-    {
-        emit towerUpgradeRequested(relativePos);
-        // QMessageBox::information(this, tr("Upgrade"), tr("Upgrade logic not implemented yet."));
+    // --- 1. 创建一个临时的 QMenu 来选择 "升级" 还是 "出售" ---
+    // (我们仍然用 QMenu 做第一层选择，因为它简单。美化这层是下一步了)
+    QMenu menu(this);
+    QAction *upgradeAction = nullptr;
+
+    // 只有未升级的塔才显示 "升级" 选项
+    if (!tower->IsUpgraded()) {
+         upgradeAction = menu.addAction(tr("升级防御塔"));
     }
-    else if (selected == sellAction)
+    QAction *sellAction = menu.addAction(tr("出售防御塔"));
+
+    QAction *selected = menu.exec(globalPos);
+    if (!selected) {
+        return; // 用户取消
+    }
+
+    const QPointF relativePos = m_towerBases[baseIndex].relativePosition;
+
+    if (selected == sellAction)
     {
+        // --- 2. 出售逻辑 (这个很简单) ---
         emit towerSellRequested(relativePos);
-        // QMessageBox::information(this, tr("Sell"), tr("Sell logic not implemented yet."));
+        // (GameManager 会处理删除，我们需要在稍后更新塔基)
+        QTimer::singleShot(0, this, [this, baseIndex](){
+            updateSingleBaseState(baseIndex);
+        });
+    }
+    else if (selected == upgradeAction)
+    {
+        // --- 3. 升级逻辑 (使用 widget_building_list) ---
+
+        // 3a. 准备数据
+        if (!m_cachedPlayer) { m_cachedPlayer = resolvePlayer(); }
+        int currentResources = m_cachedPlayer ? m_cachedPlayer->getResource() : 0;
+        int currentLevel = m_currentLevelIndex;
+
+        // (我们需要从 tower_data.json 中查找升级信息)
+        // (这部分逻辑在 widget_reference_book.cpp 中已有)
+        QFile file(":/data/tower_data.json");
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Could not open tower_data.json for upgrade info";
+            return;
+        }
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+        file.close();
+        QJsonArray masterTowers = doc.object()["master_towers"].toArray();
+
+        QJsonObject towerData;
+        for (const QJsonValue& val : masterTowers) {
+            if (val.toObject()["type"].toString() == tower->getType()) {
+                towerData = val.toObject();
+                break;
+            }
+        }
+
+        if (towerData.isEmpty()) {
+            qWarning() << "Could not find tower type" << tower->getType() << "in tower_data.json";
+            return;
+        }
+
+        // 准备升级菜单所需的数据
+        QVector<QString> names = { "升级: " + towerData["name"].toString() };
+        QVector<QString> pixmaps = { towerData["pixmap_upgrade"].toString() };
+        QVector<QString> prices = { QString::number(towerData["upgrade_cost"].toInt()) };
+
+        // 3b. 创建 "升级模式" 的菜单
+        widget_building_list *upgradeMenu = new widget_building_list(
+            currentLevel,
+            currentResources,
+            true, // <-- true 表示这是升级菜单
+            names,
+            pixmaps,
+            prices,
+            this
+        );
+        upgradeMenu->setAttribute(Qt::WA_DeleteOnClose);
+
+        // 3c. 【Bug 修复核心】连接信号，捕获 relativePos
+        connect(upgradeMenu, &widget_building_list::buy, this, [this, relativePos](int type) {
+            // (在升级模式下, type 总是 0)
+            emit towerUpgradeRequested(relativePos);
+            // (升级后塔的状态不会立即改变，但我们可以假定它成功了)
+        });
+
+        // 3d. 显示菜单
+        upgradeMenu->setWindowModality(Qt::ApplicationModal);
+        upgradeMenu->show();
+        int x = (this->width() - upgradeMenu->width()) / 2;
+        int y = (this->height() - upgradeMenu->height()) / 2;
+        upgradeMenu->move(x, y);
     }
 }
 
@@ -1881,7 +2010,7 @@ void MainWindow::ensureHudWidget()
     {
         return;
     }
-    m_hudWidget = new widget_ingame(m_currentLevelIndex, this);
+    m_hudWidget = new widget_ingame(m_currentLevelIndex, m_view->viewport());
     m_hudWidget->hide();
     m_hudDesignSize = m_hudWidget->size();
     if (m_hudDesignSize.isEmpty())
@@ -1914,34 +2043,14 @@ void MainWindow::destroyHudWidget()
 
 void MainWindow::positionHudWidget()
 {
-    // 1. 确保 HUD 控件、视图和视口都已准备就绪
-    if (!m_hudWidget || !m_view || !m_view->viewport())
+    if (m_hudWidget && m_view && m_view->viewport())
     {
-        return;
+        // 1. 让 HUD 控件的大小与其父控件 (viewport) 保持一致
+        m_hudWidget->setGeometry(m_view->viewport()->rect());
+
+        // 2. 确保 HUD 仍然显示在最上层
+        m_hudWidget->raise();
     }
-
-    // 2. 获取 QGraphicsView 的视口（viewport）
-    QWidget* viewport = m_view->viewport();
-
-    // 3. 获取场景的逻辑矩形 (例如 0, 0, 1024, 768)
-    QRectF logicalSceneRect = m_view->sceneRect();
-    if (logicalSceneRect.isEmpty()) return;
-
-    // 4. 【核心】将逻辑场景矩形 映射为 视口中的像素矩形
-    //    这会返回 fitInView(..., Qt::KeepAspectRatio) 计算出的那个 4:3 区域
-    //    例如，在 1920x1080 的屏幕上，它可能返回 (240, 0, 1440, 1080)
-    QRect viewportGameRect = m_view->mapFromScene(logicalSceneRect).boundingRect();
-
-    // 5. 将这个 视口矩形 映射到 MainWindow 的坐标系中
-    //    因为 m_hudWidget 是 MainWindow 的子控件 (parent == this)
-    QPoint hudTopLeft = viewport->mapTo(this, viewportGameRect.topLeft());
-    QRect hudGeometry(hudTopLeft, viewportGameRect.size());
-
-    // 6. 将 HUD 控件的大小和位置设置为这个 4:3 的区域
-    m_hudWidget->setGeometry(hudGeometry);
-
-    // 7. 确保 HUD 浮在最上层
-    m_hudWidget->raise();
 }
 
 void MainWindow::connectHudToSystems()

@@ -737,42 +737,38 @@ QString LevelEditorWidget::getPixmapPath(const QMap<QString, QJsonObject>& proto
 
 void LevelEditorWidget::saveLevel() {
 
-    // 步骤 1：(新增) 在保存前检查防御塔数量
+    // 步骤 1：检查防御塔数量
     int selectedTowerCount = 0;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
         QString type = data.value("type").toString();
-
-        // 只有当类型不是 "None" 也不是空时，才算作一个有效的选择
         if (!type.isEmpty() && type != "None") {
             selectedTowerCount++;
         }
     }
 
-    // 步骤 2：(新增) 如果数量不足 4，则弹出提示并终止保存
     if (selectedTowerCount < 4) {
         QMessageBox::warning(this, "选择未完成", "请选择四座防御塔");
-        return; // 终止函数，不继续执行保存
+        return; // 终止函数
     }
 
-    // --- (以下是原有的保存逻辑) ---
-
-    // 1. (保留) 获取用户选择的 *目标* 保存路径
-    QString filePath = QFileDialog::getSaveFileName(this, "Save Level", "", "JSON Files (*.json)");
+    // 步骤 2：获取保存路径
+    QString filePath = QFileDialog::getSaveFileName(this, "保存自定义关卡", "", "JSON Files (*.json)");
     if (filePath.isEmpty()) {
         return; // 用户取消
     }
 
-    // 2. (新增) 定义并加载 *模板* 关卡 (level3.json)
-    // ... (加载模板文件的逻辑保持不变) ...
+    // 步骤 3：加载模板关卡 (level3.json)
     QString templateLevelPath = ":/levels/levels/level3.json";
-
     QFile templateFile(templateLevelPath);
-    QJsonObject rootObj; // 我们将要修改的根对象
+
+    // --- 【关键修正】在这里声明 rootObj ---
+    QJsonObject rootObj;
 
     if (templateFile.open(QIODevice::ReadOnly)) {
         QJsonDocument doc = QJsonDocument::fromJson(templateFile.readAll());
         if (doc.isObject()) {
+            // --- 【关键修正】在这里为 rootObj 赋值 ---
             rootObj = doc.object();
         } else {
             QMessageBox::critical(this, "模板错误", QString("模板文件 %1 不是一个有效的 JSON 对象。").arg(templateLevelPath));
@@ -780,15 +776,14 @@ void LevelEditorWidget::saveLevel() {
         }
         templateFile.close();
     } else {
-        // 模板加载失败
         QMessageBox::critical(this, "模板错误",
             QString("无法加载关卡模板: %1\n\n请确保该文件已正确添加到 .qrc 资源文件中。").arg(templateLevelPath));
         return;
     }
 
+    // --- 步骤 4：覆盖模板数据 (现在 rootObj 是有效的) ---
 
-    // 4. (修改) 从 UI 读取 "waves" 并覆盖
-    // ... (波次保存逻辑保持不变) ...
+    // 4a. 覆盖 "waves"
     QJsonArray wavesArray;
     for (int i = 0; i < waveListWidget->count(); ++i) {
         QJsonObject waveObj;
@@ -796,8 +791,7 @@ void LevelEditorWidget::saveLevel() {
         wavesArray.append(waveObj);
     }
 
-    // 5. (新增) 附加 Boss 波次
-    // ... (Boss 波次逻辑保持不变) ...
+    // 4b. 附加 Boss 波次
     QJsonObject bossWave;
     QJsonArray bossEnemies;
     QJsonObject nightmareEnemy;
@@ -807,11 +801,11 @@ void LevelEditorWidget::saveLevel() {
     bossEnemies.append(nightmareEnemy);
     bossWave["enemies"] = bossEnemies;
     wavesArray.append(bossWave);
+
+    // 这里的 rootObj 访问现在是安全的了
     rootObj["waves"] = wavesArray;
 
-
-    // 6. (修改) 从 UI 读取 "available_towers" 并覆盖
-    // (因为我们已经在函数开头检查过数量，所以这里只需要重建数组)
+    // 4c. 覆盖 "available_towers"
     QJsonArray towersArray;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
@@ -820,27 +814,26 @@ void LevelEditorWidget::saveLevel() {
             towersArray.append(type);
         }
     }
-    rootObj["available_towers"] = towersArray;
+    rootObj["available_towers"] = towersArray; // 访问安全
 
-
-    // 7. (修改) 从 m_enemyPrototypes 读取 "available_enemies" 并覆盖
-    // ... (敌人列表保存逻辑保持不变) ...
+    // 4d. 覆盖 "available_enemies"
     QJsonArray enemiesArray;
     for (const QString& enemyType : m_enemyPrototypes.keys()) {
         enemiesArray.append(enemyType);
     }
-    rootObj["available_enemies"] = enemiesArray;
+    rootObj["available_enemies"] = enemiesArray; // 访问安全
 
-
-    // 9. (保留) 写入文件
-    // ... (写入文件的逻辑保持不变) ...
+    // 步骤 5：写入新文件
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly)) {
         file.write(QJsonDocument(rootObj).toJson(QJsonDocument::Indented));
         file.close();
 
-        QMessageBox::information(this, "保存成功", QString("关卡已成功保存到:\n%1").arg(filePath));
+        // --- 【修改点】发出信号并关闭 ---
+        emit levelEditingFinished(filePath);
         this->close();
+        // -------------------------------
+
     } else {
         QMessageBox::critical(this, "保存失败", "无法写入目标文件。");
     }
@@ -920,3 +913,69 @@ void LevelEditorWidget::paintEvent(QPaintEvent* event) {
         // 当 'painter' 在函数结束时被销毁，透明度等设置会自动重置
     }
 }
+
+void LevelEditorWidget::loadLevelForEditing(const QString& filePath) {
+    if (filePath.isEmpty()) return;
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(this, "Error", "无法打开关卡模板文件。");
+        return;
+    }
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    file.close();
+
+    if (!doc.isObject()) {
+        QMessageBox::critical(this, "Error", "关卡模板文件不是一个有效的 JSON 对象。");
+        return;
+    }
+    QJsonObject rootObj = doc.object();
+
+    // 1. 加载波次 (Waves)
+    waveListWidget->clear();
+    QJsonArray wavesArray = rootObj["waves"].toArray();
+    for (int i = 0; i < wavesArray.size(); ++i) {
+        QJsonObject waveObj = wavesArray[i].toObject();
+        QJsonArray enemiesArray = waveObj["enemies"].toArray();
+
+        // 【修复编辑器逻辑】: 不加载 nightmare，因为它会在保存时自动附加
+        // 检查这个波次是否是 boss 波次
+        bool isBossWave = false;
+        if (enemiesArray.size() == 1) {
+            if (enemiesArray[0].toObject().value("type").toString() == "nightmare") {
+                isBossWave = true;
+            }
+        }
+
+        if (!isBossWave) { // 只加载非 Boss 波次
+            auto* item = new QListWidgetItem(QString("波次%1").arg(QString::number(waveListWidget->count() + 1)));
+            item->setData(Qt::UserRole, enemiesArray);
+            waveListWidget->addItem(item);
+        }
+    }
+
+    // 2. 加载可用防御塔 (Available Towers)
+    for (int i = 0; i < 4; ++i) {
+        QListWidgetItem* slotItem = availableTowersListWidget->item(i);
+        slotItem->setText(QString("防御塔%1").arg(QString::number(i + 1)));
+        slotItem->setData(Qt::UserRole, QJsonObject());
+    }
+    QJsonArray towersArray = rootObj["available_towers"].toArray();
+    for(int i=0; i < towersArray.size() && i < 4; ++i) {
+        QString type = towersArray[i].toString();
+        if (m_towerPrototypes.contains(type)) {
+            QListWidgetItem* slotItem = availableTowersListWidget->item(i);
+            QJsonObject data;
+            data["type"] = type;
+            slotItem->setData(Qt::UserRole, data);
+            QString name = m_towerPrototypes.value(type).value("name").toString(type);
+            slotItem->setText(QString("防御塔%1: %2").arg(QString::number(i + 1)).arg(name));
+        }
+    }
+
+    // 3. 刷新UI
+    if (waveListWidget->count() > 0) waveListWidget->setCurrentRow(0);
+    onWaveSelectionChanged();
+    if (availableTowersListWidget->count() > 0) availableTowersListWidget->setCurrentRow(0);
+    onTowerSlotSelectionChanged();
+}
+

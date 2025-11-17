@@ -30,6 +30,7 @@ class Player;
 class WaveManager;
 class widget_ingame;
 class widget_pause_menu;
+class Tower;
 
 struct TowerBaseVisual
 {
@@ -131,6 +132,7 @@ private:
     qreal cellIntersectionTolerance() const;
     void cacheHudSubControls();
     void updateHudStability(int value);
+    Tower* findTowerAtBase(int baseIndex) const;
 
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;

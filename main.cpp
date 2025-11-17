@@ -42,12 +42,10 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon(":/background/resources/background/title.png"));
 
     // (调试用的关卡编辑器保持注释状态)
-    /*
     LevelEditorWidget editor;
     editor.resize(1024, 768);
     editor.setWindowTitle("关卡编辑器 [调试模式]");
-    editor.show();
-    */
+
 
     // --- 窗口实例化 ---
     MainWindow w; // 游戏主窗口
@@ -145,8 +143,10 @@ int main(int argc, char *argv[])
                      { startLevel(QStringLiteral("levels/level1.json")); });
     QObject::connect(&levelChooser, &widget_choose_level::level2, &a, [&]()
                      { startLevel(QStringLiteral("levels/level2.json")); });
-    QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]()
-                     { startLevel(QStringLiteral("levels/level3.json")); });
+    QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]() {
+        editor.loadLevelForEditing(":/levels/levels/level3.json");
+        switchWindow(&levelChooser, &editor);
+    });
 
     // (保留) 从关卡选择器 -> 返回主菜单
     QObject::connect(&levelChooser, &widget_choose_level::back, &a, [&]()
@@ -189,6 +189,20 @@ int main(int argc, char *argv[])
                      {
                          switchWindow(&refBook, &menu); // <-- 修改
                      });
+
+    QObject::connect(&editor, &LevelEditorWidget::levelEditingFinished, &a, [&](const QString& savedLevelPath)
+    {
+        // 1. 尝试使用新保存的路径启动游戏
+        if (!w.startLevelFromSource(savedLevelPath, true))
+        {
+            // 如果启动失败 (例如保存的文件有问题), 切换回关卡选择器
+            switchWindow(&editor, &levelChooser);
+            return;
+        }
+
+        // 2. 成功启动，切换到游戏窗口 (此时 editor 已经自动 close() 了)
+        switchWindow(&editor, &w);
+    });
 
 
     // --- 启动逻辑 (保持不变) ---
