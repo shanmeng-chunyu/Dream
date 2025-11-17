@@ -146,14 +146,14 @@ public:
           m_clickHandler(std::move(handler)),
           m_isOccupied(false)
     {
-        setZValue(25);
+        setZValue(-1);
         setAcceptHoverEvents(false);
         setAcceptedMouseButtons(Qt::LeftButton);
         setFlag(QGraphicsItem::ItemIsSelectable, false);
         // setPen(Qt::NoPen);
         // setBrush(Qt::NoBrush);
-        setPen(QPen(Qt::red, 2));        // 设置一个2像素宽的红色边框
-        setBrush(QColor(255, 0, 0, 80)); // 设置一个半透明的红色填充 (R, G, B, Alpha)
+        setPen(Qt::NoPen);        // 设置一个2像素宽的红色边框
+        setBrush(QColor(255, 255, 255, 90)); // 设置一个半透明的白色填充 (R, G, B, Alpha)
         setCenter(center);
     }
 
@@ -244,9 +244,8 @@ MainWindow::MainWindow(QWidget *parent)
     // 2. 【关键】设置 QGraphicsView 和它的视口(viewport)透明
     // 这样才能看到 MainWindow 绘制的模糊背景
     m_view->setAttribute(Qt::WA_TranslucentBackground);
-    m_view->viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    m_view->viewport()->setAttribute(Qt::WA_Hover, true);
     m_view->setStyleSheet("background: transparent; border: none;");
-
     initializeScene();
 
     QTimer::singleShot(0, this, [this]()
@@ -1367,11 +1366,11 @@ void MainWindow::recalculateBaseRadius()
     const qreal pixelStepX = size.width() * std::max<qreal>(1e-4, m_visualMap.getGridSpacingX());
     const qreal pixelStepY = size.height() * std::max<qreal>(1e-4, m_visualMap.getGridSpacingY());
     const qreal tile = std::max(pixelStepX, pixelStepY);
-    m_baseRadius = std::max<qreal>(24.0, tile * 0.4);
+    m_baseRadius = std::max<qreal>(10.0, tile * 0.5);
     if (!m_cellSize.isEmpty())
     {
         const qreal halfCell = 0.5 * std::min(m_cellSize.width(), m_cellSize.height());
-        m_baseRadius = std::min(m_baseRadius, halfCell * 0.85);
+        m_baseRadius = std::min(m_baseRadius, halfCell * 1.0);
     }
 }
 

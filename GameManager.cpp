@@ -292,10 +292,10 @@ void GameManager::updateGame() {
             const QJsonObject proto = m_enemyPrototypes["tears"];
             const int maxHp = proto.value("health").toInt();
             if (maxHp > 0) {
-                const double thr      = proto.value("healBelowHp").toDouble(0.5);
-                const int heal        = proto.value("healPerTick").toInt(10);
+                const double thr      = proto.value("healBelowHp").toDouble(0.7);
+                const int heal        = proto.value("healPerTick").toInt(100);
                 const double radius   = proto.value("healRadius").toDouble(400.0);
-                const double interval = proto.value("healInterval").toDouble(2.0);
+                const double interval = proto.value("healInterval").toDouble(1.0);
 
                 if ((double)enemy->getHealth() / maxHp < thr) {
                     int& cd = m_healCd[enemy];

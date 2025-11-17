@@ -89,8 +89,7 @@ void Enemy::move() {
     bool shouldBeFlipped = false;
 
     // 1. 根据类型判断 "期望的" 翻转状态
-    if (type == "bug" || type == "bugmini") {
-        // 假设 "bug" 默认朝左
+    if (type == "bug" || type == "bugmini" || type == "loneliness" || type == "regret") {
         // 当向右移动 (dx > 0.01) 时，它们 "应该被翻转"
         shouldBeFlipped = (dx > 0.01);
     }
