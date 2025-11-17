@@ -23,7 +23,6 @@ widget_menu::widget_menu(QWidget *parent)
     initialGeometries[ui->btn_exit_game] = ui->btn_exit_game->geometry();
 
     // 保存图标按钮的初始图标大小
-    initialIconSizes[ui->title] = ui->title->iconSize();
     initialIconSizes[ui->btn_choose_level] = ui->btn_choose_level->iconSize();
     initialIconSizes[ui->btn_reference_book] = ui->btn_reference_book->iconSize();
     initialIconSizes[ui->btn_exit_game] = ui->btn_exit_game->iconSize();

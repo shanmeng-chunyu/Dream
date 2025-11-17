@@ -26,7 +26,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>:/frame/resources/frame/time.png</pixmap>
+    <pixmap resource="resources.qrc">:/frame/resources/frame/time.png</pixmap>
    </property>
   </widget>
   <widget class="QLabel" name="description">
@@ -41,13 +41,13 @@
    <property name="font">
     <font>
      <family>幼圆</family>
-     <pointsize>14</pointsize>
+     <pointsize>15</pointsize>
      <bold>true</bold>
      <underline>false</underline>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:white</string>
+    <string notr="true">color:rgb(85, 85, 85)</string>
    </property>
    <property name="text">
     <string>关卡进度</string>
@@ -68,13 +68,13 @@
    <property name="font">
     <font>
      <family>幼圆</family>
-     <pointsize>14</pointsize>
+     <pointsize>15</pointsize>
      <bold>true</bold>
      <underline>false</underline>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:grey</string>
+    <string notr="true">color:rgb(85, 85, 85)</string>
    </property>
    <property name="text">
     <string>0 / 0</string>
@@ -196,40 +196,6 @@ QProgressBar::chunk {
     <string/>
    </property>
   </widget>
-  <widget class="IconButton" name="stability">
-   <property name="geometry">
-    <rect>
-     <x>160</x>
-     <y>0</y>
-     <width>60</width>
-     <height>60</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-        background: transparent;       /* 背景透明 */
-        border: none;                  /* 无边框 */
-    }</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resource/resources/resource/Dream_Stability.png</normaloff>:/resource/resources/resource/Dream_Stability.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>50</width>
-     <height>50</height>
-    </size>
-   </property>
-  </widget>
   <widget class="QProgressBar" name="stability_progressbar">
    <property name="geometry">
     <rect>
@@ -249,7 +215,6 @@ QProgressBar::chunk {
 }
 
 QProgressBar::chunk {
-    border-radius: 14px;
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 rgba(116, 235, 213, 0.8),
         stop:1 rgba(172, 182, 229, 0.8));
@@ -291,35 +256,6 @@ QProgressBar::chunk {
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
-   </property>
-  </widget>
-  <widget class="IconButton" name="resourse">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>0</y>
-     <width>50</width>
-     <height>50</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-        background: transparent;       /* 背景透明 */
-        border: none;                  /* 无边框 */
-    }</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/resource/resources/resource/Inspiration.png</normaloff>:/resource/resources/resource/Inspiration.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>50</width>
-     <height>50</height>
-    </size>
    </property>
   </widget>
   <widget class="IconButton" name="menu">
@@ -392,19 +328,51 @@ padding: 5px;            </string>
     <number>100</number>
    </property>
   </widget>
+  <widget class="QLabel" name="resource">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>0</y>
+     <width>50</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/resource/resources/resource/Inspiration.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="stability">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>0</y>
+     <width>55</width>
+     <height>55</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/resource/resources/resource/Dream_Stability.png</pixmap>
+   </property>
+  </widget>
   <zorder>label</zorder>
   <zorder>description</zorder>
   <zorder>progressbar</zorder>
   <zorder>pause</zorder>
   <zorder>speed</zorder>
   <zorder>label_2</zorder>
-  <zorder>stability</zorder>
   <zorder>stability_progressbar</zorder>
   <zorder>stability_value</zorder>
-  <zorder>resourse</zorder>
   <zorder>progress</zorder>
   <zorder>menu</zorder>
   <zorder>resource_value</zorder>
+  <zorder>resource</zorder>
+  <zorder>stability</zorder>
  </widget>
  <customwidgets>
   <customwidget>

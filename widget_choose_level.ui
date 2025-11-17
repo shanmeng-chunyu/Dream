@@ -84,7 +84,7 @@
      <x>520</x>
      <y>70</y>
      <width>191</width>
-     <height>281</height>
+     <height>141</height>
     </rect>
    </property>
    <property name="font">
@@ -154,7 +154,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/frame/resources/frame/level1.png</normaloff>:/frame/resources/frame/level1.png</iconset>
+     <normaloff>:/frame/resources/frame/level1_.png</normaloff>:/frame/resources/frame/level1_.png</iconset>
    </property>
    <property name="iconSize">
     <size>

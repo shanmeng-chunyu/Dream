@@ -50,6 +50,19 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
                                                   "padding: 5px;            ");
             }
         });
+        connect(ui->tower0,&QPushButton::clicked,this,[=]{
+            if(resource_value>=price_[0].toInt()){
+                emit widget_building_list::buy(0);
+                close();
+            }
+            else{
+                timer->start();
+                ui->resource_value->setStyleSheet("background-color:white;"
+                                                  "color:red;"
+                                                  "border-radius: 6px;"
+                                                  "padding: 5px;            ");
+            }
+        });
     }
     else{
         ui->name0->hide();ui->tower0->hide();ui->price0->hide();
@@ -123,6 +136,36 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
                 btn_tower[i]->hide();
                 btn_price[i]->hide();
             }
+        for(int i=0;i<4;i++){
+            l_name[i]->setText(name_[i]);
+            btn_tower[i]->setIcon(QPixmap(pixmap_[i]));
+            btn_price[i]->setText(price_[i]);
+            connect(btn_price[i],&QPushButton::clicked,this,[=](){
+                if(resource_value>=price_[i].toInt()){
+                    emit widget_building_list::buy(i);
+                    close();
+                }
+                else{
+                    timer->start();
+                    ui->resource_value->setStyleSheet("background-color:white;"
+                                                      "color:red;"
+                                                      "border-radius: 6px;"
+                                                      "padding: 5px;            ");
+                }
+            });
+            connect(btn_tower[i],&QPushButton::clicked,this,[=](){
+                if(resource_value>=price_[i].toInt()){
+                    emit widget_building_list::buy(i);
+                    close();
+                }
+                else{
+                    timer->start();
+                    ui->resource_value->setStyleSheet("background-color:white;"
+                                                      "color:red;"
+                                                      "border-radius: 6px;"
+                                                      "padding: 5px;            ");
+                }
+            });
         }
     }
 

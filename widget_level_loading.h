@@ -11,6 +11,7 @@
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
 #include <QPauseAnimation>
+#include <QRandomGenerator>
 
 namespace Ui {
 class widget_level_loading;
@@ -21,11 +22,10 @@ class widget_level_loading : public auto_widget
     Q_OBJECT
 
 public:
-    //初始化需要给出对应关卡的编号，从0开始
-    explicit widget_level_loading(int type,QWidget *parent = nullptr);
+    explicit widget_level_loading(int type,//初始化需要给出对应关卡的编号，从0开始
+                                  QVector<QString> &tips,//向关卡提示集合中增加语句（每次是随机显示一句）
+                                  QWidget *parent = nullptr);
     ~widget_level_loading();
-
-    void set_description(QString d); //设置关卡描述
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -37,7 +37,8 @@ private:
     Ui::widget_level_loading *ui;
     QProgressBar *bar;
     int level_type;
-    QLabel *description;
+    QLabel *tip;
+    QVector<QString> tips_;
     QVector<QString> map_picture;
     QVector<QString> background;
     QVector<QVector<QString>> icon;
