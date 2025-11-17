@@ -28,144 +28,113 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
     QVector<QPushButton*> btn_tower({ui->tower1,ui->tower2,ui->tower3,ui->tower4});
     QVector<QPushButton*> btn_price({ui->price1,ui->price2,ui->price3,ui->price4});
     for(auto &p:btn_price) p->setIcon(QPixmap(resource[level]));
-    ui->resource->setIcon(QPixmap(resource[level]));
+    ui->resource->setPixmap(QPixmap(resource[level]));
 
-    if(upgrade){
-        for(int i=0;i<4;i++){
-            l_name[i]->hide();btn_tower[i]->hide();btn_price[i]->hide();
+    auto connectSignals = [&](QPushButton* button, QPushButton* priceButton, int itemIndex) {
+
+        // 检查价格字符串 (处理 "100" 和 "+100" 两种情况)
+        bool conversionOk = false;
+        int priceValue = price_[itemIndex].toInt(&conversionOk);
+
+        if (!conversionOk) {
+            // 如果转换失败 (可能是 "+200" 这种格式)，尝试去掉第一个字符再转换
+            priceValue = price_[itemIndex].mid(1).toInt(&conversionOk);
         }
-        ui->name0->setText(name[0]);
-        ui->tower0->setIcon(QPixmap(pixmap[0]));
+        if (!conversionOk) {
+            priceValue = 99999; // 设置一个极大值作为安全回退
+        }
+
+        // 定义点击时执行的动作
+        auto onClick = [=, this]() { // 捕获所需变量
+            if(resource_value >= priceValue){
+                emit widget_building_list::buy(itemIndex); // 发射正确的索引
+                close();
+            }
+            else{
+                timer->start();
+                ui->resource_value->setStyleSheet("background-color:white;"
+                                                  "color:red;"
+                                                  "border-radius: 6px;"
+                                                  "padding: 5px;            ");
+            }
+        };
+
+        // 连接两个按钮的点击事件
+        connect(button, &QPushButton::clicked, this, onClick);
+        connect(priceButton, &QPushButton::clicked, this, onClick);
+    };
+
+
+    // 2. 获取传入的选项数量
+    int itemsToShow = name_.size();
+
+    // 3. 根据选项数量，选择不同的布局
+    if (itemsToShow == 1)
+    {
+        // --- 情况 1：只有 1 个选项 (例如 "出售") ---
+        // 我们使用居中的 "slot 0"
+
+        // a. 隐藏 4 宫格
+        for(int i=0; i<4; i++) {
+            l_name[i]->hide(); btn_tower[i]->hide(); btn_price[i]->hide();
+        }
+
+        // b. 设置并显示 "slot 0"
+        ui->name0->setText(name_[0]);
+        ui->tower0->setIcon(QPixmap(pixmap_[0]));
         ui->price0->setText(price_[0]);
-        connect(ui->price0,&QPushButton::clicked,this,[=]{
-            if(resource_value>=price_[0].toInt()){
-                emit widget_building_list::buy(0);
-                close();
-            }
-            else{
-                timer->start();
-                ui->resource_value->setStyleSheet("background-color:white;"
-                                                  "color:red;"
-                                                  "border-radius: 6px;"
-                                                  "padding: 5px;            ");
-            }
-        });
-        connect(ui->tower0,&QPushButton::clicked,this,[=]{
-            if(resource_value>=price_[0].toInt()){
-                emit widget_building_list::buy(0);
-                close();
-            }
-            else{
-                timer->start();
-                ui->resource_value->setStyleSheet("background-color:white;"
-                                                  "color:red;"
-                                                  "border-radius: 6px;"
-                                                  "padding: 5px;            ");
-            }
-        });
+
+        connectSignals(ui->tower0, ui->price0, 0); // 连接索引 0
+
+        ui->name0->show(); ui->tower0->show(); ui->price0->show();
     }
-    else{
+    else if (itemsToShow == 2)
+    {
+        // --- 情况 2：有 2 个选项 (例如 "升级" 和 "出售") ---
+        // 我们使用居中的 "slot 2" 和 "slot 3"
+
+        // a. 隐藏不用的槽位 (0, 1, 4)
+        ui->name0->hide(); ui->tower0->hide(); ui->price0->hide();
+        l_name[0]->hide(); btn_tower[0]->hide(); btn_price[0]->hide(); // 隐藏 slot 1
+        l_name[3]->hide(); btn_tower[3]->hide(); btn_price[3]->hide(); // 隐藏 slot 4
+
+        // b. 设置并显示 "slot 2" (l_name[1])，使用数据[0]
+        l_name[1]->setText(name_[0]);
+        btn_tower[1]->setIcon(QPixmap(pixmap_[0]));
+        btn_price[1]->setText(price_[0]);
+        connectSignals(btn_tower[1], btn_price[1], 0); // 发射索引 0
+        l_name[1]->show(); btn_tower[1]->show(); btn_price[1]->show();
+
+        // c. 设置并显示 "slot 3" (l_name[2])，使用数据[1]
+        l_name[2]->setText(name_[1]);
+        btn_tower[2]->setIcon(QPixmap(pixmap_[1]));
+        btn_price[2]->setText(price_[1]);
+        connectSignals(btn_tower[2], btn_price[2], 1); // 发射索引 1
+        l_name[2]->show(); btn_tower[2]->show(); btn_price[2]->show();
+    }
+    else
+    {
+        // --- 情况 3：有 3 或 4 个选项 (正常的建造菜单) ---
+        // 我们使用 4 宫格 "slot 1-4"
+
+        // a. 隐藏 "slot 0"
         ui->name0->hide();ui->tower0->hide();ui->price0->hide();
-        int itemsToShow = name_.size();
 
-        // 1. 定义我们希望的 x 坐标
-        // (这些坐标是基于您 .ui 文件中的 "tower" 按钮位置)
-        QVector<int> target_x_name;
-        QVector<int> target_x_tower;
-        QVector<int> target_x_price;
-
-        if (itemsToShow == 1) {
-            // 居中 1 个项目 (使用 tower0 的 x=360)
-            target_x_name = {360};
-            target_x_tower = {360};
-            target_x_price = {360};
-        } else if (itemsToShow == 2) {
-            // 居中 2 个项目 (使用 tower2 的 x=300 和 tower3 的 x=420)
-            target_x_name = {300, 420};
-            target_x_tower = {300, 420};
-            target_x_price = {300, 420};
-        } else {
-            // 默认 4 个项目 (使用 tower1,2,3,4 的 180, 300, 420, 540)
-            target_x_name = {180, 300, 420, 540};
-            target_x_tower = {180, 300, 420, 540};
-            target_x_price = {180, 300, 420, 540};
-        }
-
-        // 2. 遍历所有4个UI槽位
-        for(int i = 0; i < 4; i++) {
-
+        // b. 遍历 4 宫格
+        for(int i=0; i < 4; i++) {
             if (i < itemsToShow) {
-                // 如果当前索引 (i) 小于我们传入的选项数，则设置并显示它
+                // 设置并显示
                 l_name[i]->setText(name_[i]);
                 btn_tower[i]->setIcon(QPixmap(pixmap_[i]));
                 btn_price[i]->setText(price_[i]);
 
-                // 3. (新) 移动到我们计算好的 x 坐标
-                //    我们只修改 X 坐标，Y 坐标保持 .ui 中的原样
-                l_name[i]->move(target_x_name[i], l_name[i]->y());
-                btn_tower[i]->move(target_x_tower[i], btn_tower[i]->y());
-                btn_price[i]->move(target_x_price[i], btn_price[i]->y());
+                connectSignals(btn_tower[i], btn_price[i], i); // 发射索引 i
 
-                // 确保它们是可见的
-                l_name[i]->show();
-                btn_tower[i]->show();
-                btn_price[i]->show();
-
-                // 4. (新) 检查是否是“出售”选项（价格以+开头）
-                bool isSellOption = price_[i].startsWith("+");
-
-                connect(btn_price[i], &QPushButton::clicked, this, [=](){
-
-                    // 5. (新) 如果是出售，则跳过资源检查
-                    if(isSellOption || resource_value >= price_[i].toInt()){
-                        emit widget_building_list::buy(i); // 发出正确的索引 (0 或 1)
-                        close();
-                    }
-                    else{
-                        timer->start();
-                        ui->resource_value->setStyleSheet("background-color:white;"
-                                                          "color:red;"
-                                                          "border-radius: 6px;"
-                                                          "padding: 5px;            ");
-                    }
-                });
-
+                l_name[i]->show(); btn_tower[i]->show(); btn_price[i]->show();
             } else {
-                // 如果 'i' 超出了我们的选项数 (例如 i=2 或 i=3)，则隐藏这些多余的槽位
-                l_name[i]->hide();
-                btn_tower[i]->hide();
-                btn_price[i]->hide();
+                // 隐藏多余的
+                l_name[i]->hide(); btn_tower[i]->hide(); btn_price[i]->hide();
             }
-        for(int i=0;i<4;i++){
-            l_name[i]->setText(name_[i]);
-            btn_tower[i]->setIcon(QPixmap(pixmap_[i]));
-            btn_price[i]->setText(price_[i]);
-            connect(btn_price[i],&QPushButton::clicked,this,[=](){
-                if(resource_value>=price_[i].toInt()){
-                    emit widget_building_list::buy(i);
-                    close();
-                }
-                else{
-                    timer->start();
-                    ui->resource_value->setStyleSheet("background-color:white;"
-                                                      "color:red;"
-                                                      "border-radius: 6px;"
-                                                      "padding: 5px;            ");
-                }
-            });
-            connect(btn_tower[i],&QPushButton::clicked,this,[=](){
-                if(resource_value>=price_[i].toInt()){
-                    emit widget_building_list::buy(i);
-                    close();
-                }
-                else{
-                    timer->start();
-                    ui->resource_value->setStyleSheet("background-color:white;"
-                                                      "color:red;"
-                                                      "border-radius: 6px;"
-                                                      "padding: 5px;            ");
-                }
-            });
         }
     }
 

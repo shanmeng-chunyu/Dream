@@ -50,7 +50,7 @@ widget_ingame::widget_ingame(int level,QWidget *parent)
     ui->stability_progressbar->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->stability_value->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    ui->resourse->setAttribute(Qt::WA_TransparentForMouseEvents, true); // (这是个图标)
+    ui->resource->setAttribute(Qt::WA_TransparentForMouseEvents, true); // (这是个图标)
     ui->resource_value->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
 
