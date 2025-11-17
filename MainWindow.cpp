@@ -1531,6 +1531,9 @@ Tower* MainWindow::findTowerAtBase(int baseIndex) const
     return nullptr; // 没找到
 }
 
+// 在 MainWindow.cpp 中
+// 用此函数替换掉您原来的 showUpgradeMenu 函数
+
 void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
 {
     Tower* tower = findTowerAtBase(baseIndex);
@@ -1538,98 +1541,103 @@ void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
         qWarning() << "showUpgradeMenu: Could not find tower at base index" << baseIndex;
         return;
     }
-
-    // --- 1. 创建一个临时的 QMenu 来选择 "升级" 还是 "出售" ---
-    // (我们仍然用 QMenu 做第一层选择，因为它简单。美化这层是下一步了)
-    QMenu menu(this);
-    QAction *upgradeAction = nullptr;
-
-    // 只有未升级的塔才显示 "升级" 选项
-    if (!tower->IsUpgraded()) {
-         upgradeAction = menu.addAction(tr("升级防御塔"));
-    }
-    QAction *sellAction = menu.addAction(tr("出售防御塔"));
-
-    QAction *selected = menu.exec(globalPos);
-    if (!selected) {
-        return; // 用户取消
-    }
-
     const QPointF relativePos = m_towerBases[baseIndex].relativePosition;
 
-    if (selected == sellAction)
-    {
-        // --- 2. 出售逻辑 (这个很简单) ---
-        emit towerSellRequested(relativePos);
-        // (GameManager 会处理删除，我们需要在稍后更新塔基)
-        QTimer::singleShot(0, this, [this, baseIndex](){
-            updateSingleBaseState(baseIndex);
-        });
-    }
-    else if (selected == upgradeAction)
-    {
-        // --- 3. 升级逻辑 (使用 widget_building_list) ---
+    // --- 1. 准备数据 ---
+    QVector<QString> names;
+    QVector<QString> pixmaps;
+    QVector<QString> prices;
 
-        // 3a. 准备数据
-        if (!m_cachedPlayer) { m_cachedPlayer = resolvePlayer(); }
-        int currentResources = m_cachedPlayer ? m_cachedPlayer->getResource() : 0;
-        int currentLevel = m_currentLevelIndex;
-
-        // (我们需要从 tower_data.json 中查找升级信息)
-        // (这部分逻辑在 widget_reference_book.cpp 中已有)
-        QFile file(":/data/tower_data.json");
-        if (!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open tower_data.json for upgrade info";
-            return;
-        }
+    // --- 步骤 1.1：(新) 提前加载 tower_data.json ---
+    // (我们把这段代码移到了 "if (canUpgrade)" 之前，以便 "出售" 选项也能使用它)
+    QJsonObject towerData;
+    QFile file(":/data/tower_data.json");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Could not open tower_data.json for upgrade info";
+    } else {
         QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
         file.close();
         QJsonArray masterTowers = doc.object()["master_towers"].toArray();
-
-        QJsonObject towerData;
         for (const QJsonValue& val : masterTowers) {
             if (val.toObject()["type"].toString() == tower->getType()) {
                 towerData = val.toObject();
                 break;
             }
         }
-
-        if (towerData.isEmpty()) {
-            qWarning() << "Could not find tower type" << tower->getType() << "in tower_data.json";
-            return;
-        }
-
-        // 准备升级菜单所需的数据
-        QVector<QString> names = { "升级: " + towerData["name"].toString() };
-        QVector<QString> pixmaps = { towerData["pixmap_upgrade"].toString() };
-        QVector<QString> prices = { QString::number(towerData["upgrade_cost"].toInt()) };
-
-        // 3b. 创建 "升级模式" 的菜单
-        widget_building_list *upgradeMenu = new widget_building_list(
-            currentLevel,
-            currentResources,
-            true, // <-- true 表示这是升级菜单
-            names,
-            pixmaps,
-            prices,
-            this
-        );
-        upgradeMenu->setAttribute(Qt::WA_DeleteOnClose);
-
-        // 3c. 【Bug 修复核心】连接信号，捕获 relativePos
-        connect(upgradeMenu, &widget_building_list::buy, this, [this, relativePos](int type) {
-            // (在升级模式下, type 总是 0)
-            emit towerUpgradeRequested(relativePos);
-            // (升级后塔的状态不会立即改变，但我们可以假定它成功了)
-        });
-
-        // 3d. 显示菜单
-        upgradeMenu->setWindowModality(Qt::ApplicationModal);
-        upgradeMenu->show();
-        int x = (this->width() - upgradeMenu->width()) / 2;
-        int y = (this->height() - upgradeMenu->height()) / 2;
-        upgradeMenu->move(x, y);
     }
+    // --- towerData 现在已加载 ---
+
+    bool canUpgrade = !tower->IsUpgraded();
+    int upgradeIndex = -1; // 用于信号槽连接
+    int sellIndex = -1;    // 用于信号槽连接
+
+    // 2a. 添加 "升级" 选项 (如果可以)
+    if (canUpgrade && !towerData.isEmpty()) {
+        names.append("升级: " + towerData["name"].toString());
+        pixmaps.append(towerData["pixmap_upgrade"].toString());
+        prices.append(QString::number(towerData["upgrade_cost"].toInt()));
+        upgradeIndex = names.size() - 1; // 升级选项的索引 (现在是 0)
+    }
+
+    // 2b. 添加 "出售" 选项
+    sellIndex = names.size(); // 索引 (0 或 1)
+    int sellPrice = static_cast<int>(tower->getCost() * 0.7);
+    QString selltext = QString("出售：%1").arg(towerData["name"].toString());
+    names.append(selltext);
+
+    // --- 步骤 1.2：(新) 修改“出售”图标路径 ---
+    // (我们使用 towerData 中的基础 "pixmap" 路径)
+    if (!towerData.isEmpty()) {
+        pixmaps.append(towerData["pixmap"].toString());
+    } else {
+        pixmaps.append(":/button/resources/button/lose_repeat.png"); // (保留一个备用)
+    }
+    // --- 修改结束 ---
+
+    prices.append(QString("+%1").arg(QString::number(sellPrice))); // 显示将返还的资源
+
+    // 2c. 获取玩家当前资源和关卡
+    if (!m_cachedPlayer) { m_cachedPlayer = resolvePlayer(); }
+    int currentResources = m_cachedPlayer ? m_cachedPlayer->getResource() : 0;
+    int currentLevel = m_currentLevelIndex;
+
+    // --- 3. 创建 widget_building_list (使用建造模式) ---
+    widget_building_list *upgradeSellMenu = new widget_building_list(
+        currentLevel,
+        currentResources,
+        false, // <-- 关键：使用 false (建造模式)，这样它会显示列表
+        names,
+        pixmaps,
+        prices,
+        this
+    );
+    upgradeSellMenu->setAttribute(Qt::WA_DeleteOnClose);
+
+    // --- 4. 连接信号槽 ---
+    connect(upgradeSellMenu, &widget_building_list::buy, this,
+        // 使用 Lambda 捕获关键变量
+        [this, relativePos, upgradeIndex, sellIndex, baseIndex](int type) {
+
+        if (type == upgradeIndex) {
+            // "升级" 被点击
+            emit towerUpgradeRequested(relativePos);
+
+        } else if (type == sellIndex) {
+            // "出售" 被点击
+            emit towerSellRequested(relativePos);
+            QTimer::singleShot(0, this, [this, baseIndex](){
+                updateSingleBaseState(baseIndex);
+            });
+        }
+    });
+
+    // --- 5. 显示美化后的菜单 ---
+    upgradeSellMenu->setWindowModality(Qt::ApplicationModal); // 设置为模态
+    upgradeSellMenu->show();
+    // 居中显示
+    int x = (this->width() - upgradeSellMenu->width()) / 2;
+    int y = (this->height() - upgradeSellMenu->height()) / 2;
+    upgradeSellMenu->move(x, y);
 }
 
 bool MainWindow::baseHasTower(int baseIndex) const

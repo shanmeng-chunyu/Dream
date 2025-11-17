@@ -881,18 +881,18 @@ void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
         // 没有找到塔
         return;
     }
-    // // 2. 计算退款
-    // int totalCost = towerToSell->getCost();
-    // if (towerToSell->IsUpgraded()) {
-    //     totalCost += towerToSell->getUpgradeCost();
-    // }
-    //
-    // // 定义退款率为 70%
-    // const double REFUND_RATE = 0.7;
-    // int refundAmount = static_cast<int>(totalCost * REFUND_RATE);
-    //
-    // // 3. 返还资源
-    // m_player->addResource(refundAmount);
+    // 2. 计算退款
+    int totalCost = towerToSell->getCost();
+    if (towerToSell->IsUpgraded()) {
+        totalCost += towerToSell->getUpgradeCost();
+    }
+
+    // 定义退款率为 70%
+    const double REFUND_RATE = 0.7;
+    int refundAmount = static_cast<int>(totalCost * REFUND_RATE);
+
+    // 3. 返还资源
+    m_player->addResource(refundAmount);
     m_sellSound->play();
     m_entitiesToClean.append(towerToSell);
     m_towers.removeAll(towerToSell);

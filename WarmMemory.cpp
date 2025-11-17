@@ -3,7 +3,7 @@
 WarmMemory::WarmMemory(double range,const QString &gif_path,const QSize pixelSize, QGraphicsItem* parent):Tower(200,range,10,120,150,gif_path,pixelSize,parent)
 {
     //通过fireRate来表示充能的时间
-    type="WarmMemory";
+    type="WarmMemories";
 }
 
 void WarmMemory::attack()
@@ -32,7 +32,7 @@ void WarmMemory::upgrade()
             fireCount=fireInterval;
         upgraded=true;
         const QSize towerPixelSize(76, 76);
-        QPixmap originalUpgradePixmap(":/towers/resources/towers/level2/WarmMemory_upgrade.png");
+        QPixmap originalUpgradePixmap(":/towers/resources/towers/level2/WarmMemories_upgrade.png");
         QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         setPixmap(scaledPixmap);
     }

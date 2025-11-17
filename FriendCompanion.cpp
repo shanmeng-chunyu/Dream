@@ -4,7 +4,7 @@ FriendCompanion::FriendCompanion(double range,const QString &gif_path,QSize pixe
 {
     //朋友陪伴的fireRate应该是存在的，因为有对应的bullet，应该有一个发射频率(只是对应敌人无功能，先设为1）
     increaseDamage=1.15;
-    type="FriendCompanion";
+    type="Companionship";
 }
 void FriendCompanion::attack(){return;}
 void FriendCompanion:: upgrade()
