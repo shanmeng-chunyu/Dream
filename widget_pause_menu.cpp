@@ -27,7 +27,6 @@ widget_pause_menu::widget_pause_menu(QWidget *parent)
     // 保存图标按钮的初始图标大小
     initialIconSizes[ui->back_to_game] = ui->back_to_game->iconSize();
     initialIconSizes[ui->back_to_menu] = ui->back_to_menu->iconSize();
-    initialIconSizes[ui->game_pause] = ui->game_pause->iconSize();
 }
 
 widget_pause_menu::~widget_pause_menu()

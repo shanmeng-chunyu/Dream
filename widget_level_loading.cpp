@@ -1,18 +1,19 @@
 #include "widget_level_loading.h"
 #include "ui_widget_level_loading.h"
 
-widget_level_loading::widget_level_loading(int type,QWidget *parent)
+widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,QWidget *parent)
     :level_type(type)
     ,auto_widget(parent)
     , ui(new Ui::widget_level_loading)
+    ,tips_(tips)
     ,map_picture({":/map/resources/map/first.png",
                    ":/map/resources/map/second.png",
                    ":/map/resources/map/third.png"})
     ,background({":/background/resources/background/first_background.png",
                   ":/background/resources/background/second_background.png",
                   ":/background/resources/background/third_background.png"})
-    ,icon({{":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/first/scratchpaper.png",":/map_items/resources/map_items/first/stationery.png",":/map_items/resources/map_items/first/cable.png"},
-           {":/map_items/resources/map_items/second/memory_box.png",":/map_items/resources/map_items/second/withered_flowers.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/second/broken_ring.png"},
+    ,icon({{":/towers/resources/towers/level1/InspirationBulb.png",":/map_items/resources/map_items/first/scratchpaper.png",":/map_items/resources/map_items/first/stationery.png",":/towers/resources/towers/level1/FishingCatPillow.png"},
+           {":/towers/resources/towers/level2/PettingCatTime.png",":/map_items/resources/map_items/second/withered_flowers.png",":/map_items/resources/map_items/second/broken_friendship.png",":/towers/resources/towers/level2/WarmMemories_upgrade.png"},
            {":/map_items/resources/map_items/third/start_block.png",":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/third/end_block.png"}})
     , m_animationDistance(20)
     , m_animationDuration(2000)
@@ -30,23 +31,30 @@ widget_level_loading::widget_level_loading(int type,QWidget *parent)
     createSequentialStaggeredFloating(icons);
     start_loadding();
 
+    tips_.push_back("逸一时，误一世");
+    int random = QRandomGenerator::global()->bounded(tips_.size());
+    ui->tip->setText(tips_[random]);
+
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
 
     // 保存各个组件的初始几何信息
     initialGeometries[ui->background] = ui->background->geometry();
-    initialGeometries[ui->description] = ui->description->geometry();
+    initialGeometries[ui->tip] = ui->tip->geometry();
+    initialGeometries[ui->tip_label] = ui->tip_label->geometry();
     initialGeometries[ui->icon1] = ui->icon1->geometry();
     initialGeometries[ui->icon2] = ui->icon2->geometry();
     initialGeometries[ui->icon3] = ui->icon3->geometry();
     initialGeometries[ui->icon4] = ui->icon4->geometry();
     initialGeometries[ui->map] = ui->map->geometry();
     initialGeometries[ui->progressBar] = ui->progressBar->geometry();
+    initialGeometries[ui->portrait] = ui->portrait->geometry();
 
     // 保存图标按钮的初始图标大小
     initialIconSizes[ui->icon1] = ui->icon1->iconSize();
     initialIconSizes[ui->icon2] = ui->icon2->iconSize();
     initialIconSizes[ui->icon3] = ui->icon3->iconSize();
     initialIconSizes[ui->icon4] = ui->icon4->iconSize();
+    initialIconSizes[ui->portrait] = ui->portrait->iconSize();
 }
 
 widget_level_loading::~widget_level_loading()
@@ -60,10 +68,6 @@ widget_level_loading::~widget_level_loading()
     }
     m_animations.clear();
     delete ui;
-}
-
-void widget_level_loading::set_description(QString d){
-    description->setText(d);
 }
 
 void widget_level_loading::start_loadding(int time){

@@ -51,7 +51,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>:/map/resources/map/brief_first.png</pixmap>
+    <pixmap resource="resources.qrc">:/map/resources/map/brief_first.png</pixmap>
    </property>
   </widget>
   <widget class="QProgressBar" name="progressBar">
@@ -66,7 +66,6 @@
    <property name="styleSheet">
     <string notr="true">QProgressBar {
     border: 3px solid rgba(220, 220, 220, 1) ;
-    border-radius: 15px;
     background-color: rgba(255,255,255,0.1);
     text-align: center;
     color: white;
@@ -74,7 +73,6 @@
 }
 
 QProgressBar::chunk {
-    border-radius: 14px;
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 rgba(116, 235, 213, 0.8),
         stop:1 rgba(172, 182, 229, 0.8));
@@ -91,12 +89,12 @@ QProgressBar::chunk {
     <enum>Qt::Orientation::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="description">
+  <widget class="QLabel" name="tip">
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>280</x>
      <y>440</y>
-     <width>481</width>
+     <width>411</width>
      <height>61</height>
     </rect>
    </property>
@@ -104,13 +102,14 @@ QProgressBar::chunk {
     <font>
      <family>幼圆</family>
      <pointsize>18</pointsize>
+     <bold>true</bold>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true">color:white</string>
    </property>
    <property name="text">
-    <string>Description</string>
+    <string>balabala...</string>
    </property>
   </widget>
   <widget class="IconButton" name="icon1">
@@ -132,7 +131,7 @@ QProgressBar::chunk {
     <string/>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="resources.qrc">
      <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
    </property>
    <property name="iconSize">
@@ -161,7 +160,7 @@ QProgressBar::chunk {
     <string/>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="resources.qrc">
      <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
    </property>
    <property name="iconSize">
@@ -190,7 +189,7 @@ QProgressBar::chunk {
     <string/>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="resources.qrc">
      <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
    </property>
    <property name="iconSize">
@@ -219,7 +218,7 @@ QProgressBar::chunk {
     <string/>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="resources.qrc">
      <normaloff>:/map_items/resources/map_items/first/draft_100_100.png</normaloff>:/map_items/resources/map_items/first/draft_100_100.png</iconset>
    </property>
    <property name="iconSize">
@@ -227,6 +226,58 @@ QProgressBar::chunk {
      <width>100</width>
      <height>100</height>
     </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tip_label">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>440</y>
+     <width>61</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>幼圆</family>
+     <pointsize>18</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:white</string>
+   </property>
+   <property name="text">
+    <string>Tip:</string>
+   </property>
+  </widget>
+  <widget class="IconButton" name="portrait">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>450</y>
+     <width>45</width>
+     <height>45</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/portrait/resources/portrait/shan_meng_chun_yu.jpg</normaloff>:/portrait/resources/portrait/shan_meng_chun_yu.jpg</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>50</width>
+     <height>50</height>
+    </size>
+   </property>
+   <property name="default">
+    <bool>false</bool>
+   </property>
+   <property name="flat">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

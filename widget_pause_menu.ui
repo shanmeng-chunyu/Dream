@@ -52,7 +52,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+     <normaloff>:/button/resources/button/button_continue.png</normaloff>:/button/resources/button/button_continue.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -84,7 +84,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/button/resources/button/button_.png</normaloff>:/button/resources/button/button_.png</iconset>
+     <normaloff>:/button/resources/button/button_return.png</normaloff>:/button/resources/button/button_return.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -93,36 +93,20 @@
     </size>
    </property>
   </widget>
-  <widget class="IconButton" name="game_pause">
+  <widget class="QLabel" name="game_pause">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>50</y>
+     <x>280</x>
+     <y>60</y>
      <width>320</width>
      <height>180</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton {
-        background: transparent;       /* 背景透明 */
-        border: none;                  /* 无边框 */
-    }
-
-
-</string>
-   </property>
    <property name="text">
     <string/>
    </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/background/resources/background/label_pause.png</normaloff>:/background/resources/background/label_pause.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>320</width>
-     <height>180</height>
-    </size>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/background/resources/background/label_pause.png</pixmap>
    </property>
   </widget>
  </widget>

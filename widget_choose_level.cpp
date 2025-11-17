@@ -7,7 +7,7 @@ widget_choose_level::widget_choose_level(QWidget *parent)
     ,titles({"第 一 关","第 二 关","第 三 关"})
     ,descriptions(3,"Description")
     ,map({":/map/resources/map/first.png",":/map/resources/map/second.png",":/map/resources/map/third.png"})
-    ,frames({":/frame/resources/frame/level1.png",":/frame/resources/frame/level2.png",":/frame/resources/frame/level3.png"})
+    ,frames({":/frame/resources/frame/level1_.png",":/frame/resources/frame/level2_.png",":/frame/resources/frame/level3_.png"})
     ,icons({":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/third/start_block.png"})
 {
     ui->setupUi(this);
