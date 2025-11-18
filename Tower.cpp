@@ -68,6 +68,7 @@ void Tower::findAndAttackTarget() {
     {
         if (currentTarget && targetIsInRange())
         {
+            regretEffect();
             coffeeEffect();
             friendEffect();
             attack();
@@ -210,5 +211,43 @@ void Tower::resumeAnimation()
     // 检查 m_movie 是否存在，并且之前是暂停状态
     if (m_movie && m_movie->state() == QMovie::Paused) {
         m_movie->setPaused(false);
+    }
+}
+
+QList<Enemy*> Tower::findRegretInRange()
+{
+    QList<Enemy*> regretEnemies;
+    QList<QGraphicsItem*> items = scene()->items();
+    for(auto& item : items)
+    {
+        // 检查它是否是一个 Enemy
+        Enemy* enemy = dynamic_cast<Enemy*>(item);
+        // 检查它是否是 "regret" 类型
+        if(enemy && enemy->getType() == "regret")
+        {
+            QLineF line(pos(), enemy->pos());
+            // 假设 "regret" 的光环范围是 200 (你可以自定义)
+            if(line.length() <= 200.0)
+                regretEnemies.append(enemy);
+        }
+    }
+    return regretEnemies;
+}
+
+void Tower::regretEffect()
+{
+    // 1. (重要) 先调用 stop 函数，
+    //    这可以确保如果敌人走出了范围，塔能恢复正常攻速
+    slowAttackStop();
+
+    QList<Enemy*> auraEnemies = findRegretInRange();
+
+    // 2. 如果找到了光环敌人
+    if(!auraEnemies.isEmpty())
+    {
+        // 假设减速因子是 1.5 (即攻速降低 50%)
+        // 你可以从 enemy_data.json 中读取这个值
+        const double slowFactor = 1.5;
+        slowAttack(slowFactor);
     }
 }

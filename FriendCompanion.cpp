@@ -38,7 +38,7 @@ FriendCompanion::FriendCompanion(double range,const QString &gif_path,QSize pixe
 
     // 3d. 将光环居中 (假设塔的尺寸是 76x76)
     m_auraItem->setZValue(9);    // 确保光环在塔的身后
-    m_auraItem->setOpacity(0.4);  // 设置半透明
+    m_auraItem->setOpacity(0.2);  // 设置半透明
 }
 void FriendCompanion::attack(){return;}
 void FriendCompanion:: upgrade()

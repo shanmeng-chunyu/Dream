@@ -59,6 +59,8 @@ private:
     void friendEffect();
     QList<LiveCoffee*> findCoffeeInRange();//查找
     QList<FriendCompanion*> findFriendInRange();
+    QList<Enemy*> findRegretInRange(); // 查找光环敌人
+    void regretEffect();                // 应用光环效果
 
 protected:
     //属性

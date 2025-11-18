@@ -415,6 +415,8 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
         tower = new NightRadio(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "PettingCatTime") {
         tower = new PettingCatTime(pixelRange,pixmap_path,towerPixelSize);
+        PettingCatTime* catTime = qobject_cast<PettingCatTime*>(tower);
+        connect(catTime, &PettingCatTime::applyControl, this, &GameManager::onApplyEnemyControl);
     }else if (type == "Companionship") {
         tower = new FriendCompanion(pixelRange,pixmap_path,towerPixelSize);
     }
@@ -973,12 +975,19 @@ void GameManager::onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration
         QJsonObject proto = m_towerPrototypes[towerType]; //
 
         // 我们利用 tower_data.json 中已有的 "bullet_pixmap" 字段
-        bool isUpgraded = sendingTower->upgraded;
+
         QString effectPath;
-        if (isUpgraded) {
-            effectPath = proto.value("bullet_pixmap_upgrade").toString();
+        if (towerType == "PettingCatTime")
+        {
+            // 它使用“摸鱼猫猫枕”的图标
+            effectPath = m_towerPrototypes["FishingCatPillow"].value("bullet_pixmap").toString();
         }else {
-            effectPath = proto.value("bullet_pixmap").toString();
+            bool isUpgraded = sendingTower->upgraded;
+            if (isUpgraded) {
+                effectPath = proto.value("bullet_pixmap_upgrade").toString();
+            }else {
+                effectPath = proto.value("bullet_pixmap").toString();
+            }
         }
 
 
@@ -991,8 +1000,11 @@ void GameManager::onApplyEnemyControl(QGraphicsPixmapItem* enemy,double duration
             }
         }
     }
-
-    enemyTarget->stopFor(duration);
+    QString towerType = sendingTower ? sendingTower->getType() : "";
+    if (towerType == "FishingCatPillow" || towerType == "WarmMemories")
+    {
+        enemyTarget->stopFor(duration);
+    }
 }
 Enemy* GameManager::spawnByTypeWithPath(const QString& type,
                                         const std::vector<QPointF>& absPath,

@@ -131,12 +131,7 @@ int main(int argc, char *argv[])
     g_loadingTips.push_back("清除障碍物可以获得额外资源。");
     g_loadingTips.push_back("出售防御塔可以立即返还其总花费（包括升级费用）的 70%。");
     g_loadingTips.push_back("防御塔总是优先攻击范围内的敌人；只有当没有敌人在范围内时，它们才会攻击障碍物。");
-    g_loadingTips.push_back("知识古树发射的子弹可以造成范围伤害，非常适合对付成群的敌人。");
-    g_loadingTips.push_back("续命咖啡是一座光环塔，它能减慢范围内敌人的移动速度，并提升周围友方防御塔的攻击速度。");
-    g_loadingTips.push_back("朋友的陪伴也是一座光环塔，它可以提升周围友方防御塔的攻击力。");
-    g_loadingTips.push_back("深夜电台发射的子弹可以穿透路径上的一排敌人，适合放在长直道上。");
-    g_loadingTips.push_back("摸鱼猫猫枕和温暖的记忆可以使敌人眩晕，暂时阻止其前进。");
-    g_loadingTips.push_back("PRE会嘲讽你所有的防御塔，使它们不顾一切地优先攻击自己。");
+    g_loadingTips.push_back("本次作业的ddl是今晚23：59，你提交了吗?");
 
     // 设置你想要的加载时长 (3000ms = 3秒)
     const int LOADING_DURATION_MS = 8000;

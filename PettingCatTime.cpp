@@ -5,13 +5,30 @@ PettingCatTime::PettingCatTime(double range,const QString &gif_path,QSize pixelS
 {
     type = "PettingCatTime";
 }
-void PettingCatTime::attack(){return;}//没有子弹
+void PettingCatTime::attack(){
+    if(currentTarget)
+    {
+        Enemy* enemy = dynamic_cast<Enemy*>(currentTarget);
+        if(enemy)
+        {
+            // 2a. 立即对敌人造成伤害 (this->damage 是基类成员)
+            enemy->takeDamage(this->damage);
+
+            // 2b. (保留) 发射信号，应用视觉特效 (持续1.0秒)
+            if (!IsUpgraded()) {
+                emit applyControl(enemy, 0.25);
+            }else {
+                emit applyControl(enemy, 0.1);
+            }
+        }
+    }
+}//没有子弹
 void PettingCatTime::upgrade()
 {
     if(!upgraded)
     {
         damage = 90;
-        fireRate = 0.1;
+        fireRate = 0.25;
         fireInterval = fireRate * 60;
         originalFireInterval = fireInterval;
         originalDamage = damage;
