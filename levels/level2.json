@@ -1,7 +1,7 @@
 {
   "level_name": "第二关：失恋的悲伤",
   "map": {
-    "background": "./美术素材（透明）/画面背景/第二关背景.png",
+    "background": ":/background/resources/background/second.png",
     "path_width": 0.1259765625,
     "path": [
       {

@@ -731,7 +731,7 @@ QString MainWindow::locateProjectRootPath(const QString &levelPath) const
     QDir dir = info.absoluteDir();
     for (int depth = 0; depth < 8; ++depth)
     {
-        if (dir.exists(QStringLiteral("美术素材（透明）")))
+        if (dir.exists(QStringLiteral("resources.qrc")))
         {
             return dir.absolutePath();
         }

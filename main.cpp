@@ -125,13 +125,15 @@ int main(int argc, char *argv[])
     g_loadingTips.push_back("孤独和遗憾总是结伴而来。");
     g_loadingTips.push_back("最终的恐惧源于你自己。战胜它，才能迎来真正的黎明。");
     g_loadingTips.push_back("不要低估陪伴的力量，它能让你身边的防线更加坚固。");
-    g_loadingTips.push_back("温暖的回忆拥有强大的力量，它能让时间短暂停止。");
     g_loadingTips.push_back("有时候，一杯咖啡、一个抱枕，就是对抗焦虑的最好武器。");
     g_loadingTips.push_back("有一颗紧紧依靠着你的心，一瞬间落空");
     g_loadingTips.push_back("清除障碍物可以获得额外资源。");
     g_loadingTips.push_back("出售防御塔可以立即返还其总花费（包括升级费用）的 70%。");
     g_loadingTips.push_back("防御塔总是优先攻击范围内的敌人；只有当没有敌人在范围内时，它们才会攻击障碍物。");
     g_loadingTips.push_back("本次作业的ddl是今晚23：59，你提交了吗?");
+    g_loadingTips.push_back("记忆是梦的开场白。");
+    g_loadingTips.push_back("每个岔路都是一次学习，而非错误。");
+    g_loadingTips.push_back("无论梦境多么真实，你始终拥有醒来的力量。");
 
     // 设置你想要的加载时长 (3000ms = 3秒)
     const int LOADING_DURATION_MS = 8000;

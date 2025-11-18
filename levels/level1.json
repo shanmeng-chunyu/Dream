@@ -1,7 +1,7 @@
 {
   "level_name": "第一关：学业的烦恼",
   "map": {
-    "background": "./美术素材（透明）/画面背景/第一关背景.png",
+    "background": ":/background/resources/background/first.png",
     "path_width": 0.11572265625,
     "path": [
       {

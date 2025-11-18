@@ -670,7 +670,7 @@ QString GameMap::locateProjectRootPath(const QString &startDir)
     for (int depth = 0; depth < 8 && dir.exists(); ++depth)
     {
         // 【注意】：我们仍然保留这个检测，以防万一
-        if (dir.exists(QStringLiteral("美术素材（透明）")))
+        if (dir.exists(QStringLiteral("resources.qrc")))
         {
             return dir.absolutePath();
         }

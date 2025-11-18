@@ -186,5 +186,6 @@
     <qresource prefix="/portrait">
         <file>resources/portrait/shan_meng_chun_yu.jpg</file>
         <file>resources/portrait/wu_sa_qi.jpg</file>
+        <file>resources/portrait/liu_ying.gif</file>
     </qresource>
 </RCC>

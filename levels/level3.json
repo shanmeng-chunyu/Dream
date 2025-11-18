@@ -21,7 +21,7 @@
     ],
     "level_name": "第三关：梦你所梦",
     "map": {
-        "background": "./美术素材（透明）/画面背景/第三关背景.png",
+        "background": ":/background/resources/background/third.png",
         "obstacles": [
             {
                 "health": 300,
