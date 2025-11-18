@@ -15,12 +15,8 @@ LiveCoffee::LiveCoffee(double range,const QString &gif_path,QSize pixelSize,QGra
     QPixmap scaledAuraPixmap = originalAuraPixmap.scaled(auraPixelSize,
                                                         Qt::KeepAspectRatio,
                                                         Qt::SmoothTransformation);
-    m_auraItem = new QGraphicsPixmapItem(scaledAuraPixmap, this);
-    const QPointF towerCenter(76.0 / 2.0, 76.0 / 2.0);
-    const QPointF auraTopLeft(towerCenter.x() - auraPixelSize.width() / 2.0,
-                                towerCenter.y() - auraPixelSize.height() / 2.0);
-    m_auraItem->setPos(auraTopLeft);
-    m_auraItem->setZValue(-1);
+    m_auraItem = new QGraphicsPixmapItem(scaledAuraPixmap);
+    m_auraItem->setZValue(9);
     m_auraItem->setOpacity(0.4);
 }
 
@@ -52,10 +48,7 @@ void LiveCoffee::upgrade()
                                                             Qt::KeepAspectRatio,
                                                             Qt::SmoothTransformation);
         m_auraItem->setPixmap(scaledAuraPixmap);
-        const QPointF towerCenter(76.0 / 2.0, 76.0 / 2.0);
-        const QPointF auraTopLeft(towerCenter.x() - auraPixelSize.width() / 2.0,
-                                    towerCenter.y() - auraPixelSize.height() / 2.0);
-        m_auraItem->setPos(auraTopLeft);
+        m_auraItem->setZValue(9);
         m_auraItem->setOpacity(0.4);
     }
 }

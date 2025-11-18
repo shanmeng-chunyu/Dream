@@ -19,7 +19,8 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     currentTarget(nullptr),
     fireInterval(static_cast<int>(fireRate * 60)),fireCount(fireInterval),
     originalFireInterval(fireInterval),originalDamage(damage),
-    m_pixelSize(pixelSize){
+    m_pixelSize(pixelSize),
+    m_auraItem(nullptr){
 
     m_movie = new QMovie(gif_path, QByteArray(), this);
     m_movie->setCacheMode(QMovie::CacheAll);
@@ -28,6 +29,7 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     if (m_movie->isValid()) {
         updatePixmapFromMovie();
     }
+    setZValue(10);
     // 3. 启用鼠标悬停事件
     setAcceptHoverEvents(true);
     m_rangeCircle = new QGraphicsEllipseItem(this);

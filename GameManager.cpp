@@ -427,6 +427,17 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     m_buildSound->play();
     m_scene->addItem(tower);
     m_towers.append(tower);
+    if (tower->getAuraItem())
+    {
+        // 1. 计算塔的中心点
+        const QPointF towerCenter(towerTopLeftPos.x() + towerPixelSize.width() / 2.0,
+                                  towerTopLeftPos.y() + towerPixelSize.height() / 2.0);
+        // 2. 计算光环的左上角 (光环是 300x300)
+        const QPointF auraTopLeft(towerCenter.x() - 300.0 / 2.0,
+                                    towerCenter.y() - 300.0 / 2.0);
+        tower->getAuraItem()->setPos(auraTopLeft); // 定位光环
+        m_scene->addItem(tower->getAuraItem());    // 添加光环
+    }
     connect(tower,&Tower::newBullet,this,&GameManager::onNewBullet);
 }
 
@@ -850,6 +861,18 @@ void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
             if (m_player->spendResource(proto["upgrade_cost"].toInt())) {
                 tower->upgrade();
                 m_upgradeSound->play();
+                if (tower->getAuraItem())
+                {
+                    // (我们假设塔的大小和位置不变)
+                    const QPointF towerTopLeftAbs = tower->pos();
+                    const QSize towerPixelSize(76, 76);
+                    const QPointF towerCenter(towerTopLeftAbs.x() + towerPixelSize.width() / 2.0,
+                                              towerTopLeftAbs.y() + towerPixelSize.height() / 2.0);
+                    const QPointF auraTopLeft(towerCenter.x() - 300.0 / 2.0,
+                                                towerCenter.y() - 300.0 / 2.0);
+                    // 重新设置光环的位置 (这会更新 upgrade() 中修改过的光环贴图)
+                    tower->getAuraItem()->setPos(auraTopLeft);
+                }
             }
             break;
         }
@@ -896,6 +919,11 @@ void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
     // 3. 返还资源
     m_player->addResource(refundAmount);
     m_sellSound->play();
+    if (towerToSell->getAuraItem()) {
+        m_scene->removeItem(towerToSell->getAuraItem());
+        // 将光环也加入清理队列
+        m_entitiesToClean.append(towerToSell->getAuraItem());
+    }
     m_entitiesToClean.append(towerToSell);
     m_towers.removeAll(towerToSell);
 }
@@ -1063,6 +1091,9 @@ void GameManager::clearGameScene()
 
     // 1. 收集所有场景中的实体
     for (Tower* tower : m_towers) {
+        if (tower->getAuraItem()) {
+            m_entitiesToClean.append(tower->getAuraItem());
+        }
         m_entitiesToClean.append(tower);
     }
     m_towers.clear();

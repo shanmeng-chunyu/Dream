@@ -15,8 +15,6 @@ public:
 private:
     double slowFactor;//敌人速度降低率
     double increaseFactor;//塔攻击速度提升率
-
-    QGraphicsPixmapItem* m_auraItem;
 };
 
 #endif // LIVECOFFEE_H

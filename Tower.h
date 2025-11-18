@@ -7,7 +7,7 @@
 #include <Qstring>
 #include "Enemy.h" // 包含头文件以使用Enemy类
 
-
+class QGraphicsPixmapItem;
 class Bullet;
 class LiveCoffee;
 class FriendCompanion;
@@ -29,6 +29,7 @@ public:
     QGraphicsPixmapItem* getCurrentTarget()const{return currentTarget;}
     bool IsUpgraded()const{return upgraded;}
     QString getType(){return type;}
+    QGraphicsPixmapItem* getAuraItem() { return m_auraItem; }
 
     //基本功能
     virtual void attack();
@@ -81,6 +82,7 @@ protected:
     QGraphicsEllipseItem* m_rangeCircle;
     QMovie* m_movie;
     QSize m_pixelSize;
+    QGraphicsPixmapItem* m_auraItem;
     // 鼠标悬停进入事件
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     // 鼠标悬停离开事件

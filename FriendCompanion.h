@@ -13,7 +13,6 @@ public:
     double getFactor(){return increaseDamage;};
 private:
     double increaseDamage;
-    QGraphicsPixmapItem* m_auraItem;
 };
 
 #endif // FRIENDCOMPANION_H
