@@ -154,7 +154,7 @@ public:
         // setPen(Qt::NoPen);
         // setBrush(Qt::NoBrush);
         setPen(Qt::NoPen);        // 设置一个2像素宽的红色边框
-        setBrush(QColor(255, 255, 255, 90)); // 设置一个半透明的白色填充 (R, G, B, Alpha)
+        setBrush(QColor(255, 255, 255, 0)); // 设置一个半透明的白色填充 (R, G, B, Alpha)
         setCenter(center);
     }
 
@@ -272,7 +272,7 @@ void MainWindow::initializeScene()
     }
     connect(this, &MainWindow::towerUpgradeRequested, manager, &GameManager::onTowerUpgradeRequested);
     connect(this, &MainWindow::towerSellRequested, manager, &GameManager::onTowerSellRequested);
-    // connect(manager, &GameManager::obstacleCleared, this, &MainWindow::onObstacleAreaCleared);
+    connect(manager, &GameManager::obstacleCleared, this, &MainWindow::onObstacleAreaCleared);
     synchronizeLogicScreenSize();
     recalculateBaseRadius();
 
@@ -1187,50 +1187,56 @@ void MainWindow::drawPathLayer()
 
 void MainWindow::drawObstacles()
 {
+    // 1. 清空旧的阻挡区域记录
     m_obstacleRects.clear();
 
     const auto &obstacles = m_visualMap.getObstacles();
-    if (obstacles.empty())
-    {
-        return;
-    }
+    if (obstacles.empty()) return;
 
     const QSizeF sceneSize = m_scene->sceneRect().size();
-    if (sceneSize.isEmpty())
-    {
-        return;
-    }
+    if (sceneSize.isEmpty()) return;
 
+    // 计算标准尺寸比例 (保持原逻辑)
     qreal tileVisualSize = kReferenceTileSize * referenceScaleFactor(sceneSize);
-    if (!m_pathTileRects.isEmpty())
-    {
+    if (!m_pathTileRects.isEmpty()) {
         tileVisualSize = std::max<qreal>(m_pathTileRects.first().width(), 1.0);
     }
-
     const qreal targetObstacleSize = tileVisualSize * kObstacleToTileRatio;
 
     for (const auto &obs : obstacles)
     {
+        // 为了获取图片的原始长宽比，我们需要加载一下图片
         QPixmap pix(obs.pixmapPath);
-        if (pix.isNull())
-        {
-            qWarning() << "❌ 无法加载障碍物图片:" << obs.pixmapPath;
-            continue;
-        }
+        if (pix.isNull()) continue;
 
+        // 计算它在屏幕上显示的“视觉尺寸”
         QPixmap scaled = pix.scaled(QSize(qRound(targetObstacleSize), qRound(targetObstacleSize)),
                                     Qt::KeepAspectRatio,
                                     Qt::SmoothTransformation);
 
         const QPointF center = toAbsolutePosition(obs.relativePosition);
-        QRectF rect(center.x() - scaled.width() / 2.0,
-                    center.y() - scaled.height() / 2.0,
-                    scaled.width(),
-                    scaled.height());
 
-        m_obstacleRects.append(rect);
+        // ============================================================
+        // 【核心修改点】引入 Hitbox 缩小因子
+        // ============================================================
+        // 0.7 表示：我们只认为图片中心 70% 的区域是“实心”的，
+        // 边缘 15% 的透明/半透明区域不应该阻挡塔基生成。
+        const qreal hitboxScale = 0.5;
+
+        qreal hitWidth = scaled.width() * hitboxScale;
+        qreal hitHeight = scaled.height() * hitboxScale;
+
+        // 生成一个比图片看起来更小的“逻辑阻挡框”
+        QRectF hitboxRect(center.x() - hitWidth / 2.0,
+                          center.y() - hitHeight / 2.0,
+                          hitWidth,
+                          hitHeight);
+
+        // 将这个缩小后的框加入阻挡列表
+        m_obstacleRects.append(hitboxRect);
     }
 
+    // 立即刷新塔基状态
     updateBaseAvailability();
 }
 
@@ -1255,10 +1261,9 @@ bool MainWindow::isScenePointBlocked(const QPointF &scenePos) const
 
 void MainWindow::createTowerBaseItems()
 {
-    for (TowerBaseVisual &base : m_towerBases)
-    {
-        if (base.graphicsItem)
-        {
+    // 1. 清理旧数据
+    for (TowerBaseVisual &base : m_towerBases) {
+        if (base.graphicsItem) {
             m_scene->removeItem(base.graphicsItem);
             delete base.graphicsItem;
             base.graphicsItem = nullptr;
@@ -1267,78 +1272,45 @@ void MainWindow::createTowerBaseItems()
     m_towerBases.clear();
 
     const QRectF sceneRect = m_scene->sceneRect();
-    if (sceneRect.isEmpty())
-    {
-        return;
-    }
-
-    const double spacingX = std::max<double>(1e-4, m_visualMap.getGridSpacingX());
-    const double spacingY = std::max<double>(1e-4, m_visualMap.getGridSpacingY());
-    const double fallbackSpacing = 0.08;
-    const double effectiveSpacingX = spacingX > 1e-4 ? spacingX : fallbackSpacing;
-    const double effectiveSpacingY = spacingY > 1e-4 ? spacingY : fallbackSpacing;
-    m_cellSize = QSizeF(sceneRect.width() * effectiveSpacingX,
-                        sceneRect.height() * effectiveSpacingY);
-    if (m_cellSize.isEmpty())
-    {
-        return;
-    }
+    if (sceneRect.isEmpty()) return;
 
     recalculateBaseRadius();
 
-    const double offsetX = estimateGridOffset(true, effectiveSpacingX);
-    const double offsetY = estimateGridOffset(false, effectiveSpacingY);
-    const QVector<double> columns = buildAxisCoordinates(offsetX, effectiveSpacingX);
-    const QVector<double> rows = buildAxisCoordinates(offsetY, effectiveSpacingY);
+    // 获取 JSON 中明确定义的所有坐标 (包含空地 + 障碍物下的点)
+    const std::vector<QPointF>& explicitPositions = m_visualMap.getTowerPositions();
+
+    // 计算标准格子大小 (用于碰撞检测)
+    double spacingX = std::max<double>(0.08, m_visualMap.getGridSpacingX());
+    double spacingY = std::max<double>(0.08, m_visualMap.getGridSpacingY());
+    QSizeF cellSize(sceneRect.width() * spacingX, sceneRect.height() * spacingY);
+
+    // 碰撞检测容差
     const qreal intersectionTolerance = cellIntersectionTolerance();
 
-    auto withinUnit = [](double value)
-    {
-        return value >= -1e-4 && value <= 1.0 + 1e-4;
-    };
+    for (const QPointF& relPos : explicitPositions) {
+        TowerBaseVisual base;
+        base.relativePosition = relPos;
 
-    for (double relY : rows)
-    {
-        if (!withinUnit(relY))
-        {
-            continue;
-        }
-        for (double relX : columns)
-        {
-            if (!withinUnit(relX))
-            {
-                continue;
-            }
+        // 计算该塔基的逻辑占用矩形
+        QPointF center = toAbsolutePosition(relPos);
+        base.cellRect = QRectF(center.x() - cellSize.width() / 2.0,
+                               center.y() - cellSize.height() / 2.0,
+                               cellSize.width(),
+                               cellSize.height());
 
-            QPointF relative(relX, relY);
-            QPointF center = toAbsolutePosition(relative);
-            QRectF cellRect(center.x() - m_cellSize.width() / 2.0,
-                            center.y() - m_cellSize.height() / 2.0,
-                            m_cellSize.width(),
-                            m_cellSize.height());
+        // [核心逻辑]：检测该位置当前是否被任何障碍物覆盖
+        // rectIntersectsAny 使用的是我们在 drawObstacles 中生成的“缩小版 Hitbox”
+        // 这完美解决了透明贴图边缘误判的问题，同时又能准确识别“正下方”的遮挡
+        base.blockedByObstacle = rectIntersectsAny(m_obstacleRects, base.cellRect, intersectionTolerance);
 
-            if (!sceneRect.contains(cellRect))
-            {
-                continue;
-            }
+        base.graphicsItem = nullptr;
+        int index = m_towerBases.size();
+        m_towerBases.append(base);
 
-            if (rectIntersectsAny(m_pathTileRects, cellRect, intersectionTolerance))
-            {
-                continue;
-            }
-
-            TowerBaseVisual base;
-            base.relativePosition = relative;
-            base.cellRect = cellRect;
-            base.blockedByObstacle = rectIntersectsAny(m_obstacleRects, cellRect, intersectionTolerance);
-            base.graphicsItem = nullptr;
-            const int index = m_towerBases.size();
-            m_towerBases.append(base);
-
-            if (!m_towerBases[index].blockedByObstacle)
-            {
-                spawnBaseItem(index);
-            }
+        // 只有【没被阻挡】的时候，才创建视觉项
+        // 这解决了 Level 3 "一开始就显示在障碍物上" 的问题
+        if (!base.blockedByObstacle) {
+            spawnBaseItem(index);
         }
     }
 
