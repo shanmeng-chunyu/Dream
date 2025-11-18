@@ -819,6 +819,7 @@ void MainWindow::updateLevelSwitchStatus(int index)
 
 bool MainWindow::loadLevelByIndex(int index, bool showError)
 {
+    GameManager::instance()->clearGameScene();
     if (index < 0 || index >= m_levelSources.size())
     {
         if (showError)

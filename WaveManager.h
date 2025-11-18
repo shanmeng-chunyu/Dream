@@ -8,6 +8,7 @@
 #include <QPointF>
 #include <vector>
 #include <QSizeF>
+#include <QRandomGenerator>
 #include "GameMap.h"
 
 struct EnemyWaveData {
@@ -43,9 +44,10 @@ private:
     int intervalToTicks(double intervalInSeconds);
     QList<Wave> waves;
     int currentWaveIndex;
-    QList<EnemyWaveData> spawnQueue;
+    QList<QString> m_spawnBag;
     int m_spawnCooldownTicks;//计时器，-1空闲，0准备就绪，>0正在倒计时
     int m_interWaveCooldownTicks;//波次间计时器
+    int m_waveIntervalTicks;
     GameMap* gameMap;
     QSizeF screenSize;
     int totalEnemiesKilled = 0;
