@@ -409,6 +409,8 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
         tower = new LiveCoffee(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "WarmMemories") {
         tower = new WarmMemory(pixelRange,pixmap_path,towerPixelSize);
+        WarmMemory* memory = qobject_cast<WarmMemory*>(tower);
+        connect(memory, &WarmMemory::applyControl, this, &GameManager::onApplyEnemyControl);
     }else if (type == "NightRadio") {
         tower = new NightRadio(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "PettingCatTime") {

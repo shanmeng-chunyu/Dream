@@ -3,6 +3,7 @@
 
 #include "Tower.h"
 
+class QGraphicsPixmapItem;
 class FriendCompanion:public Tower
 {
 public:
@@ -12,6 +13,7 @@ public:
     double getFactor(){return increaseDamage;};
 private:
     double increaseDamage;
+    QGraphicsPixmapItem* m_auraItem;
 };
 
 #endif // FRIENDCOMPANION_H

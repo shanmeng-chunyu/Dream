@@ -4,6 +4,7 @@ WarmMemory::WarmMemory(double range,const QString &gif_path,const QSize pixelSiz
 {
     //通过fireRate来表示充能的时间
     type="WarmMemories";
+    stopDuration = 2.0;
 }
 
 void WarmMemory::attack()
@@ -13,6 +14,7 @@ void WarmMemory::attack()
         Enemy* enemy = dynamic_cast<Enemy*>(currentTarget);
         if(enemy)
         {
+            enemy->takeDamage(this->damage);
             emit applyControl(enemy,stopDuration);
         }
     }
