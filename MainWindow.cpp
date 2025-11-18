@@ -216,7 +216,8 @@ MainWindow::MainWindow(QWidget *parent)
       m_currentWaveCounter(0),
       m_spawnedInCurrentWave(0),
       m_gameLoopTimer(nullptr),
-      m_fastModeActive(false)
+      m_fastModeActive(false),
+      m_wasRunningBeforeMenu(false)
 {
 
     setWindowTitle("Dream Guardian");
@@ -782,18 +783,38 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
                     loadLevelByIndex(targetIndex, true);
                 } });
 
-    connect(m_postGameWidget, &widget_post_game::next, this, [this]()
+    if (win)
+    {
+        // 1. 如果胜利了，"next" 按钮执行“继续下一关”或“返回关卡选择”
+        connect(m_postGameWidget, &widget_post_game::next, this, [this]()
+        {
+            const int nextIndex = m_currentLevelIndex + 1;
+            dismissPostGameWidget();
+            if (nextIndex < m_levelSources.size())
             {
-                const int nextIndex = m_currentLevelIndex + 1;
-                dismissPostGameWidget();
-                if (nextIndex < m_levelSources.size())
-                {
-                    loadLevelByIndex(nextIndex, true);
-                }
-                else
-                {
-                    emit levelSelectionRequested();
-                } });
+                loadLevelByIndex(nextIndex, true);
+            }
+            else
+            {
+                // (这是我们之前的修复) 返回关卡选择界面
+                emit levelSelectionRequested();
+            }
+        });
+    }
+    else
+    {
+        // 2. 如果失败了，"next" 按钮 (现在是返回图标) 执行“返回主菜单”
+        connect(m_postGameWidget, &widget_post_game::next, this, [this]()
+        {
+            dismissPostGameWidget();
+
+            // (重要) 在返回主菜单前，必须清理游戏场景
+            GameManager::instance()->clearGameScene();
+
+            // (main.cpp 会监听这个信号并切换到 menu)
+            emit mainMenuRequested();
+        });
+    }
 
     m_postGameWidget->show();
 }
@@ -2319,6 +2340,12 @@ void MainWindow::onAllWavesCompleted()
 
 void MainWindow::onHudMenuClicked()
 {
+    locateGameLoopTimer();
+    if (m_gameLoopTimer && m_gameLoopTimer->isActive()) {
+        m_wasRunningBeforeMenu = true;
+    } else {
+        m_wasRunningBeforeMenu = false;
+    }
     // 1. 暂停游戏逻辑
     GameManager::instance()->pauseGame();
 
@@ -2342,7 +2369,7 @@ void MainWindow::onHudMenuClicked()
         // 4. 连接暂停菜单的信号
 
         // "返回游戏" -> 恢复游戏 (我们已经修改了 onHudResumeRequested)
-        connect(m_pauseMenuWidget, &widget_pause_menu::back_to_game, this, &MainWindow::onHudResumeRequested);
+        connect(m_pauseMenuWidget, &widget_pause_menu::back_to_game, this, &MainWindow::onPauseMenuBackToGame);
 
         // "返回主菜单" -> 触发 onReturnToMainMenu
         connect(m_pauseMenuWidget, &widget_pause_menu::back_to_menu, this, &MainWindow::onReturnToMainMenu);
@@ -2456,4 +2483,20 @@ void MainWindow::generateBlurredBackground()
 
     // 4. 保存最终的 QPixmap
     m_blurredBg = QPixmap::fromImage(image);
+}
+
+void MainWindow::onPauseMenuBackToGame()
+{
+    // 1. 关闭菜单 (这会自动触发 onPauseMenuClosed 来移除模糊)
+    if (m_pauseMenuWidget) {
+        m_pauseMenuWidget->close();
+    }
+
+    // 2. (关键) 检查我们“记住”的状态
+    if (m_wasRunningBeforeMenu)
+    {
+        // 如果游戏在打开菜单前是【运行】的，则【恢复】它
+        GameManager::instance()->resumeGame();
+        applyGameSpeed(m_fastModeActive);
+    }
 }

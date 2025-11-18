@@ -76,6 +76,7 @@ private slots:
     void onHudMenuClicked();      // 响应 HUD 菜单按钮点击
     void onReturnToMainMenu();    // 响应暂停菜单的“返回主菜单”
     void onPauseMenuClosed();     // 响应暂停菜单关闭事件（用于清理）
+    void onPauseMenuBackToGame(); // "返回游戏"按钮的新处理器
 
 private:
     void initializeScene();
@@ -168,6 +169,7 @@ private:
     QMetaObject::Connection m_waveSpawnConnection;
     QMetaObject::Connection m_waveCompletionConnection;
     bool m_fastModeActive;
+    bool m_wasRunningBeforeMenu; // 记住菜单打开前的状态
     QPixmap m_rawBg;
     QPixmap m_blurredBg;
     int m_blurRadius;

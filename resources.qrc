@@ -13,6 +13,7 @@
         <file>resources/button/win_continue.png</file>
         <file>resources/button/win_repeat.png</file>
         <file>resources/button/lose_continue.png</file>
+        <file>resources/button/lose_return.png</file>
         <file>resources/button/lose_repeat.png</file>
         <file>resources/button/pause.png</file>
         <file>resources/button/continue.png</file>
