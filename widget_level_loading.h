@@ -24,6 +24,7 @@ class widget_level_loading : public auto_widget
 public:
     explicit widget_level_loading(int type,//初始化需要给出对应关卡的编号，从0开始
                                   QVector<QString> &tips,//向关卡提示集合中增加语句（每次是随机显示一句）
+                                  int duration=8000,
                                   QWidget *parent = nullptr);
     ~widget_level_loading();
 

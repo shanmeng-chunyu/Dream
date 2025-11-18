@@ -1,7 +1,7 @@
 #include "widget_level_loading.h"
 #include "ui_widget_level_loading.h"
 
-widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,QWidget *parent)
+widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,int duration,QWidget *parent)
     :level_type(type)
     ,auto_widget(parent)
     , ui(new Ui::widget_level_loading)
@@ -29,7 +29,7 @@ widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,QWidg
         m_originalPositions.append(icons[i]->pos());
     }
     createSequentialStaggeredFloating(icons);
-    start_loadding();
+    start_loadding(duration);
 
     tips_.push_back("逸一时，误一世");
     int random = QRandomGenerator::global()->bounded(tips_.size());

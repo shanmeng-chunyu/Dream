@@ -696,7 +696,10 @@ QString MainWindow::absoluteAssetPath(const QString &path, const QString &projec
     {
         return {};
     }
-
+    if (path.startsWith(QStringLiteral(":/")))
+    {
+        return path; // 这是一个 QRC 路径, 直接返回它
+    }
     QFileInfo info(path);
     if (info.isAbsolute())
     {

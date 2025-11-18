@@ -39,6 +39,7 @@
       "upgrade_cost": 180,
       "pixmap": ":/towers/resources/towers/level1/FishingCatPillow.png",
       "pixmap_upgrade": ":/towers/resources/towers/level1/FishingCatPillow_upgrade.png",
+      "gif_path": ":/towers/resources/towers/level1/FishingCatPillow.gif",
       "bullet_pixmap": ":/bullet/resources/bullet/level1/FishingCatPillow.png",
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/FishingCatPillow_upgrade.png",
       "damage": 0,

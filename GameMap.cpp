@@ -63,22 +63,22 @@ namespace
 
     // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kTowerSpriteTable[] = {
-        {"KnowledgeTree", u8":/towers/resources/towers/level1/KnowledgeTree.png", "", ""},
-        {"InspirationBulb", u8":/towers/resources/towers/level1/InspirationBulb.png", "", ""},
-        {"LiveCoffee", u8":/towers/resources/towers/level1/LiveCoffee.png", "", ""},
-        {"FishingCatPillow", u8":/towers/resources/towers/level1/FishingCatPillow.png", "", ""},
-        {"WarmMemories", "", u8":/towers/resources/towers/level2/WarmMemories.png", ""},
-        {"NightRadio", "", u8":/towers/resources/towers/level2/NightRadio.png", ""},
-        {"PettingCatTime", "", u8":/towers/resources/towers/level2/PettingCatTime.png", ""},
-        {"Companionship", "", u8":/towers/resources/towers/level2/Companionship.png", ""}};
+        {"KnowledgeTree",     u8":/towers/resources/towers/level1/KnowledgeTree.png",    "", u8":/towers/resources/towers/level1/KnowledgeTree.png"},
+        {"InspirationBulb",   u8":/towers/resources/towers/level1/InspirationBulb.png",  "", u8":/towers/resources/towers/level1/InspirationBulb.png"},
+        {"LiveCoffee",        u8":/towers/resources/towers/level1/LiveCoffee.png",       "", u8":/towers/resources/towers/level1/LiveCoffee.png"},
+        {"FishingCatPillow",  u8":/towers/resources/towers/level1/FishingCatPillow.png", "", u8":/towers/resources/towers/level1/FishingCatPillow.png"},
+        {"WarmMemories",      "", u8":/towers/resources/towers/level2/WarmMemories.png",     u8":/towers/resources/towers/level2/WarmMemories.png"},
+        {"NightRadio",        "", u8":/towers/resources/towers/level2/NightRadio.png",       u8":/towers/resources/towers/level2/NightRadio.png"},
+        {"PettingCatTime",    "", u8":/towers/resources/towers/level2/PettingCatTime.png",  u8":/towers/resources/towers/level2/PettingCatTime.png"},
+        {"Companionship",     "", u8":/towers/resources/towers/level2/Companionship.png",    u8":/towers/resources/towers/level2/Companionship.png"}};
 
     // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kTowerBulletTable[] = {
-        {"KnowledgeTree", u8":/bullet/resources/bullet/level1/KnowledgeTree.png", "", ""},
-        {"InspirationBulb", u8":/bullet/resources/bullet/level1/InspirationBulb.png", "", ""},
-        {"LiveCoffee", u8":/bullet/resources/bullet/level1/LiveCoffee.png", "", ""}, // 咖啡的光环
-        {"NightRadio", "", u8":/bullet/resources/bullet/level2/NightRadio.png", ""},
-        {"Companionship", "", u8":/bullet/resources/bullet/level2/Companionship.png", ""}}; // 朋友的光环
+        {"KnowledgeTree",     u8":/bullet/resources/bullet/level1/KnowledgeTree.png",    "", u8":/bullet/resources/bullet/level1/KnowledgeTree.png"},
+        {"InspirationBulb",   u8":/bullet/resources/bullet/level1/InspirationBulb.png",  "", u8":/bullet/resources/bullet/level1/InspirationBulb.png"},
+        {"LiveCoffee",        u8":/bullet/resources/bullet/level1/LiveCoffee.png",       "", u8":/bullet/resources/bullet/level1/LiveCoffee.png"}, // 咖啡的光环
+        {"NightRadio",        "", u8":/bullet/resources/bullet/level2/NightRadio.png",       u8":/bullet/resources/bullet/level2/NightRadio.png"},
+        {"Companionship",     "", u8":/bullet/resources/bullet/level2/Companionship.png",    u8":/bullet/resources/bullet/level2/Companionship.png"}}; // 朋友的光环
 
     // --- 【已修改】 使用 QRC 路径 ---
     const StageAssetRow kEnemySpriteTable[] = {

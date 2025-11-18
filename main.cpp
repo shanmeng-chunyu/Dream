@@ -114,35 +114,64 @@ int main(int argc, char *argv[])
         to->activateWindow();
     };
 
-    auto startLevel = [&](const QString &candidatePath)
+    QVector<QString> g_loadingTips;
+    g_loadingTips.push_back("正在唤醒记忆...");
+    g_loadingTips.push_back("清除障碍物可以获得额外资源。");
+    g_loadingTips.push_back("不同的塔有不同的攻击特性，合理搭配是制胜关键。");
+
+    // 设置你想要的加载时长 (3000ms = 3秒)
+    const int LOADING_DURATION_MS = 3000;
+
+    /**
+     * @brief 这是一个新的辅助 Lambda，它负责：
+     * 1. 创建和显示加载界面
+     * 2. 连接加载界面的 finished() 信号
+     * 3. 在加载完成后，才真正加载并切换到游戏窗口
+     */
+    auto showLoadingAndStart = [&](int levelIndex,    // 关卡索引 (0, 1, 2)
+                                   const QString& levelPath, // 关卡路径
+                                   QWidget* fromWindow) // 从哪个窗口切换过来 (chooser 或 editor)
     {
-        // ... (内容保持不变) ...
-        if (!w.startLevelFromSource(candidatePath, true))
-        {
-            focusWindow(&levelChooser); // 失败时保持旧逻辑
-            return;
-        }
+        // 1. 创建加载界面
+        //    (我们使用 levelIndex % 3 来确保主题索引总是 0, 1, 2 之一)
+        widget_level_loading *loader = new widget_level_loading(
+            levelIndex % 3,
+            g_loadingTips,
+            LOADING_DURATION_MS,
+            nullptr // 必须为 nullptr，使其成为一个独立的窗口
+        );
+        loader->setAttribute(Qt::WA_DeleteOnClose); // 关闭时自动删除
 
-        // 【修改】使用新的 switchWindow 函数
-        switchWindow(&levelChooser, &w);
+        // 2. 关键：连接 loader 的 finished 信号
+        QObject::connect(loader, &widget_level_loading::finished, &a,
+            // 当加载界面播放完毕后，执行这个 Lambda：
+            [&, levelPath, loader]() {
 
-        // 【删除】以下逻辑已由 switchWindow 处理
-        // levelChooser.hide();
-        // if (!w.isVisible())
-        // {
-        //     w.show();
-        // }
-        // w.raise();
-        // w.activateWindow();
+            // 3. (A) 真正开始加载关卡
+            if (!w.startLevelFromSource(levelPath, true))
+            {
+                // 如果加载失败 (例如 json 文件损坏)
+                loader->close(); // 关闭加载界面
+                switchWindow(nullptr, &levelChooser); // 退回到关卡选择界面
+                return;
+            }
+
+            // 3. (B) 加载成功，切换到游戏窗口
+            switchWindow(loader, &w);
+            loader->close(); // 切换后关闭 (并自动删除) 加载界面
+        });
+
+        // 4. 立即从 "fromWindow" 切换到 "loader"
+        switchWindow(fromWindow, loader);
     };
 
     // --- 信号槽连接 ---
 
     // (保留) 从关卡选择器 -> 开始游戏
     QObject::connect(&levelChooser, &widget_choose_level::level1, &a, [&]()
-                     { startLevel(QStringLiteral("levels/level1.json")); });
+                     { showLoadingAndStart(0, "levels/level1.json", &levelChooser); });
     QObject::connect(&levelChooser, &widget_choose_level::level2, &a, [&]()
-                     { startLevel(QStringLiteral("levels/level2.json")); });
+                     { showLoadingAndStart(1, "levels/level2.json", &levelChooser); });
     QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]() {
         editor.loadLevelForEditing(":/levels/levels/level3.json");
         switchWindow(&levelChooser, &editor);
@@ -192,16 +221,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(&editor, &LevelEditorWidget::levelEditingFinished, &a, [&](const QString& savedLevelPath)
     {
-        // 1. 尝试使用新保存的路径启动游戏
-        if (!w.startLevelFromSource(savedLevelPath, true))
-        {
-            // 如果启动失败 (例如保存的文件有问题), 切换回关卡选择器
-            switchWindow(&editor, &levelChooser);
-            return;
-        }
-
-        // 2. 成功启动，切换到游戏窗口 (此时 editor 已经自动 close() 了)
-        switchWindow(&editor, &w);
+        showLoadingAndStart(2, savedLevelPath, &editor);
     });
 
 
