@@ -23,6 +23,8 @@
 #include <QFile>
 #include <QDebug>
 #include <QStandardItemModel>
+#include <QStandardPaths>
+#include <QDir>
 
 LevelEditorWidget::LevelEditorWidget(QWidget* parent)
     : QWidget(parent),
@@ -61,7 +63,7 @@ LevelEditorWidget::LevelEditorWidget(QWidget* parent)
 
     // 2. 构建UI
     setupUI();
-
+    loadButton->hide();
     // 3. --- 连接通用信号 ---
     connect(saveButton, &QPushButton::clicked, this, &LevelEditorWidget::saveLevel);
     connect(loadButton, &QPushButton::clicked, this, &LevelEditorWidget::loadLevel);
@@ -737,7 +739,7 @@ QString LevelEditorWidget::getPixmapPath(const QMap<QString, QJsonObject>& proto
 
 void LevelEditorWidget::saveLevel() {
 
-    // 步骤 1：检查防御塔数量
+    // 步骤 1：检查防御塔数量 (这部分不变)
     int selectedTowerCount = 0;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
@@ -752,23 +754,26 @@ void LevelEditorWidget::saveLevel() {
         return; // 终止函数
     }
 
-    // 步骤 2：获取保存路径
-    QString filePath = QFileDialog::getSaveFileName(this, "保存自定义关卡", "", "JSON Files (*.json)");
-    if (filePath.isEmpty()) {
-        return; // 用户取消
+    // 步骤 2：(修改) 移除文件对话框，强制使用 AppData 路径
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
+    // 确保该目录存在
+    QDir dir(appDataPath);
+    if (!dir.exists()) {
+        dir.mkpath("."); // 递归创建目录
     }
 
-    // 步骤 3：加载模板关卡 (level3.json)
+    // 这是你的固定保存路径
+    QString filePath = appDataPath + "/custom_level3.json";
+
+
+    // 步骤 3：加载模板关卡 (level3.json) (这部分不变)
     QString templateLevelPath = ":/levels/levels/level3.json";
     QFile templateFile(templateLevelPath);
-
-    // --- 【关键修正】在这里声明 rootObj ---
     QJsonObject rootObj;
-
     if (templateFile.open(QIODevice::ReadOnly)) {
         QJsonDocument doc = QJsonDocument::fromJson(templateFile.readAll());
         if (doc.isObject()) {
-            // --- 【关键修正】在这里为 rootObj 赋值 ---
             rootObj = doc.object();
         } else {
             QMessageBox::critical(this, "模板错误", QString("模板文件 %1 不是一个有效的 JSON 对象。").arg(templateLevelPath));
@@ -781,17 +786,14 @@ void LevelEditorWidget::saveLevel() {
         return;
     }
 
-    // --- 步骤 4：覆盖模板数据 (现在 rootObj 是有效的) ---
-
-    // 4a. 覆盖 "waves"
+    // 步骤 4：覆盖模板数据 (这部分不变)
     QJsonArray wavesArray;
     for (int i = 0; i < waveListWidget->count(); ++i) {
         QJsonObject waveObj;
         waveObj["enemies"] = waveListWidget->item(i)->data(Qt::UserRole).toJsonArray();
         wavesArray.append(waveObj);
     }
-
-    // 4b. 附加 Boss 波次
+    // 附加 Boss 波次 (不变)
     QJsonObject bossWave;
     QJsonArray bossEnemies;
     QJsonObject nightmareEnemy;
@@ -801,11 +803,9 @@ void LevelEditorWidget::saveLevel() {
     bossEnemies.append(nightmareEnemy);
     bossWave["enemies"] = bossEnemies;
     wavesArray.append(bossWave);
-
-    // 这里的 rootObj 访问现在是安全的了
     rootObj["waves"] = wavesArray;
 
-    // 4c. 覆盖 "available_towers"
+    // 覆盖 "available_towers" (不变)
     QJsonArray towersArray;
     for (int i = 0; i < availableTowersListWidget->count(); ++i) {
         QJsonObject data = availableTowersListWidget->item(i)->data(Qt::UserRole).toJsonObject();
@@ -814,26 +814,24 @@ void LevelEditorWidget::saveLevel() {
             towersArray.append(type);
         }
     }
-    rootObj["available_towers"] = towersArray; // 访问安全
+    rootObj["available_towers"] = towersArray;
 
-    // 4d. 覆盖 "available_enemies"
+    // 覆盖 "available_enemies" (不变)
     QJsonArray enemiesArray;
     for (const QString& enemyType : m_enemyPrototypes.keys()) {
         enemiesArray.append(enemyType);
     }
-    rootObj["available_enemies"] = enemiesArray; // 访问安全
+    rootObj["available_enemies"] = enemiesArray;
 
-    // 步骤 5：写入新文件
+    // 步骤 5：写入新文件 (现在写入的是 AppData 路径)
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly)) {
         file.write(QJsonDocument(rootObj).toJson(QJsonDocument::Indented));
         file.close();
 
-        // --- 【修改点】发出信号并关闭 ---
+        // 发出信号并关闭 (不变)
         emit levelEditingFinished(filePath);
         this->close();
-        // -------------------------------
-
     } else {
         QMessageBox::critical(this, "保存失败", "无法写入目标文件。");
     }

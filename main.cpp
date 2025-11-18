@@ -2,6 +2,9 @@
 #include <QTimer>
 #include <QStringList>
 #include <QIcon>
+#include <QStandardPaths>
+#include <QFile>
+#include <QDir>
 
 #include "LevelEditorWidget.h"
 #include "MainWindow.h"
@@ -54,6 +57,11 @@ int main(int argc, char *argv[])
     widget_choose_level levelChooser; // 关卡选择
     levelChooser.setWindowTitle(QStringLiteral("Choose Level"));
     levelChooser.resize(1024, 768);
+    QVector<QString> levelDescriptions;
+    levelDescriptions.append("第一关：学业的烦恼\n\n梦境被成堆的作业和紧迫的DDL所占据。你需要收集“灵感”资源，构筑起能够发射光弹的灯塔，并唤醒沉睡的古树为你作战。请守护好你的精神稳定度，不要在学业的压力下崩溃。");
+    levelDescriptions.append("第二关：失恋的忧伤\n\n破碎的誓言和枯萎的花朵构成了这场心碎的梦境。“无尽的孤独”和“昔日幻影” 正不断袭来。你需要收集“慰藉”资源，唤醒那些能带来片刻温暖的记忆和朋友的陪伴，用它们来抵御这股悲伤的浪潮。");
+    levelDescriptions.append("第三关：梦你所梦\n\n这是你内心的终极战场，融合了过去所有的焦虑与悲伤。你需要鼓起“勇气”，编辑属于你自己的梦境防线。使用你一路以来所掌握的所有力量，直面并战胜最终的“噩梦”。");
+    levelChooser.set_descriptions(levelDescriptions);
 
     widget_menu menu; // 主菜单
     menu.resize(1024, 768);
@@ -124,16 +132,20 @@ int main(int argc, char *argv[])
     g_loadingTips.push_back("那些无穷无尽的压力，是否让你喘不过气？");
     g_loadingTips.push_back("孤独和遗憾总是结伴而来。");
     g_loadingTips.push_back("最终的恐惧源于你自己。战胜它，才能迎来真正的黎明。");
-    g_loadingTips.push_back("不要低估陪伴的力量，它能让你身边的防线更加坚固。");
     g_loadingTips.push_back("有时候，一杯咖啡、一个抱枕，就是对抗焦虑的最好武器。");
-    g_loadingTips.push_back("有一颗紧紧依靠着你的心，一瞬间落空");
-    g_loadingTips.push_back("清除障碍物可以获得额外资源。");
-    g_loadingTips.push_back("出售防御塔可以立即返还其总花费（包括升级费用）的 70%。");
-    g_loadingTips.push_back("防御塔总是优先攻击范围内的敌人；只有当没有敌人在范围内时，它们才会攻击障碍物。");
     g_loadingTips.push_back("本次作业的ddl是今晚23：59，你提交了吗?");
     g_loadingTips.push_back("记忆是梦的开场白。");
+    g_loadingTips.push_back("()()不是回文字符串，())(才是。");
     g_loadingTips.push_back("每个岔路都是一次学习，而非错误。");
     g_loadingTips.push_back("无论梦境多么真实，你始终拥有醒来的力量。");
+    g_loadingTips.push_back("回忆如潮水般涌来，而你正在学习如何不为所淹没。");
+    g_loadingTips.push_back("梦境是内心的镜子，而你是执镜的人。");
+    g_loadingTips.push_back("当现实的压力化身梦魇，你将以何为盾，以何为塔？");
+    g_loadingTips.push_back("心碎的声音，也曾是爱的回响。治愈，从接受悲伤开始。");
+    g_loadingTips.push_back("别让“必须优秀”的焦虑，吞噬你本该多彩的梦。");
+    g_loadingTips.push_back("知识的塔，不应只是为了压倒他人而建。");
+    g_loadingTips.push_back("心上的裂痕，也是光照进来的地方。");
+    g_loadingTips.push_back("这里没有标准答案，你的策略，就是唯一的解。");
 
     // 设置你想要的加载时长 (3000ms = 3秒)
     const int LOADING_DURATION_MS = 8000;
@@ -189,7 +201,10 @@ int main(int argc, char *argv[])
     QObject::connect(&levelChooser, &widget_choose_level::level2, &a, [&]()
                      { showLoadingAndStart(1, "levels/level2.json", &levelChooser); });
     QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]() {
-        editor.loadLevelForEditing(":/levels/levels/level3.json");
+        QString customPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/custom_level3.json";
+        QString path_to_load = QFile::exists(customPath) ? customPath : ":/levels/levels/level3.json";
+        // 使用正确的路径加载编辑器
+        editor.loadLevelForEditing(path_to_load);
         switchWindow(&levelChooser, &editor);
     });
 

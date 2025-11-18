@@ -11,6 +11,7 @@ widget_choose_level::widget_choose_level(QWidget *parent)
     ,icons({":/map_items/resources/map_items/first/book.png",":/map_items/resources/map_items/second/broken_friendship.png",":/map_items/resources/map_items/third/start_block.png"})
 {
     ui->setupUi(this);
+    ui->description->setWordWrap(true);
     title=ui->btn_level;
     description=ui->description;
     connect(ui->next,&QPushButton::clicked,this,[=]{

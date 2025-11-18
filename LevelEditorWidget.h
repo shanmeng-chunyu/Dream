@@ -111,6 +111,7 @@ private:
     QList<QString> m_enemyTypeOrder;
     QList<QString> m_towerTypeOrder;
 
+    QString m_currentEditingPath;
     QPixmap m_backgroundPixmap; // 存储背景图片
     QString m_fontFamily;//存储自定义字体名称
 };

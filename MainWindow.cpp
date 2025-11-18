@@ -34,7 +34,8 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QProgressBar>
-
+#include <QStandardPaths>
+#include <QFile>
 #include <QSet>
 #include <algorithm>
 #include <functional>
@@ -311,7 +312,12 @@ void MainWindow::initializeScene()
     appendCandidate(envLevelCandidate);
     appendCandidate(QStringLiteral("levels/level1.json"));
     appendCandidate(QStringLiteral("levels/level2.json"));
-    appendCandidate(QStringLiteral("levels/level3.json"));
+    QString customLevel3Path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/custom_level3.json";
+    if (QFile::exists(customLevel3Path)) {
+        appendCandidate(customLevel3Path); // 优先加载自定义版本
+    } else {
+        appendCandidate(QStringLiteral("levels/level3.json")); // 加载默认版本
+    }
 
     m_levelSources.clear();
     for (const QString &candidate : levelSearchOrder)
@@ -786,9 +792,7 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
                 }
                 else
                 {
-                    QMessageBox::information(this,
-                                             tr("Level Switch"),
-                                             tr("No further level is available. Please select a level manually."));
+                    emit levelSelectionRequested();
                 } });
 
     m_postGameWidget->show();
