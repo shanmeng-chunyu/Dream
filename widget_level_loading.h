@@ -50,6 +50,8 @@ private:
     int m_animationDistance;
     int m_animationDuration;
     int m_staggerDelay;
+    QTimer *m_tipTimer;
+    QVector<QString> m_dynamicPortraitPaths;
 
     void start_loadding(int time=8000); //开始加载动画，给出动画持续时间，结束后触发finished信号
     void createSequentialStaggeredFloating(const QVector<QPushButton*> &btns, int distance = 20, int duration = 1500, int staggerDelay = 200);

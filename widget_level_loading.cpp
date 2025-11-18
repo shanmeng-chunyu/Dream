@@ -18,9 +18,14 @@ widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,int d
     , m_animationDistance(20)
     , m_animationDuration(2000)
     , m_staggerDelay(200)
+    , m_tipTimer(nullptr)
 {
     ui->setupUi(this);
     bar=ui->progressBar;
+    // 1. 允许 QLabel 自动换行
+    ui->tip->setWordWrap(true);
+    // 2. (推荐) 让文本从顶部开始显示，而不是垂直居中
+    ui->tip->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     ui->background->setPixmap(background[type]);
     ui->map->setPixmap(map_picture[type]);
     QVector<QPushButton *> icons={ui->icon1,ui->icon2,ui->icon3,ui->icon4};
@@ -31,11 +36,31 @@ widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,int d
     createSequentialStaggeredFloating(icons);
     start_loadding(duration);
 
-    tips_.push_back("逸一时，误一世");
+    m_dynamicPortraitPaths.push_back(":/resource/resources/resource/sleep.png");
+    m_dynamicPortraitPaths.push_back(":/portrait/resources/portrait/wu_sa_qi.jpg");
     int random = QRandomGenerator::global()->bounded(tips_.size());
     ui->tip->setText(tips_[random]);
 
+    // 5. 创建、连接并启动新的 tip 计时器
+    m_tipTimer = new QTimer(this); // 'this' 作为父对象
+    m_tipTimer->setInterval(2000); // 2000ms = 2 秒
+
+    connect(m_tipTimer, &QTimer::timeout, this, [=](){
+        // 确保列表不为空
+        if (tips_.isEmpty()) return;
+
+        // 每 2 秒，挑选一条新的随机 tip
+        int newRandom = QRandomGenerator::global()->bounded(tips_.size());
+        ui->tip->setText(tips_[newRandom]);
+        if (tips[newRandom] == "很外向，说悄悄话都要用音响。") {
+            ui->portrait->setIcon(QIcon(m_dynamicPortraitPaths[1]));
+        }else {
+            ui->portrait->setIcon(QIcon(m_dynamicPortraitPaths[0]));
+        }
+    });
+    m_tipTimer->start();
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
+    ui->portrait->setIcon(QIcon(m_dynamicPortraitPaths[0]));
 
     // 保存各个组件的初始几何信息
     initialGeometries[ui->background] = ui->background->geometry();
@@ -79,6 +104,9 @@ void widget_level_loading::start_loadding(int time){
         if(bar->value()>=100){
             emit finished();
             timer->stop();
+            if (m_tipTimer) {
+                m_tipTimer->stop();
+            }
         }
     });
 }

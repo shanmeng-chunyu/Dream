@@ -116,11 +116,30 @@ int main(int argc, char *argv[])
 
     QVector<QString> g_loadingTips;
     g_loadingTips.push_back("正在唤醒记忆...");
+    g_loadingTips.push_back("很外向，说悄悄话都要用音响。");
+    g_loadingTips.push_back("爱究竟源自何处呢？就这样扪心自问着。");
+    g_loadingTips.push_back("梦境正在被侵蚀，请守护好你最后的精神稳定度。");
+    g_loadingTips.push_back("无论是论文、回忆还是噩梦，它们都只是你梦中的一部分。别怕，天就快亮了。");
+    g_loadingTips.push_back("梦境是现实的倒影。你在烦恼什么，就会梦见什么。");
+    g_loadingTips.push_back("那些无穷无尽的压力，是否让你喘不过气？");
+    g_loadingTips.push_back("孤独和遗憾总是结伴而来。");
+    g_loadingTips.push_back("最终的恐惧源于你自己。战胜它，才能迎来真正的黎明。");
+    g_loadingTips.push_back("不要低估陪伴的力量，它能让你身边的防线更加坚固。");
+    g_loadingTips.push_back("温暖的回忆拥有强大的力量，它能让时间短暂停止。");
+    g_loadingTips.push_back("有时候，一杯咖啡、一个抱枕，就是对抗焦虑的最好武器。");
+    g_loadingTips.push_back("有一颗紧紧依靠着你的心，一瞬间落空");
     g_loadingTips.push_back("清除障碍物可以获得额外资源。");
-    g_loadingTips.push_back("不同的塔有不同的攻击特性，合理搭配是制胜关键。");
+    g_loadingTips.push_back("出售防御塔可以立即返还其总花费（包括升级费用）的 70%。");
+    g_loadingTips.push_back("防御塔总是优先攻击范围内的敌人；只有当没有敌人在范围内时，它们才会攻击障碍物。");
+    g_loadingTips.push_back("知识古树发射的子弹可以造成范围伤害，非常适合对付成群的敌人。");
+    g_loadingTips.push_back("续命咖啡是一座光环塔，它能减慢范围内敌人的移动速度，并提升周围友方防御塔的攻击速度。");
+    g_loadingTips.push_back("朋友的陪伴也是一座光环塔，它可以提升周围友方防御塔的攻击力。");
+    g_loadingTips.push_back("深夜电台发射的子弹可以穿透路径上的一排敌人，适合放在长直道上。");
+    g_loadingTips.push_back("摸鱼猫猫枕和温暖的记忆可以使敌人眩晕，暂时阻止其前进。");
+    g_loadingTips.push_back("PRE会嘲讽你所有的防御塔，使它们不顾一切地优先攻击自己。");
 
     // 设置你想要的加载时长 (3000ms = 3秒)
-    const int LOADING_DURATION_MS = 3000;
+    const int LOADING_DURATION_MS = 8000;
 
     /**
      * @brief 这是一个新的辅助 Lambda，它负责：
