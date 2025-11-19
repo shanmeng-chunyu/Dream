@@ -737,6 +737,10 @@ QString MainWindow::locateProjectRootPath(const QString &levelPath) const
 
 void MainWindow::handleGameFinished(bool win, int stability, int killCount)
 {
+    QList<widget_building_list*> menus = this->findChildren<widget_building_list*>();
+    for (auto* menu : menus) {
+        menu->close(); // close() 会触发 deleteLater (因为设置了 WA_DeleteOnClose)
+    }
     showPostGameWidget(win, stability, killCount);
 }
 
@@ -1447,6 +1451,10 @@ QPoint MainWindow::sceneToGlobalPoint(const QPointF &scenePos) const
 
 void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
 {
+    if (m_currentBuildMenu) {
+        m_currentBuildMenu->close();
+        // 由于设置了 WA_DeleteOnClose，close() 会导致对象被析构，QPointer 自动置空
+    }
     // --- 1. 准备数据 ---
     const auto &towerChoices = m_visualMap.getAvailableTowers();
     if (towerChoices.empty())
@@ -1478,9 +1486,15 @@ void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
         names,
         pixmaps,
         prices,
-        this // <-- 设为 this (MainWindow) 的子控件
+        this
     );
-    buildMenu->setAttribute(Qt::WA_DeleteOnClose); // 关键：关闭时自动删除
+    buildMenu->setAttribute(Qt::WA_DeleteOnClose);
+    m_currentBuildMenu = buildMenu;
+
+    if (m_cachedPlayer) {
+        connect(m_cachedPlayer, &Player::resourceChanged,
+                buildMenu, &widget_building_list::updateResource);
+    }
 
     // --- 3. 【Bug 修复核心】使用 Lambda 捕获 baseIndex ---
     connect(buildMenu, &widget_building_list::buy, this,
@@ -1504,8 +1518,6 @@ void MainWindow::showBuildMenu(int baseIndex, const QPoint &globalPos)
     });
 
     // --- 4. 显示菜单 ---
-    // (将其显示为 "Application Modal" 模态窗口，会阻止点击其他地方)
-    buildMenu->setWindowModality(Qt::ApplicationModal);
     buildMenu->show();
 
     // 居中显示
@@ -1536,6 +1548,10 @@ Tower* MainWindow::findTowerAtBase(int baseIndex) const
 
 void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
 {
+    if (m_currentBuildMenu) {
+        m_currentBuildMenu->close();
+    }
+
     Tower* tower = findTowerAtBase(baseIndex);
     if (!tower) {
         qWarning() << "showUpgradeMenu: Could not find tower at base index" << baseIndex;
@@ -1613,6 +1629,13 @@ void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
     );
     upgradeSellMenu->setAttribute(Qt::WA_DeleteOnClose);
 
+    m_currentBuildMenu = upgradeSellMenu;
+
+    if (m_cachedPlayer) {
+        connect(m_cachedPlayer, &Player::resourceChanged,
+                upgradeSellMenu, &widget_building_list::updateResource);
+    }
+
     // --- 4. 连接信号槽 ---
     connect(upgradeSellMenu, &widget_building_list::buy, this,
         // 使用 Lambda 捕获关键变量
@@ -1632,7 +1655,6 @@ void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
     });
 
     // --- 5. 显示美化后的菜单 ---
-    upgradeSellMenu->setWindowModality(Qt::ApplicationModal); // 设置为模态
     upgradeSellMenu->show();
     // 居中显示
     int x = (this->width() - upgradeSellMenu->width()) / 2;

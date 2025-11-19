@@ -27,7 +27,8 @@ public:
 
 signals:
     void buy(int type); //点击购买后传出种类的序号，按传入的顺序。
-
+    public slots:
+        void updateResource(int currentResource);
 private:
     Ui::widget_building_list *ui;
     QVector<QString> background;
@@ -35,6 +36,7 @@ private:
     QVector<QString> pixmap_;
     QVector<QString> price_;
     QVector<QString> resource;
+    int m_currentResource;
 };
 
 #endif // WIDGET_BUILDING_LIST_H

@@ -16,6 +16,7 @@
 
 #include "GameMap.h"
 #include "widget_post_game.h"
+#include "widget_building_list.h"
 
 class QGraphicsPixmapItem;
 class QGraphicsItem;
@@ -174,6 +175,7 @@ private:
     QPixmap m_rawBg;
     QPixmap m_blurredBg;
     int m_blurRadius;
+    QPointer<widget_building_list> m_currentBuildMenu;
 };
 
 #endif

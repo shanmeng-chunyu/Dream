@@ -9,10 +9,14 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
     ,resource({":/resource/resources/resource/Inspiration.png",":/resource/resources/resource/Comfort.png",":/resource/resources/resource/Courage.png"})
 {
     ui->setupUi(this);
+    m_currentResource = resource_value;
+
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);
     ui->background->setPixmap(QPixmap(background[level]));
     ui->resource_value->display(resource_value);
+
+    ui->resource_value->display(m_currentResource);
 
     QTimer *timer=new QTimer(this);
     timer->setInterval(1000);
@@ -45,17 +49,24 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
         }
 
         // 定义点击时执行的动作
-        auto onClick = [=, this]() { // 捕获所需变量
-            if(resource_value >= priceValue){
-                emit widget_building_list::buy(itemIndex); // 发射正确的索引
-                close();
+        auto onClick = [this, priceValue, itemIndex]() {
+            // 使用最新的成员变量 m_currentResource 进行判断
+            if(this->m_currentResource >= priceValue){
+                emit this->buy(itemIndex);
+                this->close();
             }
             else{
-                timer->start();
-                ui->resource_value->setStyleSheet("background-color:white;"
-                                                  "color:red;"
-                                                  "border-radius: 6px;"
-                                                  "padding: 5px;            ");
+                // 余额不足的逻辑 (保持不变)
+                // 注意：这里的 timer 和 ui 需要能被访问到。
+                // 简单的方法是把 timer 也变成成员变量，或者在这里重新查找。
+                // 但更简单的是，因为 'ui' 是成员变量，通过 'this' 就可以访问。
+                // 为了让 timer 能用，你可以把它定义在类成员里，或者在这里临时创建一个新的动画效果。
+                // (为了最小化改动，假设原来的 timer 逻辑在这里仍然有效，或者你可以简化为只变色)
+                this->ui->resource_value->setStyleSheet("background-color:white; color:red; border-radius: 6px; padding: 5px;");
+                // 如果需要恢复颜色，可以简单的用 QTimer::singleShot
+                QTimer::singleShot(1000, this, [this](){
+                    this->ui->resource_value->setStyleSheet("background-color:white; color:black; border-radius: 6px; padding: 5px;");
+                });
             }
         };
 
@@ -156,4 +167,13 @@ widget_building_list::widget_building_list(int level,int resource_value,bool upg
 widget_building_list::~widget_building_list()
 {
     delete ui;
+}
+
+void widget_building_list::updateResource(int currentResource)
+{
+    // 1. 更新内部逻辑用的变量
+    m_currentResource = currentResource;
+
+    // 2. 更新界面显示
+    ui->resource_value->display(m_currentResource);
 }
