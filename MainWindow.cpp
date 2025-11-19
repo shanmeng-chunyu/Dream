@@ -842,7 +842,7 @@ void MainWindow::updateLevelSwitchStatus(int index)
     }
 
     QFileInfo info(m_levelSources.at(index));
-    setWindowTitle(QStringLiteral("Dream Guardian - %1").arg(info.fileName()));
+    setWindowTitle(QStringLiteral("Dream Guardian"));
 }
 
 bool MainWindow::loadLevelByIndex(int index, bool showError)

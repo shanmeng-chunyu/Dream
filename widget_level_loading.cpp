@@ -51,6 +51,7 @@ widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,int d
 
     m_dynamicPortraitPaths.push_back(":/resource/resources/resource/sleep.png");
     m_dynamicPortraitPaths.push_back(":/portrait/resources/portrait/wu_sa_qi.jpg");
+    m_dynamicPortraitPaths.push_back(":/portrait/resources/portrait/li_yun_fei.jpg");
     int random = QRandomGenerator::global()->bounded(tips_.size());
     ui->tip->setText(tips_[random]);
 
@@ -67,7 +68,10 @@ widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,int d
         ui->tip->setText(tips_[newRandom]);
         if (tips[newRandom] == "很外向，说悄悄话都要用音响。") {
             ui->portrait->setIcon(QIcon(m_dynamicPortraitPaths[1]));
-        }else {
+        }else if (tips[newRandom] == "听说扫了这个二维码可以获得通关秘籍。") {
+            ui->portrait->setIcon(QIcon(m_dynamicPortraitPaths[2]));
+        }
+        else {
             ui->portrait->setIcon(QIcon(m_dynamicPortraitPaths[0]));
         }
     });

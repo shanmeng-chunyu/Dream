@@ -51,15 +51,16 @@ int main(int argc, char *argv[])
     // (调试用的关卡编辑器保持注释状态)
     LevelEditorWidget editor;
     editor.resize(1024, 768);
-    editor.setWindowTitle("关卡编辑器 [调试模式]");
+    editor.setWindowTitle("Dream Guardian");
 
 
     // --- 窗口实例化 ---
     MainWindow w; // 游戏主窗口
     w.resize(1024, 768);
+    w.setWindowTitle("Dream Guardian");
 
     widget_choose_level levelChooser; // 关卡选择
-    levelChooser.setWindowTitle(QStringLiteral("Choose Level"));
+    levelChooser.setWindowTitle(QStringLiteral("Dream Guardian"));
     levelChooser.resize(1024, 768);
     QVector<QString> levelDescriptions;
     levelDescriptions.append("第一关：学业的烦恼\n\n梦境被成堆的作业和紧迫的DDL所占据。你需要收集“灵感”资源，构筑起能够发射光弹的灯塔，并唤醒沉睡的古树为你作战。请守护好你的精神稳定度，不要在学业的压力下崩溃。");
@@ -69,10 +70,12 @@ int main(int argc, char *argv[])
 
     widget_menu menu; // 主菜单
     menu.resize(1024, 768);
+    menu.setWindowTitle("Dream Guardian");
 
     // 步骤 1：(新增) 实例化图鉴窗口
     widget_reference_book refBook;
     refBook.resize(1024, 768);
+    refBook.setWindowTitle("Dream Guardian");
 
     // --- 辅助 Lambda (保持不变) ---
     auto focusWindow = [](QWidget *widget)
@@ -150,6 +153,7 @@ int main(int argc, char *argv[])
     g_loadingTips.push_back("知识的塔，不应只是为了压倒他人而建。");
     g_loadingTips.push_back("心上的裂痕，也是光照进来的地方。");
     g_loadingTips.push_back("这里没有标准答案，你的策略，就是唯一的解。");
+    g_loadingTips.push_back("听说扫了这个二维码可以获得通关秘籍。");
 
     // 设置你想要的加载时长 (3000ms = 3秒)
     const int LOADING_DURATION_MS = 8000;
@@ -173,6 +177,7 @@ int main(int argc, char *argv[])
             nullptr // 必须为 nullptr，使其成为一个独立的窗口
         );
         loader->setAttribute(Qt::WA_DeleteOnClose); // 关闭时自动删除
+        loader->setWindowTitle("Dream Guardian");
 
         // 2. 关键：连接 loader 的 finished 信号
         QObject::connect(loader, &widget_level_loading::finished, &a,
