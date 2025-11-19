@@ -61,7 +61,8 @@ bool Tower::targetIsInRange() const {
     if (!currentTarget) {
         return false;
     }
-    QLineF line(pos(), currentTarget->pos());//tower和enemy之间的距离
+    QPointF myCenter = this->sceneBoundingRect().center();
+    QLineF line(myCenter, currentTarget->pos());//tower和enemy之间的距离
     return line.length() <= range;
 }
 
@@ -108,12 +109,14 @@ QList<LiveCoffee*> Tower::findCoffeeInRange()
 {
     QList<LiveCoffee*>coffeeTowers;
     const QList<Tower*>& allTowers = GameManager::instance()->getTowers();
+    QPointF myCenter = this->sceneBoundingRect().center();
     for(auto& item :allTowers)
     {
         LiveCoffee* tower=dynamic_cast<LiveCoffee*>(item);
         if(tower&&tower!=this)
         {
-            QLineF line(pos(),tower->pos());
+            QPointF targetCenter = tower->sceneBoundingRect().center();
+            QLineF line(myCenter, targetCenter);
             if(line.length()<=tower->getRange())
                 coffeeTowers.append(tower);
         }

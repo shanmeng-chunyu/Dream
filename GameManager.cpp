@@ -742,12 +742,15 @@ void GameManager::updateTowerTargets() {
         Enemy* closestTaunter = nullptr;
         double minTauntDistance = tower->getRange() + 1.0;
 
+        // 【新增】获取塔的绝对中心点坐标
+        // sceneBoundingRect() 会自动处理塔的位置和大小，返回准确的包围盒
+        QPointF towerCenter = tower->sceneBoundingRect().center();
+
         // 第一次遍历：只寻找 "pre" 类型的敌人
         for (Enemy* enemy : m_enemies) {
-            // 检查这个敌人是否是 "pre"
-            // 我们从 enemy_data.json 中得知其类型字符串为 "pre"
             if (enemy->getType() == "pre") {
-                double distance = QLineF(tower->pos(), enemy->pos()).length();
+                // 【修改】使用 towerCenter 而不是 tower->pos()
+                double distance = QLineF(towerCenter, enemy->pos()).length();
 
                 if (distance <= tower->getRange()) {
                     if (distance < minTauntDistance) {
@@ -758,24 +761,20 @@ void GameManager::updateTowerTargets() {
             }
         }
 
-        //
         if (closestTaunter) {
-            // 找到了 "pre" 敌人。强制设为目标，并跳过所有其他逻辑。
             tower->setTarget(closestTaunter);
-            continue; // 处理下一个塔
+            continue;
         }
 
         // --- 优先级 1: 永远优先寻找敌人 ---
-        // (我们每一帧都执行这个搜索)
         Enemy* closestEnemy = nullptr;
         double minEnemyDistance = tower->getRange() + 1.0;
 
         for (Enemy* enemy : m_enemies) {
-            double distance = QLineF(tower->pos(), enemy->pos()).length();
+            // 【修改】使用 towerCenter 而不是 tower->pos()
+            double distance = QLineF(towerCenter, enemy->pos()).length();
 
-            // 检查敌人是否在塔的攻击范围内
             if (distance <= tower->getRange()) {
-                // 如果是，再检查它是否是"最近"的敌人
                 if (distance < minEnemyDistance) {
                     minEnemyDistance = distance;
                     closestEnemy = enemy;
@@ -783,33 +782,29 @@ void GameManager::updateTowerTargets() {
             }
         }
 
-        // --- 决策 1: 是否找到了敌人？ ---
         if (closestEnemy) {
-            // 是。敌人拥有最高优先级。
-            // 无论当前目标是什么（哪怕是障碍物），立即切换目标为敌人。
             tower->setTarget(closestEnemy);
-            continue; // 此塔的索敌逻辑在本帧完成
+            continue;
         }
 
-        // --- 优先级 2: 没有敌人在范围内。检查障碍物 ---
-        // (只有在 100% 确定没有敌人在范围内时，才执行这里的逻辑)
-
-        // 2a. 检查是否已经在攻击一个有效的障碍物
-        Obstacle* currentObstacle = dynamic_cast<Obstacle*>(tower->currentTarget);
+        // --- 优先级 2: 检查障碍物 ---
+        Obstacle* currentObstacle = dynamic_cast<Obstacle*>(tower->getCurrentTarget());
         if (currentObstacle &&
             m_obstacles.contains(currentObstacle) &&
             tower->targetIsInRange()) {
-
-            // 是。保持当前目标，继续攻击障碍物。
-            continue; // 此塔的索敌逻辑在本帧完成
+            // 注意：tower->targetIsInRange() 内部可能也用了 pos()，也需要检查 Tower.cpp
+            continue;
         }
 
-        // 2b. 如果没有在攻击有效障碍物，则寻找一个新的障碍物
         Obstacle* closestObstacle = nullptr;
         double minObstacleDistance = tower->getRange() + 1.0;
 
         for (Obstacle* obstacle : m_obstacles) {
-            double distance = QLineF(tower->pos(), obstacle->pos()).length();
+            // 【修改】使用 towerCenter 而不是 tower->pos()
+            // 注意：障碍物的 pos() 通常已经是中心点（在 GameManager 中设置过偏移），但为了保险也可以用 center()
+            // 这里假设 obstacle->pos() 是正确的（通常是中心）
+            double distance = QLineF(towerCenter, obstacle->pos()).length();
+
             if (distance <= tower->getRange()) {
                 if (distance < minObstacleDistance) {
                     minObstacleDistance = distance;
@@ -818,12 +813,9 @@ void GameManager::updateTowerTargets() {
             }
         }
 
-        // --- 决策 2: 是否找到了新的障碍物？ ---
         if (closestObstacle) {
-            // 是。设置新目标为障碍物。
             tower->setTarget(closestObstacle);
         } else {
-            // 否。范围内没有敌人，也没有障碍物。
             tower->setTarget(nullptr);
         }
     }
@@ -931,6 +923,7 @@ void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
     }
     m_entitiesToClean.append(towerToSell);
     m_towers.removeAll(towerToSell);
+    cleanupEntities();
 }
 
 void GameManager::pauseGame() {
