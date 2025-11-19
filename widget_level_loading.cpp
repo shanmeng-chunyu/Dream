@@ -22,6 +22,19 @@ widget_level_loading::widget_level_loading(int type,QVector<QString> &tips,int d
 {
     ui->setupUi(this);
     bar=ui->progressBar;
+
+    const QString newFontFamily = "mplus_hzk_12";
+    QFont tipFont = ui->tip->font();
+    tipFont.setFamily(newFontFamily); // 设置新的字体家族
+    ui->tip->setFont(tipFont);        // 应用新字体
+
+    const QString labelNewFamily = "Comic Sans MS";
+    QFont labelFont = ui->tip_label->font();
+    labelFont.setFamily(labelNewFamily);
+    ui->tip_label->setFont(labelFont);
+    initialFonts[ui->tip] = tipFont;
+    initialFonts[ui->tip_label] = labelFont;
+
     // 1. 允许 QLabel 自动换行
     ui->tip->setWordWrap(true);
     // 2. (推荐) 让文本从顶部开始显示，而不是垂直居中

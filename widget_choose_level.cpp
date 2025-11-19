@@ -30,6 +30,16 @@ widget_choose_level::widget_choose_level(QWidget *parent)
     });
     connect(ui->btn_back,&QPushButton::clicked,this,&widget_choose_level::back);
 
+    const QString newFontFamily = "mplus_hzk_12";
+    // 1. 获取 UI 文件中设置的初始字体（例如：幼圆, 16pt）
+    QFont descFont = ui->description->font();
+    // 2. 更改字体家族
+    descFont.setFamily(newFontFamily);
+    // 3. 应用新字体到 QLabel 控件
+    ui->description->setFont(descFont);
+    // 4. 【关键】将控件及其字体注册到基类，以实现缩放
+    initialFonts[ui->description] = descFont;
+
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
 
     // 保存各个组件的初始几何信息

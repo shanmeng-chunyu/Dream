@@ -177,6 +177,7 @@
     </qresource>
     <qresource prefix="/font">
         <file>resources/font/font.ttf</file>
+        <file>resources/font/Comic Sans MS.ttf</file>
     </qresource>
     <qresource prefix="/music">
         <file>resources/music/explosion.wav</file>

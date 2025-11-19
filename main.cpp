@@ -5,6 +5,7 @@
 #include <QStandardPaths>
 #include <QFile>
 #include <QDir>
+#include <QFontDatabase>
 
 #include "LevelEditorWidget.h"
 #include "MainWindow.h"
@@ -41,6 +42,9 @@ namespace
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QFontDatabase::addApplicationFont(":/font/resources/font/font.ttf");
+    QFontDatabase::addApplicationFont(":/font/resources/font/Comic Sans MS.ttf");
 
     a.setWindowIcon(QIcon(":/background/resources/background/title.png"));
 

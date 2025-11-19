@@ -79,6 +79,23 @@ widget_reference_book::widget_reference_book(QWidget *parent)
 
     ui->next->click();
 
+    const QString newFontFamily = "mplus_hzk_12";
+
+    QFont descFont = ui->description->font();
+    descFont.setFamily(newFontFamily);
+    ui->description->setFont(descFont);
+    initialFonts[ui->description] = descFont;
+
+    QFont label1Font = ui->label1->font();
+    label1Font.setFamily(newFontFamily);
+    ui->label1->setFont(label1Font);
+    initialFonts[ui->label1] = label1Font;
+
+    QFont label2Font = ui->label2->font();
+    label2Font.setFamily(newFontFamily);
+    ui->label2->setFont(label2Font);
+    initialFonts[ui->label2] = label2Font;
+
     initialSize = this->size(); // 从ui文件中获取的初始尺寸
 
     // 保存各个组件的初始几何信息

@@ -101,8 +101,8 @@ QProgressBar::chunk {
    <property name="font">
     <font>
      <family>幼圆</family>
-     <pointsize>18</pointsize>
-     <bold>true</bold>
+     <pointsize>16</pointsize>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -240,8 +240,8 @@ QProgressBar::chunk {
    <property name="font">
     <font>
      <family>幼圆</family>
-     <pointsize>18</pointsize>
-     <bold>true</bold>
+     <pointsize>16</pointsize>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
