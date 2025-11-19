@@ -335,22 +335,6 @@ void MainWindow::initializeScene()
         m_levelSources.append(resolved);
     }
 
-    // bool loaded = false;
-    // for (int idx = 0; idx < m_levelSources.size(); ++idx)
-    // {
-    //     if (loadLevelByIndex(idx, false))
-    //     {
-    //         loaded = true;
-    //         break;
-    //     }
-    // }
-    //
-    // if (!loaded)
-    // {
-    //     QMessageBox::critical(this, tr("Level Missing"), tr("Cannot find a usable level.json in the workspace."));
-    //     return;
-    // }
-
     connectHudToSystems();
 }
 
@@ -783,38 +767,47 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
                     loadLevelByIndex(targetIndex, true);
                 } });
 
-    if (win)
-    {
-        // 1. 如果胜利了，"next" 按钮执行“继续下一关”或“返回关卡选择”
-        connect(m_postGameWidget, &widget_post_game::next, this, [this]()
-        {
+    // 1. 处理 "backToMenu" 信号 (胜利界面的返回按钮)
+    connect(m_postGameWidget, &widget_post_game::backToMenu, this, [this]() {
+        dismissPostGameWidget();
+        // 1. 清理游戏场景
+        GameManager::instance()->clearGameScene();
+        // 2. 隐藏游戏窗口
+        this->hide();
+        // 3. 通知 main.cpp 切换回主菜单
+        emit mainMenuRequested();
+    });
+
+    // 2. 处理 "repeat" 信号 (失败界面的重试按钮)
+    connect(m_postGameWidget, &widget_post_game::repeat, this, [this]() {
+        const int targetIndex = m_currentLevelIndex;
+        dismissPostGameWidget();
+        if (targetIndex >= 0) {
+            loadLevelByIndex(targetIndex, true);
+        }
+    });
+
+    // 3. 处理 "next" 信号 (胜利的下一关 / 失败的返回)
+    // 注意：根据你的图片资源，失败界面的 next 是 lose_return.png，所以它通常也应该返回菜单
+    // 但如果你希望失败界面的 next 是返回菜单，你需要在这里区分
+    connect(m_postGameWidget, &widget_post_game::next, this, [this, win]() {
+        if (win) {
+            // 胜利 -> 下一关
             const int nextIndex = m_currentLevelIndex + 1;
             dismissPostGameWidget();
-            if (nextIndex < m_levelSources.size())
-            {
+            if (nextIndex < m_levelSources.size()) {
                 loadLevelByIndex(nextIndex, true);
+            } else {
+                emit levelSelectionRequested(); // 通关后返回选关
             }
-            else
-            {
-                // (这是我们之前的修复) 返回关卡选择界面
-                emit levelSelectionRequested();
-            }
-        });
-    }
-    else
-    {
-        // 2. 如果失败了，"next" 按钮 (现在是返回图标) 执行“返回主菜单”
-        connect(m_postGameWidget, &widget_post_game::next, this, [this]()
-        {
+        } else {
+            // 失败 -> 右侧按钮 (lose_return) -> 返回主菜单
             dismissPostGameWidget();
-
-            // (重要) 在返回主菜单前，必须清理游戏场景
             GameManager::instance()->clearGameScene();
-
-            // (main.cpp 会监听这个信号并切换到 menu)
+            this->hide();
             emit mainMenuRequested();
-        });
-    }
+        }
+    });
 
     m_postGameWidget->show();
 }
@@ -844,6 +837,7 @@ void MainWindow::updateLevelSwitchStatus(int index)
 
 bool MainWindow::loadLevelByIndex(int index, bool showError)
 {
+    dismissPostGameWidget();
     GameManager::instance()->clearGameScene();
     if (index < 0 || index >= m_levelSources.size())
     {
@@ -2368,6 +2362,8 @@ void MainWindow::onReturnToMainMenu()
         m_pauseMenuWidget->close();
         // close() 会触发 destroyed，进而调用 onPauseMenuClosed() 来清理效果
     }
+
+    dismissPostGameWidget();
 
     // 2. 恢复游戏逻辑（以便下次进入时是正常状态）
     GameManager::instance()->clearGameScene();

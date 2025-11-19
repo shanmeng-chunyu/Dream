@@ -19,6 +19,7 @@ public:
 signals:
     void repeat();
     void next();
+    void backToMenu();
 
 private:
     Ui::widget_post_game *ui;

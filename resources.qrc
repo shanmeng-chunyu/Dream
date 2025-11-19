@@ -11,6 +11,7 @@
         <file>resources/button/left.png</file>
         <file>resources/button/right.png</file>
         <file>resources/button/win_continue.png</file>
+        <file>resources/button/win_return.png</file>
         <file>resources/button/win_repeat.png</file>
         <file>resources/button/lose_continue.png</file>
         <file>resources/button/lose_return.png</file>

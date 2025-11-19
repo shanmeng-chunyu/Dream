@@ -24,43 +24,51 @@ void WaveManager::loadWaves(const QJsonArray& wavesData) {
 }
 
 void WaveManager::startNextWave() {
+    // 1. 检查是否还有下一波
     if (currentWaveIndex + 1 >= waves.size()) {
         return;
     }
 
+    // 2. 【关键】必须先增加波次索引
     currentWaveIndex++;
-    m_spawnBag.clear(); // 1. 清空“袋子”
 
-    // 2. 获取当前波次的所有“敌人组”
+    m_spawnBag.clear(); // 清空袋子
+
+    // 3. 获取当前波次配置
     QList<EnemyWaveData> enemyGroups = waves[currentWaveIndex].enemies;
 
     if (enemyGroups.isEmpty()) {
-        // 这是一个空波次，直接跳过
         m_spawnCooldownTicks = -1;
         if (currentWaveIndex >= waves.size() - 1) {
             emit allWavesCompleted();
         } else {
-            m_interWaveCooldownTicks = intervalToTicks(5.0); // 5 秒
+            m_interWaveCooldownTicks = intervalToTicks(5.0);
         }
         return;
     }
 
-    // 3. (关键) “装袋子”：把所有敌人都加进来
+    // 4. “装袋子”
     for (const EnemyWaveData& group : enemyGroups) {
         for (int i = 0; i < group.count; ++i) {
             m_spawnBag.append(group.type);
         }
     }
 
-    // 4. (关键) “洗牌”：随机打乱“袋子”
+    // 5. “洗牌”
     std::shuffle(m_spawnBag.begin(), m_spawnBag.end(), *QRandomGenerator::global());
 
-    // 5. 确定刷怪间隔：我们使用这个波次中“第一组”敌人的间隔
-    //    (这是一个约定：第一个定义的敌人组的 interval 将是本波次的刷怪速度)
+    // 6. 确定常规刷怪间隔
     m_waveIntervalTicks = intervalToTicks(enemyGroups.first().interval);
 
-    // 6. 设置第一个怪的刷新倒计时
-    m_spawnCooldownTicks = m_waveIntervalTicks;
+    // 7. 【核心修改】设置第一只怪的生成倒计时
+    if (currentWaveIndex == 0) {
+        // 如果是第0波（第一关刚开始），强制等待 5 秒 (约300帧)
+        m_spawnCooldownTicks = intervalToTicks(3.0);
+    } else {
+        // 后续波次，使用配置表中的间隔
+        m_spawnCooldownTicks = m_waveIntervalTicks;
+    }
+
     m_interWaveCooldownTicks = 0;
 }
 
