@@ -290,7 +290,7 @@
         ]
     },
     "player": {
-        "initial_resource": 1000,
+        "initial_resource": 500,
         "initial_stability": 100
     },
     "waves": [

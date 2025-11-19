@@ -15,7 +15,8 @@
 #include "widget_menu.h"
 #include "widget_ingame.h"
 #include "widget_pause_menu.h"
-#include "widget_reference_book.h" // 确保包含了图鉴的头文件
+#include "widget_reference_book.h"
+#include "ConfigHelper.h"
 
 namespace
 {
@@ -211,7 +212,7 @@ int main(int argc, char *argv[])
                      { showLoadingAndStart(1, "levels/level2.json", &levelChooser); });
     QObject::connect(&levelChooser, &widget_choose_level::level3, &a, [&]() {
         QString customPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/custom_level3.json";
-        QString path_to_load = QFile::exists(customPath) ? customPath : ":/levels/levels/level3.json";
+        QString path_to_load = QFile::exists(customPath) ? customPath : getConfigFile("levels/level3.json");
         // 使用正确的路径加载编辑器
         editor.loadLevelForEditing(path_to_load);
         switchWindow(&levelChooser, &editor);

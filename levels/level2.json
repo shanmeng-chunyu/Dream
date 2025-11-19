@@ -524,7 +524,7 @@
   },
   "player": {
     "initial_stability": 100,
-    "initial_resource": 1000
+    "initial_resource": 300
   },
   "available_towers": [
     "WarmMemories",

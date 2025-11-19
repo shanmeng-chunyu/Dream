@@ -769,7 +769,7 @@ void LevelEditorWidget::saveLevel() {
 
 
     // 步骤 3：加载模板关卡 (level3.json) (这部分不变)
-    QString templateLevelPath = ":/levels/levels/level3.json";
+    QString templateLevelPath = getConfigFile("levels/level3.json");
     QFile templateFile(templateLevelPath);
     QJsonObject rootObj;
     if (templateFile.open(QIODevice::ReadOnly)) {

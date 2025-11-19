@@ -496,7 +496,7 @@
   },
   "player": {
     "initial_stability": 100,
-    "initial_resource": 1000
+    "initial_resource": 500
   },
   "available_towers": [
     "InspirationBulb",

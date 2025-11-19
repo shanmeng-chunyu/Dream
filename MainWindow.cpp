@@ -311,13 +311,13 @@ void MainWindow::initializeScene()
 
     appendCandidate(commandLineLevelCandidate);
     appendCandidate(envLevelCandidate);
-    appendCandidate(QStringLiteral("levels/level1.json"));
-    appendCandidate(QStringLiteral("levels/level2.json"));
+    appendCandidate(getConfigFile("levels/level1.json"));
+    appendCandidate(getConfigFile("levels/level2.json"));
     QString customLevel3Path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/custom_level3.json";
     if (QFile::exists(customLevel3Path)) {
         appendCandidate(customLevel3Path); // 优先加载自定义版本
     } else {
-        appendCandidate(QStringLiteral("levels/level3.json")); // 加载默认版本
+        appendCandidate(getConfigFile("levels/level3.json"));
     }
 
     m_levelSources.clear();

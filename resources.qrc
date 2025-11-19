@@ -72,11 +72,15 @@
         <file>resources/enemies/level2/coldwords.png</file>
         <file>resources/enemies/level2/coldwords.gif</file>
         <file>resources/enemies/level2/lonelyness.png</file>
+        <file>resources/enemies/level2/lonelyness.gif</file>
         <file>resources/enemies/level2/recall.png</file>
+        <file>resources/enemies/level2/recall.gif</file>
         <file>resources/enemies/level2/tears.png</file>
         <file>resources/enemies/level2/tears.gif</file>
         <file>resources/enemies/level2/thephantomofthepast.png</file>
+        <file>resources/enemies/level2/thephantomofthepast.gif</file>
         <file>resources/enemies/level3/nightmare.png</file>
+        <file>resources/enemies/level3/nightmare.gif</file>
         <file>resources/enemies/EnemyDie.gif</file>
     </qresource>
     <qresource prefix="/frame">
@@ -175,9 +179,6 @@
         <file>resources/towers/level2/WarmMemories_upgrade.gif</file>
         <file>resources/towers/level2/WarmMemories_upgrade_charge.png</file>
         <file>resources/towers/level2/WarmMemories_upgrade_charge.gif</file>
-    </qresource>
-    <qresource prefix="/levels">
-        <file>levels/level3.json</file>
     </qresource>
     <qresource prefix="/font">
         <file>resources/font/font.ttf</file>
