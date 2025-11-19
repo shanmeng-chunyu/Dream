@@ -12,7 +12,7 @@
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/InspirationBulb_upgrade.png",
       "damage": 20,
       "damage_upgrade": 30,
-      "range": 2.5,
+      "range": 1.5,
       "fire_rate": 0.8,
       "description": "单体攻击，较快的射速和较低的伤害。升级后提升伤害和攻速"
     },
@@ -28,7 +28,7 @@
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/KnowledgeTree_upgrade.png",
       "damage": 80,
       "damage_upgrade": 100,
-      "range": 3.5,
+      "range": 2.5,
       "fire_rate": 2.0,
       "description": "群体攻击，较高的伤害和较慢的射速"
     },
@@ -44,7 +44,7 @@
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/FishingCatPillow_upgrade.png",
       "damage": 0,
       "damage_upgrade": 0,
-      "range": 2.5,
+      "range": 1.5,
       "fire_rate": null,
       "description": "每隔一段时间会吸引一名敌人，使其停止移动一段时间。升级后提升伤害与攻速"
     },
@@ -60,7 +60,7 @@
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level1/LiveCoffee.png",
       "damage": 0,
       "damage_upgrade": 0,
-      "range": 2.5,
+      "range": 1.5,
       "fire_rate": null,
       "description": "增加范围内友军的攻速，降低范围内敌人的移速，升级后提升效果"
     },
@@ -70,12 +70,13 @@
       "cost": 120,
       "upgrade_cost": 150,
       "pixmap": ":/towers/resources/towers/level2/WarmMemories.png",
+      "gif_path": ":/towers/resources/towers/level2/WarmMemories.gif",
       "pixmap_upgrade": ":/towers/resources/towers/level2/WarmMemories_upgrade.png",
       "bullet_pixmap": "",
       "damage": 100,
       "damage_upgrade": 150,
-      "range": 2.5,
-      "fire_rate": 8,
+      "range": 1.5,
+      "fire_rate": 6,
       "description": "每隔一段时间对单个敌人造成大量伤害并造成眩晕，升级后提升伤害和眩晕时间"
     },
     {
@@ -90,7 +91,7 @@
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level2/NightRadio_upgrade.png",
       "damage": 50,
       "damage_upgrade": 75,
-      "range": 4.5,
+      "range": 3.0,
       "fire_rate": 1.5,
       "description": "子弹可以穿透敌人，升级后提升伤害和攻速"
     },
@@ -100,12 +101,13 @@
       "cost": 180,
       "upgrade_cost": 220,
       "pixmap": ":/towers/resources/towers/level2/PettingCatTime.png",
+      "gif_path": ":/towers/resources/towers/level2/PettingCatTime.gif",
       "pixmap_upgrade": ":/towers/resources/towers/level2/PettingCatTime_upgrade.png",
       "bullet_pixmap": ":/bullet/resources/bullet/level2/PettingCatTime.png",
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level2/PettingCatTime_upgrade.png",
       "damage": 30,
       "damage_upgrade": 45,
-      "range": 1.5,
+      "range": 1,
       "fire_rate": 0.5,
       "description": "对攻击范围内的单个敌人快速造成多次伤害，升级后提升伤害和攻速"
     },
@@ -121,7 +123,7 @@
       "bullet_pixmap_upgrade": ":/bullet/resources/bullet/level2/Companionship.png",
       "damage": 0,
       "damage_upgrade": 0,
-      "range": 2.5,
+      "range": 1.5,
       "fire_rate": null,
       "description": "提升范围内友军的攻击力，升级后提升效果"
     }

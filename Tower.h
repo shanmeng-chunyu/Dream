@@ -85,6 +85,11 @@ protected:
     QMovie* m_movie;
     QSize m_pixelSize;
     QGraphicsPixmapItem* m_auraItem;
+    QString m_baseGifPath;      // 基础状态 GIF 路径 (未充能)
+    QString m_chargeGifPath;    // 充能状态 GIF 路径
+    QString m_upgradedGifPath;  // 升级后基础状态 GIF 路径 (未充能)
+    QString m_upgradedChargeGifPath; // 升级后充能状态 GIF 路径
+    void updateVisualState(bool isCharged);
     // 鼠标悬停进入事件
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     // 鼠标悬停离开事件

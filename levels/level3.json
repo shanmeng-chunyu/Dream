@@ -14,10 +14,6 @@
         "thesis"
     ],
     "available_towers": [
-        "InspirationBulb",
-        "KnowledgeTree",
-        "FishingCatPillow",
-        "LiveCoffee"
     ],
     "level_name": "第三关：梦你所梦",
     "map": {
@@ -298,35 +294,6 @@
         "initial_stability": 100
     },
     "waves": [
-        {
-            "enemies": [
-                {
-                    "count": 1,
-                    "interval": 1,
-                    "type": "thesis"
-                },
-                {
-                    "count": 1,
-                    "interval": 1,
-                    "type": "tears"
-                },
-                {
-                    "count": 1,
-                    "interval": 1,
-                    "type": "bug"
-                },
-                {
-                    "count": 1,
-                    "interval": 1,
-                    "type": "bug"
-                },
-                {
-                    "count": 1,
-                    "interval": 1,
-                    "type": "bug"
-                }
-            ]
-        },
         {
             "enemies": [
                 {

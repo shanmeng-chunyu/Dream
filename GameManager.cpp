@@ -281,7 +281,7 @@ void GameManager::updateGame() {
 
             if (maxHp > 0 && (double)enemy->getHealth() / maxHp < thr) {
                 const double baseSpd = proto.value("speed").toDouble();
-                const double mul = proto.value("rageSpeedMul").toDouble(1.35);
+                const double mul = proto.value("rageSpeedMul").toDouble(1.6);
                 enemy->setBaseSpeed(baseSpd * mul);
                 m_raged.insert(enemy);
             }
@@ -408,7 +408,9 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     }else if (type == "LiveCoffee") {
         tower = new LiveCoffee(pixelRange,pixmap_path,towerPixelSize);
     }else if (type == "WarmMemories") {
-        tower = new WarmMemory(pixelRange,pixmap_path,towerPixelSize);
+        QString wm_charge_path;
+        wm_charge_path = ":/towers/resources/towers/level2/WarmMemories_charge.gif";
+        tower = new WarmMemory(pixelRange,pixmap_path,wm_charge_path,towerPixelSize);
         WarmMemory* memory = qobject_cast<WarmMemory*>(tower);
         connect(memory, &WarmMemory::applyControl, this, &GameManager::onApplyEnemyControl);
     }else if (type == "NightRadio") {

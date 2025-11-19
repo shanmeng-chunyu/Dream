@@ -66,6 +66,9 @@ void Tower::findAndAttackTarget() {
     fireCount--;
     if(fireCount<=0)
     {
+        if (type == "WarmMemories") {
+            updateVisualState(true);
+        }
         if (currentTarget && targetIsInRange())
         {
             regretEffect();
@@ -249,5 +252,55 @@ void Tower::regretEffect()
         // 你可以从 enemy_data.json 中读取这个值
         const double slowFactor = 1.5;
         slowAttack(slowFactor);
+    }
+}
+
+void Tower::updateVisualState(bool isCharged) {
+    if (type != "WarmMemories") {
+        return; // 仅对 WarmMemory 执行此逻辑
+    }
+
+    QString targetPath;
+    if (upgraded) {
+        targetPath = isCharged ? m_upgradedGifPath : m_upgradedChargeGifPath;
+    } else {
+        targetPath = isCharged ? m_baseGifPath : m_chargeGifPath;
+    }
+
+    if (targetPath.isEmpty()) {
+        qWarning() << "WarmMemory: Target GIF path is empty for state (Charged:" << isCharged << ", Upgraded:" << upgraded << ")";
+        return;
+    }
+
+    // 检查是否已经是目标路径，避免重复加载
+    if (m_movie && m_movie->fileName() == targetPath) {
+        return;
+    }
+
+    // 停止当前电影
+    if (m_movie) {
+        m_movie->stop();
+    }
+
+    // 加载新 GIF 或 Pixmap
+    if (targetPath.endsWith(".gif", Qt::CaseInsensitive)) {
+        // 如果是 GIF，用 QMovie 替换
+        if (m_movie) {
+            m_movie->setFileName(targetPath);
+        } else {
+            // 理论上不会发生，因为 m_movie 在构造函数中创建
+            m_movie = new QMovie(targetPath, QByteArray(), this);
+            connect(m_movie, &QMovie::frameChanged, this, &Tower::updatePixmapFromMovie);
+        }
+        m_movie->start();
+    } else {
+        // 如果是 PNG/Pixmap，直接设置 Pixmap
+        QPixmap staticPixmap(targetPath);
+        if (staticPixmap.isNull()) {
+            qWarning() << "WarmMemory: Failed to load static pixmap:" << targetPath;
+            return;
+        }
+        QPixmap scaledPixmap = staticPixmap.scaled(m_pixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
     }
 }

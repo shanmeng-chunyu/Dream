@@ -161,12 +161,19 @@
         <file>resources/towers/level2/NightRadio.png</file>
         <file>resources/towers/level2/NightRadio.gif</file>
         <file>resources/towers/level2/NightRadio_upgrade.png</file>
+        <file>resources/towers/level2/NightRadio_upgrade.gif</file>
         <file>resources/towers/level2/PettingCatTime.png</file>
+        <file>resources/towers/level2/PettingCatTime.gif</file>
         <file>resources/towers/level2/PettingCatTime_upgrade.png</file>
+        <file>resources/towers/level2/PettingCatTime_upgrade.gif</file>
         <file>resources/towers/level2/WarmMemories.png</file>
+        <file>resources/towers/level2/WarmMemories.gif</file>
         <file>resources/towers/level2/WarmMemories_charge.png</file>
+        <file>resources/towers/level2/WarmMemories_charge.gif</file>
         <file>resources/towers/level2/WarmMemories_upgrade.png</file>
+        <file>resources/towers/level2/WarmMemories_upgrade.gif</file>
         <file>resources/towers/level2/WarmMemories_upgrade_charge.png</file>
+        <file>resources/towers/level2/WarmMemories_upgrade_charge.gif</file>
     </qresource>
     <qresource prefix="/data">
         <file>enemy_data.json</file>
