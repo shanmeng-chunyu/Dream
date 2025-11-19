@@ -18,30 +18,79 @@ Enemy::Enemy(int health, double speed, int damage, const std::vector<QPointF>& p
       absolutePath(path),
       m_currentPathIndex(0),
       m_maxHealth(health),
+      m_movie(nullptr),
       m_stunTicksRemainimng(0),
       m_baseSpeed(speed),
       m_isFlipped(false),
       m_pixelSize(pixelSize),
+      m_currentFrameIndex(0),
       m_effectItem(nullptr),
       m_effectTicksRemaining(0)
 {
     if (!absolutePath.empty()) {
         setPos(absolutePath[0]);
     }
-    m_movie = new QMovie(gifPath, QByteArray(), this);
-
-    // 推荐：对于大量重复的GIF，开启缓存
-    m_movie->setCacheMode(QMovie::CacheAll);
-
-    // 连接 QMovie 的 frameChanged 信号到我们的槽
-    connect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
-
-    m_movie->start();
-
-    // 立即设置第一帧，防止敌人隐形
-    if (m_movie->isValid()) {
-        updatePixmapFromMovie();
+    // 1. 使用局部变量 QMovie 加载 GIF (只用于提取数据，用完即弃)
+    QMovie tempMovie(gifPath);
+    if (!tempMovie.isValid()) {
+        // 如果加载失败，设置一个默认图或者打印错误
+        qWarning() << "Failed to load GIF:" << gifPath;
+        return;
     }
+
+    // 2. 预处理：遍历 GIF 的每一帧
+    tempMovie.setCacheMode(QMovie::CacheAll);
+    int frameCount = tempMovie.frameCount();
+
+    // 这是一个防御性编程，防止获取不到帧数
+    if (frameCount <= 0) {
+        // 尝试强制跳转来触发加载
+        tempMovie.jumpToFrame(0);
+        frameCount = tempMovie.frameCount();
+        if (frameCount <= 0) frameCount = 1; // 仍然获取不到，当作单帧图片处理
+    }
+
+    for (int i = 0; i < frameCount; ++i) {
+        tempMovie.jumpToFrame(i); // 跳转到第 i 帧
+
+        // 获取当前帧的原始图片
+        QPixmap rawFrame = tempMovie.currentPixmap();
+
+        // 【关键】在这里进行昂贵的缩放操作（只做一次！）
+        if (!rawFrame.isNull()) {
+            QPixmap scaledFrame = rawFrame.scaled(m_pixelSize,
+                                                Qt::KeepAspectRatio,
+                                                Qt::SmoothTransformation);
+            m_frames.append(scaledFrame); // 存入缓存
+        }
+    }
+
+    // 3. 设置初始图像
+    if (!m_frames.isEmpty()) {
+        setPixmap(m_frames[0]);
+    }
+
+    // 4. 创建并启动动画计时器
+    m_animTimer = new QTimer(this);
+    // 计算帧率：GIF 默认通常是 100ms 一帧，或者你可以根据 tempMovie.nextFrameDelay() 来动态获取
+    // 这里为了简单，我们设定为 100ms (即 10 FPS)
+    int delay = tempMovie.nextFrameDelay();
+    if (delay <= 0) delay = 100;
+
+    m_animTimer->setInterval(delay);
+
+    // 连接超时信号到 lambda 表达式（或者新建一个 slot 函数）
+    connect(m_animTimer, &QTimer::timeout, this, [this]() {
+        if (m_frames.isEmpty()) return;
+
+        // 切换到下一帧
+        m_currentFrameIndex = (m_currentFrameIndex + 1) % m_frames.size();
+
+        // 直接设置图片，开销极小（O(1)）
+        this->setPixmap(m_frames[m_currentFrameIndex]);
+    });
+
+    m_animTimer->start();
 }
 
 void Enemy::setAbsolutePath(const std::vector<QPointF>& path) {
@@ -305,7 +354,14 @@ void Enemy::removeVisualEffect()
 
 void Enemy::pauseAnimation()
 {
-    // 检查 m_movie 是否存在，并且正在运行
+    // 1. 暂停行走动画 (由 m_animTimer 驱动)
+    // 只有当计时器存在且正在运行时才停止
+    if (m_animTimer && m_animTimer->isActive()) {
+        m_animTimer->stop();
+    }
+
+    // 2. 暂停死亡动画 (通常由 m_movie 驱动)
+    // 如果你保留了 playDeathAnimation 中的 QMovie 逻辑，这里需要暂停它
     if (m_movie && m_movie->state() == QMovie::Running) {
         m_movie->setPaused(true);
     }
@@ -313,7 +369,15 @@ void Enemy::pauseAnimation()
 
 void Enemy::resumeAnimation()
 {
-    // 检查 m_movie 是否存在，并且之前是暂停状态
+    // 1. 恢复行走动画
+    // 关键检查：只有当敌人"没死"(m_isDying == false) 时，才恢复行走动画
+    // 如果敌人正在播放死亡动画，千万不要重新启动行走计时器，否则会出现"诈尸"闪烁
+    if (!m_isDying && m_animTimer && !m_animTimer->isActive()) {
+        m_animTimer->start();
+    }
+
+    // 2. 恢复死亡动画
+    // 如果 m_movie 处于暂停状态（说明之前正在播死亡动画被暂停了），则恢复它
     if (m_movie && m_movie->state() == QMovie::Paused) {
         m_movie->setPaused(false);
     }
@@ -321,26 +385,44 @@ void Enemy::resumeAnimation()
 
 void Enemy::playDeathAnimation()
 {
-    if (!m_movie) return;
+    if (m_animTimer) {
+        m_animTimer->stop();
+    }
 
-    // 停止并断开旧的循环动画
-    m_movie->stop();
-    disconnect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
-    disconnect(m_movie, &QMovie::finished, this, &Enemy::onDeathAnimationFinished); // 断开可能的旧连接
+    if (!m_movie) {
+        // 如果 m_movie 是空的（第一次死），则创建它
+        m_movie = new QMovie(this);
+        // 只有 m_movie 被创建后，连接信号才安全
+        // 注意：checkDeathFrame 的连接应该放在 start 之前
+        connect(m_movie, QOverload<int>::of(&QMovie::frameChanged), this, &Enemy::checkDeathFrame);
+        connect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
+    } else {
+        // 如果 m_movie 已经存在（理论上不会发生，除非复活逻辑），先停止
+        m_movie->stop();
+        // 断开旧的连接，防止重复连接导致多次调用
+        disconnect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
+        // 重新连接（或者你可以只在创建时连接一次，这里为了保险起见重连）
+        connect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
+    }
 
-    // 加载死亡动画
+    // 3. 移除之前可能存在的旧连接 (关于 finished 信号)
+    // 你的代码里之前有这一行，保留它是好的习惯
+    disconnect(m_movie, &QMovie::finished, this, &Enemy::onDeathAnimationFinished);
+
+    // 4. 设置资源并播放
     m_movie->setFileName(":/enemies/resources/enemies/EnemyDie.gif");
 
-    // 确保动画只播放一次
+    if (!m_movie->isValid()) {
+        qWarning() << "Failed to load death animation!";
+        // 如果加载失败，直接触发死亡完成逻辑，防止游戏卡住
+        onDeathAnimationFinished();
+        return;
+    }
+
     m_movie->setCacheMode(QMovie::CacheAll);
     m_movie->setSpeed(100);
 
-    // 重新连接 frameChanged 以显示动画
-    connect(m_movie, &QMovie::frameChanged, this, &Enemy::updatePixmapFromMovie);
-
-    // !!! 核心：连接 movie 的 finished 信号到我们的槽 !!!
-    connect(m_movie, QOverload<int>::of(&QMovie::frameChanged), this, &Enemy::checkDeathFrame);
-
+    // 开始播放
     m_movie->start();
 }
 

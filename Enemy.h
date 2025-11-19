@@ -56,8 +56,11 @@ private:
     int m_currentPathIndex;
     void applyAuraEffects();
     QList<LiveCoffee*> findCoffeeInRange() const;
-    QMovie* m_movie;       // 用于播放GIF
     QSize m_pixelSize;     // 存储敌人的标准像素尺寸
+    QMovie* m_movie;      // 用于处理GIF动画
+    QVector<QPixmap> m_frames;
+    int m_currentFrameIndex;
+    QTimer* m_animTimer;
 
     int m_stunTicksRemainimng = 0;
     double m_baseSpeed;//Ô­Ê¼ËÙ¶È
