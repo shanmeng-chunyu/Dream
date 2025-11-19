@@ -228,6 +228,19 @@ int main(int argc, char *argv[])
         switchWindow(&w, &menu); // <-- 修改
     });
 
+    QObject::connect(&w, &MainWindow::levelEditorRequested, &a, [&]() {
+        // 1. 确定要加载的文件路径 (逻辑同 levelChooser -> level3)
+        //    优先加载用户 AppData 中的存档，没有则加载默认资源
+        QString customPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/custom_level3.json";
+        QString path_to_load = QFile::exists(customPath) ? customPath : ":/levels/levels/level3.json";
+
+        // 2. 让编辑器加载该关卡
+        editor.loadLevelForEditing(path_to_load);
+
+        // 3. 执行窗口切换：隐藏游戏窗口(w)，显示编辑器(editor)
+        switchWindow(&w, &editor);
+    });
+
     // --- 主菜单的三个按钮连接 ---
 
     // 1. (保留) 主菜单 -> 关卡选择器

@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include "LiveCoffee.h"
 #include "FriendCompanion.h"
+#include "GameManager.h"
 
 Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,const QString &gif_path, const QSize& pixelSize, QGraphicsItem* parent)
     : QObject(nullptr),
@@ -104,8 +105,8 @@ void Tower::slowAttackStop()
 QList<LiveCoffee*> Tower::findCoffeeInRange()
 {
     QList<LiveCoffee*>coffeeTowers;
-    QList<QGraphicsItem*> items = scene()->items();
-    for(auto& item :items)
+    const QList<Tower*>& allTowers = GameManager::instance()->getTowers();
+    for(auto& item :allTowers)
     {
         LiveCoffee* tower=dynamic_cast<LiveCoffee*>(item);
         if(tower&&tower!=this)
@@ -120,8 +121,8 @@ QList<LiveCoffee*> Tower::findCoffeeInRange()
 QList<FriendCompanion*>Tower:: findFriendInRange()
 {
     QList<FriendCompanion*>friendTowers;
-    QList<QGraphicsItem*> items = scene()->items();
-    for(auto& item :items)
+    const QList<Tower*>& allTowers = GameManager::instance()->getTowers();
+    for(auto& item :allTowers)
     {
        FriendCompanion* tower=dynamic_cast<FriendCompanion*>(item);
         if(tower&&tower!=this)
@@ -220,8 +221,8 @@ void Tower::resumeAnimation()
 QList<Enemy*> Tower::findRegretInRange()
 {
     QList<Enemy*> regretEnemies;
-    QList<QGraphicsItem*> items = scene()->items();
-    for(auto& item : items)
+    const QList<Enemy*>& allEnemies = GameManager::instance()->getEnemies();
+    for(auto& item : allEnemies)
     {
         // 检查它是否是一个 Enemy
         Enemy* enemy = dynamic_cast<Enemy*>(item);

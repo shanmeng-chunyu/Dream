@@ -54,6 +54,7 @@ signals:
     void towerSellRequested(const QPointF &relativePosition);
     void levelSelectionRequested();
     void mainMenuRequested();
+    void levelEditorRequested();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

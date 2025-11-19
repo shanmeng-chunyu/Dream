@@ -795,6 +795,12 @@ void MainWindow::showPostGameWidget(bool win, int stability, int killCount)
             // 胜利 -> 下一关
             const int nextIndex = m_currentLevelIndex + 1;
             dismissPostGameWidget();
+            if (m_currentLevelIndex == 1) {
+                // 如果是 Level 2 结束，我们不直接加载 Level 3
+                // 而是发射信号，请求进入编辑器
+                emit levelEditorRequested();
+                return; // 必须 return，防止继续执行下面的 loadLevelByIndex
+            }
             if (nextIndex < m_levelSources.size()) {
                 loadLevelByIndex(nextIndex, true);
             } else {

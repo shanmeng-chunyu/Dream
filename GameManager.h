@@ -42,6 +42,8 @@ public:
     void buildTower(const QString& type, const QPointF& relativePosition);
     void clearGameScene();
 
+    const QList<Tower*>& getTowers() const { return m_towers; }
+
 public slots:
     // 响应WaveManager的信号来生成敌人
     void onSpawnEnemy(const QString& type, const std::vector<QPointF>& absolutePath);
