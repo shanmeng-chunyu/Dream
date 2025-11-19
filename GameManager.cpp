@@ -12,6 +12,7 @@
 #include "Tower.h"
 #include "Bullet.h"
 #include "Obstacle.h"
+#include "ConfigHelper.h"
 
 #include <QGraphicsScene>
 #include <QTimer>
@@ -167,7 +168,7 @@ void GameManager::loadPrototypes() {
 
     // --- 加载敌人主数据 ---
     // (注意：这些路径是 .qrc 文件中定义的路径)
-    QFile enemyFile(":/data/enemy_data.json");
+    QFile enemyFile(getConfigFile("enemy_data.json"));
     if (enemyFile.open(QIODevice::ReadOnly)) {
         QJsonDocument enemyDoc = QJsonDocument::fromJson(enemyFile.readAll());
         // (根据 enemy_data.json 的结构)
@@ -180,7 +181,7 @@ void GameManager::loadPrototypes() {
     }
 
     // --- 加载防御塔主数据 ---
-    QFile towerFile(":/data/tower_data.json");
+    QFile towerFile(getConfigFile("tower_data.json"));
     if (towerFile.open(QIODevice::ReadOnly)) {
         QJsonDocument towerDoc = QJsonDocument::fromJson(towerFile.readAll());
         // (根据 tower_data.json 的结构)
@@ -1083,6 +1084,9 @@ void GameManager::destroyAllTowers(bool withEffects)
     for (Tower* tower : m_towers) {
         // 2. 将它们全部加入到 m_entitiesToClean 队列
         //    这能确保它们在当前帧的末尾被安全地从场景中移除和删除
+        if (tower->getAuraItem()) {
+            m_entitiesToClean.append(tower->getAuraItem());
+        }
         m_entitiesToClean.append(tower);
     }
 

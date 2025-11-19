@@ -176,10 +176,6 @@
         <file>resources/towers/level2/WarmMemories_upgrade_charge.png</file>
         <file>resources/towers/level2/WarmMemories_upgrade_charge.gif</file>
     </qresource>
-    <qresource prefix="/data">
-        <file>enemy_data.json</file>
-        <file>tower_data.json</file>
-    </qresource>
     <qresource prefix="/levels">
         <file>levels/level3.json</file>
     </qresource>

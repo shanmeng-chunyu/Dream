@@ -6,6 +6,7 @@
 #include "widget_ingame.h"
 #include "widget_pause_menu.h"
 #include "widget_building_list.h"
+#include "ConfigHelper.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsPixmapItem>
@@ -41,7 +42,6 @@
 #include <functional>
 #include <cmath>
 #include <QGraphicsOpacityEffect>
-
 namespace
 {
     struct TowerBalanceRow
@@ -1567,7 +1567,7 @@ void MainWindow::showUpgradeMenu(int baseIndex, const QPoint &globalPos)
     // --- 步骤 1.1：(新) 提前加载 tower_data.json ---
     // (我们把这段代码移到了 "if (canUpgrade)" 之前，以便 "出售" 选项也能使用它)
     QJsonObject towerData;
-    QFile file(":/data/tower_data.json");
+    QFile file(getConfigFile("tower_data.json"));
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Could not open tower_data.json for upgrade info";
     } else {

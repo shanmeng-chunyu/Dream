@@ -90,10 +90,7 @@ protected:
     QString m_upgradedGifPath;  // 升级后基础状态 GIF 路径 (未充能)
     QString m_upgradedChargeGifPath; // 升级后充能状态 GIF 路径
     void updateVisualState(bool isCharged);
-    // 鼠标悬停进入事件
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    // 鼠标悬停离开事件
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     friend class GameManager;
 };
 #endif // TOWER_H

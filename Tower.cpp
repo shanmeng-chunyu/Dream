@@ -4,9 +4,11 @@
 #include <QLineF>
 #include <QMovie>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include "LiveCoffee.h"
 #include "FriendCompanion.h"
 #include "GameManager.h"
+
 
 Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,const QString &gif_path, const QSize& pixelSize, QGraphicsItem* parent)
     : QObject(nullptr),
@@ -180,18 +182,6 @@ void Tower::showRange(bool show)
     }
 }
 
-void Tower::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    showRange(true); // 显示范围
-    QGraphicsPixmapItem::hoverEnterEvent(event);
-}
-
-void Tower::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    showRange(false); // 隐藏范围
-    QGraphicsPixmapItem::hoverLeaveEvent(event);
-}
-
 void Tower::updatePixmapFromMovie()
 {
     // 关键：从 QMovie 获取当前帧，并 *缩放* 到我们期望的尺寸
@@ -303,5 +293,27 @@ void Tower::updateVisualState(bool isCharged) {
         }
         QPixmap scaledPixmap = staticPixmap.scaled(m_pixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         setPixmap(scaledPixmap);
+    }
+}
+
+void Tower::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    // 检查是否是鼠标右键
+    if (event->button() == Qt::RightButton) {
+        // 切换范围显示的可见性
+        if (m_rangeCircle) {
+            bool isVisible = m_rangeCircle->isVisible();
+            showRange(!isVisible); // 取反：如果是显示的就隐藏，隐藏的就显示
+        }
+        event->accept(); // 标记事件已处理，不再传递
+    }
+    else {
+        // 如果是左键（或其他键），我们必须【忽略】它
+        // 这样事件才能“穿透”防御塔，传递给底下的 TowerBaseItem
+        // 从而触发 MainWindow 中的升级/出售菜单逻辑
+        event->ignore();
+
+        // 或者调用基类实现（通常基类也会忽略左键，除非你设置了Flag）
+        QGraphicsPixmapItem::mousePressEvent(event);
     }
 }

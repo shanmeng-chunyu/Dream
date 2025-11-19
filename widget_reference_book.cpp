@@ -1,5 +1,6 @@
 #include "widget_reference_book.h"
 #include "ui_widget_reference_book.h"
+#include "ConfigHelper.h"
 
 widget_reference_book::widget_reference_book(QWidget *parent)
     : auto_widget(parent)
@@ -7,8 +8,8 @@ widget_reference_book::widget_reference_book(QWidget *parent)
 {
     ui->setupUi(this);
 
-    towers=get_json_array(":/data/tower_data.json","master_towers");
-    enemies=get_json_array(":/data/enemy_data.json","master_enemies");
+    towers = get_json_array(getConfigFile("tower_data.json"), "master_towers");
+    enemies = get_json_array(getConfigFile("enemy_data.json"), "master_enemies");
 
     items={
         ui->item1,ui->item2,ui->item3,ui->item4,ui->item5,ui->item6,

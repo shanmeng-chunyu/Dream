@@ -1,4 +1,5 @@
 #include "LevelEditorWidget.h"
+#include "ConfigHelper.h"
 #include <QIcon>
 #include <QFontDatabase>
 #include <QPainter>
@@ -103,8 +104,8 @@ void LevelEditorWidget::loadPrototypes() {
     // --- 在此填充你的 enemy_data.json 和 tower_data.json 的实际路径 ---
     // 提示: 最好使用 Qt 资源文件 (qrc) 路径，例如 ":/data/enemy_data.json"
     // 为了方便测试，这里暂时使用你上传的文件名。
-    QString enemyDataPath = ":/data/enemy_data.json";
-    QString towerDataPath = ":/data/tower_data.json";
+    QString enemyDataPath = getConfigFile("enemy_data.json");
+    QString towerDataPath = getConfigFile("tower_data.json");
     // -------------------------------------------------------------
 
     // 加载敌人

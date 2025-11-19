@@ -98,3 +98,4 @@ add_executable(Dream
 )
 
 target_link_libraries(Dream PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia)
+target_compile_definitions(Dream PRIVATE PROJECT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
