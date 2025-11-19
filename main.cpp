@@ -233,6 +233,7 @@ int main(int argc, char *argv[])
     // 1. (保留) 主菜单 -> 关卡选择器
     QObject::connect(&menu, &widget_menu::choose_level, &a, [&]()
                      {
+                        levelChooser.reset();
                          switchWindow(&menu, &levelChooser); // <-- 修改
                      });
 

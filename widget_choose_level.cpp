@@ -152,3 +152,15 @@ void widget_choose_level::smoothTextTransition(QLabel *label, const QString &new
     sequence->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
+void widget_choose_level::reset()
+{
+    // 1. 重置索引为 0 (第一关)
+    choice = 0;
+
+    // 2. 强制刷新 UI 元素 (不使用平滑过渡，直接设置)
+    // 确保 map, descriptions, frames, icons 这些容器不为空
+    if (map.size() > 0) ui->map_picture->setPixmap(QPixmap(map[choice]));
+    if (descriptions.size() > 0) ui->description->setText(descriptions[choice]);
+    if (frames.size() > 0) ui->btn_level->setIcon(QIcon(frames[choice]));
+    if (icons.size() > 0) ui->icon->setIcon(QIcon(icons[choice]));
+}

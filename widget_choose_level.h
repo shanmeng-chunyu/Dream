@@ -24,6 +24,7 @@ public:
 
     //设置各关卡的描述
     void set_descriptions(QVector<QString> d);
+    void reset();
 
 signals:
     //按钮按下触发的信号
