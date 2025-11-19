@@ -5,7 +5,8 @@
 #include <QGraphicsPixmapItem>
 #include <QPointF>
 #include <vector>
-#include <string>
+#include <QMap> // 【新增】
+#include <QPair>
 
 class LiveCoffee;
 class QMovie;
@@ -60,7 +61,8 @@ private:
     QMovie* m_movie;      // 用于处理GIF动画
     QVector<QPixmap> m_frames;
     int m_currentFrameIndex;
-    QTimer* m_animTimer;
+    int m_animTickCounter;    // 当前积累了多少个游戏逻辑帧
+    int m_ticksPerFrame;      // 每隔多少个游戏逻辑帧切换一次图片
 
     int m_stunTicksRemainimng = 0;
     double m_baseSpeed;//Ô­Ê¼ËÙ¶È
@@ -70,6 +72,8 @@ private:
     void removeVisualEffect();
     QGraphicsPixmapItem* m_effectItem; // 指向当前特效贴图的指针
     int m_effectTicksRemaining;
+
+    static QMap<QString, QPair<QVector<QPixmap>, int>> s_staticFrameCache;
 };
 
 #endif // ENEMY_H
