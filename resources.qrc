@@ -69,6 +69,7 @@
         <file>resources/enemies/level1/thesis.png</file>
         <file>resources/enemies/level1/thesis.gif</file>
         <file>resources/enemies/level2/coldwords.png</file>
+        <file>resources/enemies/level2/coldwords.gif</file>
         <file>resources/enemies/level2/lonelyness.png</file>
         <file>resources/enemies/level2/recall.png</file>
         <file>resources/enemies/level2/tears.png</file>
@@ -150,10 +151,15 @@
         <file>resources/towers/level1/KnowledgeTree_upgrade.png</file>
         <file>resources/towers/level1/KnowledgeTree_upgrade.gif</file>
         <file>resources/towers/level1/LiveCoffee.png</file>
+        <file>resources/towers/level1/LiveCoffee.gif</file>
         <file>resources/towers/level1/LiveCoffee_upgrade.png</file>
+        <file>resources/towers/level1/LiveCoffee_upgrade.gif</file>
         <file>resources/towers/level2/Companionship.png</file>
+        <file>resources/towers/level2/Companionship.gif</file>
         <file>resources/towers/level2/Companionship_upgrade.png</file>
+        <file>resources/towers/level2/Companionship_upgrade.gif</file>
         <file>resources/towers/level2/NightRadio.png</file>
+        <file>resources/towers/level2/NightRadio.gif</file>
         <file>resources/towers/level2/NightRadio_upgrade.png</file>
         <file>resources/towers/level2/PettingCatTime.png</file>
         <file>resources/towers/level2/PettingCatTime_upgrade.png</file>

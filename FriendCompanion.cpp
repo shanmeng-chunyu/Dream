@@ -5,7 +5,6 @@
 
 FriendCompanion::FriendCompanion(double range,const QString &gif_path,QSize pixelSize,QGraphicsItem* parent):Tower(0,range,1,100,150,gif_path,pixelSize,parent)
 {
-    //朋友陪伴的fireRate应该是存在的，因为有对应的bullet，应该有一个发射频率(只是对应敌人无功能，先设为1）
     increaseDamage=1.15;
     type="Companionship";
 
@@ -45,10 +44,18 @@ void FriendCompanion:: upgrade()
 {
     increaseDamage=1.25;
     upgraded=true;
-    const QSize towerPixelSize(76, 76);
-    QPixmap originalUpgradePixmap(":/towers/resources/towers/level2/Companionship_upgrade.png");
-    QPixmap scaledPixmap = originalUpgradePixmap.scaled(towerPixelSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    setPixmap(scaledPixmap);
+    const QString upgradedGifPath = ":/towers/resources/towers/level2/Companionship_upgrade.gif"; // <--- 假设的 .gif 路径
+    // 2. 停止当前正在播放的 QMovie
+    m_movie->stop();
+    // 3. (重要) 给 m_movie 设置新的GIF文件路径
+    m_movie->setFileName(upgradedGifPath);
+    // 4. 重新启动 QMovie
+    m_movie->start();
+    // 5. (可选但推荐) 立即更新一帧，防止短暂的空白或旧帧残留
+    if (m_movie->isValid()) {
+        // updatePixmapFromMovie() 是 Tower 基类中更新贴图的槽函数
+        updatePixmapFromMovie();
+    }
 
     // 4a. 加载升级后的光环贴图 (在这里它和原版是同一张)
     QPixmap originalAuraPixmap(":/bullet/resources/bullet/level2/Companionship.png");

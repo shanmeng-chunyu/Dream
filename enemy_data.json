@@ -72,6 +72,7 @@
       "type": "coldwords",
       "name": "冰冷的言语",
       "pixmap": ":/enemies/resources/enemies/level2/coldwords.png",
+      "gif_path": ":/enemies/resources/enemies/level2/coldwords.gif",
       "health": 200,
       "speed": 1,
       "drops": 10,
