@@ -9,7 +9,7 @@ void KnowledgeTree::upgrade()
 {
     if(!upgraded)
     {
-        damage=100;
+        damage=m_damageUpgradeValue;
         fireRate=1.6;
         fireInterval=fireRate*60;
         originalFireInterval=fireInterval;

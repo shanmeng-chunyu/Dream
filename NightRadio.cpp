@@ -8,7 +8,7 @@ void NightRadio::upgrade()
 {
     if(!upgraded)
     {
-        damage=75;
+        damage=m_damageUpgradeValue;
         fireRate=1.0;
         fireInterval = fireRate * 60;
         originalFireInterval = fireInterval;

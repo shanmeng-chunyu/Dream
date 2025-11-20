@@ -41,6 +41,7 @@ public:
     void resumeAnimation();
     //升级
     virtual void upgrade();
+    void setDamageUpgradeValue(int val) { m_damageUpgradeValue = val; }
 
 public slots:
     void findAndAttackTarget();
@@ -89,6 +90,7 @@ protected:
     QString m_chargeGifPath;    // 充能状态 GIF 路径
     QString m_upgradedGifPath;  // 升级后基础状态 GIF 路径 (未充能)
     QString m_upgradedChargeGifPath; // 升级后充能状态 GIF 路径
+    int m_damageUpgradeValue; // 升级时增加的伤害值
     void updateVisualState(bool isCharged);
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     friend class GameManager;

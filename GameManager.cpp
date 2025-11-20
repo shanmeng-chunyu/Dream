@@ -425,6 +425,12 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     }
 
 
+    if (tower) {
+        // 从 JSON 中读取 "damage_upgrade"
+        int upgradeDmg = proto["damage_upgrade"].toInt();
+        // 注入到塔对象中
+        tower->setDamageUpgradeValue(upgradeDmg);
+    }
     // 设置偏移量，将 (0,0) 点移动到中心
     const QPointF towerTopLeftPos(absPos.x() - towerPixelSize.width() / 2.0,
                                   absPos.y() - towerPixelSize.height() / 2.0);

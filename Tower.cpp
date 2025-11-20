@@ -23,7 +23,8 @@ Tower::Tower(int damage, double range, double fireRate,int cost,int upgradeCost,
     fireInterval(static_cast<int>(fireRate * 60)),fireCount(fireInterval),
     originalFireInterval(fireInterval),originalDamage(damage),
     m_pixelSize(pixelSize),
-    m_auraItem(nullptr){
+    m_auraItem(nullptr),
+    m_damageUpgradeValue(damage){
 
     m_movie = new QMovie(gif_path, QByteArray(), this);
     m_movie->setCacheMode(QMovie::CacheAll);

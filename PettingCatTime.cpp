@@ -27,7 +27,7 @@ void PettingCatTime::upgrade()
 {
     if(!upgraded)
     {
-        damage = 45;
+        damage = m_damageUpgradeValue;
         fireRate = 0.25;
         fireInterval = fireRate * 60;
         originalFireInterval = fireInterval;
