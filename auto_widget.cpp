@@ -173,9 +173,9 @@ void auto_widget::generateBlurredBackground()
     // 2. 使用 QGraphicsEffect 来施加模糊
     QGraphicsScene scene;
     QGraphicsPixmapItem item(scaledRaw);
-    QGraphicsBlurEffect blurEffect;
-    blurEffect.setBlurRadius(m_blurRadius);
-    item.setGraphicsEffect(&blurEffect);
+    QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect();
+    blurEffect->setBlurRadius(m_blurRadius);
+    item.setGraphicsEffect(blurEffect);
 
     scene.addItem(&item);
 

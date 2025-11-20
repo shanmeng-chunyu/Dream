@@ -2464,9 +2464,9 @@ void MainWindow::generateBlurredBackground()
     QGraphicsScene scene;
     QGraphicsPixmapItem item(scaledRaw);
 
-    QGraphicsBlurEffect blurEffect; // 在栈上创建
-    blurEffect.setBlurRadius(m_blurRadius); // 使用成员变量设置
-    item.setGraphicsEffect(&blurEffect); // 传递栈对象的地址
+    QGraphicsBlurEffect *blurEffect = new QGraphicsBlurEffect();
+    blurEffect->setBlurRadius(m_blurRadius);
+    item.setGraphicsEffect(blurEffect);
 
     scene.addItem(&item);
 
