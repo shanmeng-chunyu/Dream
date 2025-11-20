@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
     g_loadingTips.push_back("听说扫了这个二维码可以获得通关秘籍。");
 
     // 设置你想要的加载时长 (3000ms = 3秒)
-    const int LOADING_DURATION_MS = 8000;
+    const int LOADING_DURATION_MS = 5000;
 
     /**
      * @brief 这是一个新的辅助 Lambda，它负责：
