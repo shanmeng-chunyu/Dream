@@ -8,30 +8,39 @@
 #include <QDir>
 
 inline QString getConfigFile(const QString& fileName) {
-    // fileName 传入例如: "levels/level1.json" 或 "tower_data.json"
+    // fileName 传入类似于 "enemy_data.json" 的文件名（不要带 :/ 前缀了）
 
 #ifdef PROJECT_ROOT
-    // 1. 开发模式 (CLion): 优先读源码目录，方便修改调试
+    // 1. 开发模式：优先读取源代码目录下的文件
+    // 这样你修改项目里的 json，游戏会立刻读取到
     QString devPath = QString(PROJECT_ROOT) + "/" + fileName;
     if (QFile::exists(devPath)) {
+        static bool hasLoggedDev = false;
+        if (!hasLoggedDev) {
+            qDebug() << "[DevMode] Loading config from Source:" << devPath;
+            hasLoggedDev = true;
+        }
         return devPath;
     }
 #endif
 
-    // 2. 发布模式 (Release): 读取 .exe 同级目录下的文件
-    // QCoreApplication::applicationDirPath() 返回的是 Dream.exe 所在的文件夹路径
+    // 2. 发布模式：读取可执行文件 (.exe) 同级目录下的文件
+    // 当你打包游戏时，需要把 json 文件复制到 exe 旁边
     QString releasePath = QCoreApplication::applicationDirPath() + "/" + fileName;
-
-    // 检查文件是否存在
     if (QFile::exists(releasePath)) {
         return releasePath;
     }
 
-    // 3. 如果都找不到，打印严重警告（这通常是崩溃的前兆）
-    qWarning() << "!!! CRITICAL ERROR: Config file not found !!!";
-    fflush(stderr);
-    qWarning() << "Missing file:" << releasePath;
-    fflush(stderr);
+    // 3. 如果都找不到，打印错误
+    qWarning() << "Config file not found:" << fileName
+               << "\nSearched Dev path:" <<
+               #ifdef PROJECT_ROOT
+                   QString(PROJECT_ROOT) + "/" + fileName
+               #else
+                   "N/A"
+               #endif
+               << "\nSearched Release path:" << releasePath;
+
     return "";
 }
 

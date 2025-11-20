@@ -20,7 +20,7 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia)
 
 # ������ִ���ļ�����Դ�ļ�
-add_executable(Dream
+add_executable(Dream WIN32
         main.cpp
         MainWindow.h
         MainWindow.cpp
