@@ -40,7 +40,7 @@ void WarmMemory::upgrade()
 {
     if(!upgraded)
     {
-        damage=300;
+        damage=m_damageUpgradeValue;
         stopDuration=3.0;
         fireRate=4.0;
         fireInterval=fireRate*60;
