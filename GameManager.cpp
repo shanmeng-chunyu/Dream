@@ -56,41 +56,7 @@ GameManager::GameManager(QObject* parent)
     connect(m_gameTimer, &QTimer::timeout, this, &GameManager::updateGame);
     connect(m_waveManager, &WaveManager::spawnEnemy, this, &GameManager::onSpawnEnemy);
 
-    m_buildSound = new QSoundEffect(this);
-    m_buildSound->setSource(QUrl("qrc:/music/resources/music/build_tower.wav"));
-    m_buildSound->setVolume(0.5);
-
-    m_sellSound = new QSoundEffect(this);
-    m_sellSound->setSource(QUrl("qrc:/music/resources/music/sell_tower.wav"));
-    m_sellSound->setVolume(0.5);
-
-    m_bulbatkSound = new QSoundEffect(this);
-    m_bulbatkSound->setSource(QUrl("qrc:/music/resources/music/bulb_atk.wav"));
-    m_bulbatkSound->setVolume(0.5);
-
-    m_radioatkSound = new QSoundEffect(this);
-    m_radioatkSound->setSource(QUrl("qrc:/music/resources/music/radio_atk.wav"));
-    m_radioatkSound->setVolume(0.5);
-
-    m_hitSoundAOE = new QSoundEffect(this);
-    m_hitSoundAOE->setSource(QUrl("qrc:/music/resources/music/explosion.wav"));
-    m_hitSoundAOE->setVolume(0.5); // (AOE 声音可以大一点)
-
-    m_victorySound = new QSoundEffect(this);
-    m_victorySound->setSource(QUrl("qrc:/music/resources/music/gamewin.wav"));
-    m_victorySound->setVolume(1.0); // 胜利！大声点
-
-    m_defeatSound = new QSoundEffect(this);
-    m_defeatSound->setSource(QUrl("qrc:/music/resources/music/gamelose.wav"));
-    m_defeatSound->setVolume(1.0); // 失败也大声点
-
-    m_upgradeSound = new QSoundEffect(this);
-    m_upgradeSound->setSource(QUrl("qrc:/music/resources/music/upgrade.wav"));
-    m_upgradeSound->setVolume(0.6);
-
-    m_nightmareSpawnSound = new QSoundEffect(this);
-    m_nightmareSpawnSound->setSource(QUrl("qrc:/music/resources/music/nightmare.wav"));
-    m_nightmareSpawnSound->setVolume(0.9);
+    preloadAllSounds();
 
 }
 
@@ -271,7 +237,8 @@ void GameManager::updateGame() {
     m_waveManager->update();
 
     /* ========= 敌人更新（移动 + 狂暴 + 回血） ========= */
-    for (Enemy* enemy : m_enemies) {
+    const QList<Enemy*> enemiesSnapshot = m_enemies;
+    for (Enemy* enemy : enemiesSnapshot) {
         enemy->move();
 
         /* ----------- Boss 狂暴（第一关） ----------- */
@@ -342,7 +309,14 @@ void GameManager::updateGame() {
     }
 
     /* ========= 子弹移动 ========= */
-    for (Bullet* bullet : m_bullets) bullet->move();
+    const QList<Bullet*> bulletsSnapshot = m_bullets;
+    for (Bullet* bullet : bulletsSnapshot) {
+        // 必须检查子弹是否还“活着”（可能被其他逻辑删除了，虽然子弹通常是一次性的）
+        if (!m_bullets.contains(bullet)) continue;
+        bullet->move();
+        // move() 可能会触发 onBulletHitTarget -> removeAll()
+        // 但因为我们遍历的是 snapshot，所以不会崩。
+    }
 
     updateTowerTargets();
     for (Tower* tower : m_towers) {
@@ -365,7 +339,7 @@ void GameManager::onSpawnEnemy(const QString& type, const std::vector<QPointF>& 
     // 检查生成的敌人类型是否为 "nightmare"
     if (type == "nightmare") {
         // 如果是，立即调用 destroyAllTowers
-        m_nightmareSpawnSound->play();
+        playSound(m_nightmareSpawnSound);
         destroyAllTowers(true);
     }
 
@@ -435,7 +409,7 @@ void GameManager::buildTower(const QString& type, const QPointF& relativePositio
     const QPointF towerTopLeftPos(absPos.x() - towerPixelSize.width() / 2.0,
                                   absPos.y() - towerPixelSize.height() / 2.0);
     tower->setPos(towerTopLeftPos);
-    m_buildSound->play();
+    playSound(m_buildSound);
     m_scene->addItem(tower);
     m_towers.append(tower);
     if (tower->getAuraItem())
@@ -498,9 +472,9 @@ void GameManager::onNewBullet(Tower* tower, QGraphicsPixmapItem* target) {
     else if (type == "NightRadio") {
         damageType = Bullet::Piercing;
         // 穿透伤害不需要半径
-        m_radioatkSound->play();
+        playSound(m_radioatkSound);
     }else {
-        m_bulbatkSound->play();
+        playSound(m_bulbatkSound);
     }
     // (其他塔，如 InspirationBulb，会使用默认的 SingleTarget)
     // 创建子弹实例 (使用缩放后的贴图)
@@ -700,7 +674,7 @@ void GameManager::onBulletHitTarget(Bullet* bullet) {
                     obstacle->takeDamage(damage);
                 }
             }
-            m_hitSoundAOE->play();
+            playSound(m_hitSoundAOE);
             break; // 结束
         }
 
@@ -831,15 +805,16 @@ void GameManager::checkWinLossConditions() {
     if (m_player->getStability() <= 0) {
         m_gameIsOver = true;
         m_gameTimer->stop();
-        m_defeatSound->play();
+        playSound(m_defeatSound);
         emit gameFinished(false,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
+        return;
         // 此处可以发射一个游戏失败的信号
     }
 
     if (m_waveManager->isFinished() && m_enemies.isEmpty()) {
         m_gameIsOver = true;
         m_gameTimer->stop();
-        m_victorySound->play();
+        playSound(m_victorySound);
         emit gameFinished(true,m_player->getStability(), m_waveManager->getTotalEnemiesKilled());
         // 此处可以发射一个游戏胜利的信号
     }
@@ -863,7 +838,7 @@ void GameManager::onTowerUpgradeRequested(const QPointF& relativePosition) {
             QJsonObject proto = m_towerPrototypes[tower->getType()];
             if (m_player->spendResource(proto["upgrade_cost"].toInt())) {
                 tower->upgrade();
-                m_upgradeSound->play();
+                playSound(m_upgradeSound);
                 if (tower->getAuraItem())
                 {
                     // (我们假设塔的大小和位置不变)
@@ -921,7 +896,7 @@ void GameManager::onTowerSellRequested(const QPointF& relativePosition) {
 
     // 3. 返还资源
     m_player->addResource(refundAmount);
-    m_sellSound->play();
+    playSound(m_sellSound);
     if (towerToSell->getAuraItem()) {
         m_scene->removeItem(towerToSell->getAuraItem());
         // 将光环也加入清理队列
@@ -1071,8 +1046,6 @@ void GameManager::onBulletHitObstacle(Bullet* bullet, Obstacle* obstacle)
     // 对穿透的障碍物造成伤害
     obstacle->takeDamage(bullet->getDamage());
 
-    // （可选）你可以在这里播放一个击中障碍物的音效
-    // m_hitSoundObstacle->play();
 }
 
 void GameManager::destroyAllTowers(bool withEffects)
@@ -1150,4 +1123,70 @@ void GameManager::clearGameScene()
 
     // 5. (可选) 重置 Player 状态，但这通常在 loadLevel 时完成
     // m_player->setInitialState(0, 0);
+}
+
+QSoundEffect* GameManager::createSound(const QString& fileName, double volume) {
+    QString targetPath;
+
+    // 1. 优先级 A: 检查 .exe 旁边的 sounds 文件夹 (发布/Release模式)
+    QString releasePath = QCoreApplication::applicationDirPath() + "/sounds/" + fileName;
+
+    // 2. 优先级 B: 检查源码目录 (开发/Debug模式)
+    // (利用 CMakeLists.txt 中定义的 PROJECT_ROOT)
+#ifdef PROJECT_ROOT
+    QString devPath = QString(PROJECT_ROOT) + "/sounds/" + fileName;
+#else
+    QString devPath = "";
+#endif
+
+    if (QFile::exists(releasePath)) {
+        targetPath = releasePath;
+    } else if (!devPath.isEmpty() && QFile::exists(devPath)) {
+        targetPath = devPath;
+    } else {
+        qWarning() << "[Audio Error] File not found:" << fileName
+                   << "\nSearched:" << releasePath << "\nAnd:" << devPath;
+        return nullptr; // 文件未找到，返回空指针
+    }
+
+    // 3. 创建并初始化音效
+    QSoundEffect* sound = new QSoundEffect(this);
+    sound->setSource(QUrl::fromLocalFile(targetPath));
+    sound->setVolume(volume);
+
+    // 验证加载是否成功（非必须，但有助于调试）
+    // if (sound->status() == QSoundEffect::Error) {
+    //     qWarning() << "Failed to decode audio:" << targetPath;
+    // }
+
+    return sound;
+}
+
+void GameManager::preloadAllSounds() {
+    // 使用 createSound 一次性加载所有成员变量
+    // 这样程序刚启动，这些对象就都在内存里准备好了
+
+    m_buildSound = createSound("build_tower.wav", 0.5);
+    m_sellSound  = createSound("sell_tower.wav", 0.5);
+
+    m_bulbatkSound  = createSound("bulb_atk.wav", 0.5);
+    m_radioatkSound = createSound("radio_atk.wav", 0.5);
+
+    m_hitSoundAOE   = createSound("explosion.wav", 0.5);
+
+    m_victorySound = createSound("gamewin.wav", 1.0);
+    m_defeatSound  = createSound("gamelose.wav", 1.0);
+
+    m_upgradeSound = createSound("upgrade.wav", 0.6);
+    m_nightmareSpawnSound = createSound("nightmare.wav", 0.9);
+
+    qDebug() << "All audio assets pre-loaded.";
+}
+
+void GameManager::playSound(QSoundEffect* sound) {
+    // 如果 sound 是 nullptr（文件没找到），或者状态错误，就不播放，避免崩溃
+    if (sound && sound->status() != QSoundEffect::Error) {
+        // 如果需要支持密集播放，可以在这里加 sound->stop()，但在塔防里通常不需要
+        sound->play();
+    }
 }

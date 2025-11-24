@@ -16,7 +16,7 @@ auto_widget::auto_widget(QWidget *parent)
     if (parent == nullptr) 
     {
         // 1. 这是一个顶级窗口 (Menu, ChooseLevel, etc.)
-        //    加载你指定的原始背景图
+        //    加载指定的原始背景图
         if (!m_rawBg.load(":/background/resources/background/choose_.png")) { //
             qWarning() << "Failed to load blurred background source image.";
         }

@@ -84,6 +84,9 @@ private:
     void cleanupEntities();
     void updateTowerTargets();
     void checkWinLossConditions();
+    QSoundEffect* createSound(const QString& fileName, double volume);
+    void preloadAllSounds();
+    void playSound(QSoundEffect* sound);
 
     static GameManager* m_instance;
 
@@ -101,15 +104,15 @@ private:
     QList<Tower*> m_towers;
     QList<Bullet*> m_bullets;
     QList<Obstacle*> m_obstacles;
-    QSoundEffect* m_hitSoundAOE;
-    QSoundEffect* m_victorySound;
-    QSoundEffect* m_defeatSound;
-    QSoundEffect* m_upgradeSound;
-    QSoundEffect* m_nightmareSpawnSound;
-    QSoundEffect* m_buildSound;
-    QSoundEffect* m_sellSound;
-    QSoundEffect* m_bulbatkSound;
-    QSoundEffect* m_radioatkSound;
+    QSoundEffect* m_hitSoundAOE = nullptr;
+    QSoundEffect* m_victorySound = nullptr;
+    QSoundEffect* m_defeatSound = nullptr;
+    QSoundEffect* m_upgradeSound = nullptr;
+    QSoundEffect* m_nightmareSpawnSound = nullptr;
+    QSoundEffect* m_buildSound = nullptr;
+    QSoundEffect* m_sellSound = nullptr;
+    QSoundEffect* m_bulbatkSound = nullptr;
+    QSoundEffect* m_radioatkSound = nullptr;
 
     // 待删除的实体列表，用于安全删除
     QList<QGraphicsItem*> m_entitiesToClean;

@@ -1,20 +1,14 @@
 #include <QApplication>
-#include <QTimer>
 #include <QStringList>
-#include <QIcon>
 #include <QStandardPaths>
-#include <QFile>
-#include <QDir>
 #include <QFontDatabase>
 
 #include "LevelEditorWidget.h"
 #include "MainWindow.h"
 #include "widget_choose_level.h"
 #include "widget_level_loading.h"
-#include "widget_building_list.h"
 #include "widget_menu.h"
 #include "widget_ingame.h"
-#include "widget_pause_menu.h"
 #include "widget_reference_book.h"
 #include "ConfigHelper.h"
 
@@ -42,6 +36,7 @@ namespace
 
 int main(int argc, char *argv[])
 {
+
     QApplication a(argc, argv);
 
     QFontDatabase::addApplicationFont(":/font/resources/font/font.ttf");

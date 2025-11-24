@@ -184,18 +184,6 @@
         <file>resources/font/font.ttf</file>
         <file>resources/font/Comic Sans MS.ttf</file>
     </qresource>
-    <qresource prefix="/music">
-        <file>resources/music/explosion.wav</file>
-        <file>resources/music/gamelose.wav</file>
-        <file>resources/music/gamewin.wav</file>
-        <file>resources/music/nightmare.wav</file>
-        <file>resources/music/upgrade.wav</file>
-        <file>resources/music/build_tower.wav</file>
-        <file>resources/music/bulb_atk.wav</file>
-        <file>resources/music/button.wav</file>
-        <file>resources/music/radio_atk.wav</file>
-        <file>resources/music/sell_tower.wav</file>
-    </qresource>
     <qresource prefix="/portrait">
         <file>resources/portrait/shan_meng_chun_yu.jpg</file>
         <file>resources/portrait/wu_sa_qi.jpg</file>

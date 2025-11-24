@@ -7,7 +7,7 @@
       "gif_path": ":/enemies/resources/enemies/level1/bug.gif",
       "health": 300,
       "speed": 1.0,
-      "drops": 10,
+      "drops": 15,
       "damage": 1,
       "description": "程序中的错误，被击杀后会分裂成两只小bug"
     },
@@ -18,7 +18,7 @@
       "gif_path": ":/enemies/resources/enemies/level1/bug.gif",
       "health": 150,
       "speed": 1.2,
-      "drops": 5,
+      "drops": 10,
       "damage": 1,
       "description": "由BUG分裂而成，体型更小，速度更快"
     },
@@ -29,7 +29,7 @@
       "gif_path": ":/enemies/resources/enemies/level1/gpa.gif",
       "health": 600,
       "speed": 0.8,
-      "drops": 15,
+      "drops": 30,
       "damage": 2,
       "description": "沉重的GPA,移动速度缓慢但是生命值较高"
     },
@@ -40,7 +40,7 @@
       "gif_path": ":/enemies/resources/enemies/level1/ddl.gif",
       "health": 160,
       "speed": 1.5,
-      "drops": 8,
+      "drops": 10,
       "damage": 1,
       "description": "紧迫的DDL,移动速度较快但是生命值较低"
     },
@@ -51,7 +51,7 @@
       "gif_path": ":/enemies/resources/enemies/level1/pre.gif",
       "health": 1000,
       "speed": 1.0,
-      "drops": 50,
+      "drops": 100,
       "damage": 5,
       "description": "Presentation的压力,生命值和伤害都较高"
     },
@@ -75,7 +75,7 @@
       "gif_path": ":/enemies/resources/enemies/level2/coldwords.gif",
       "health": 200,
       "speed": 1,
-      "drops": 10,
+      "drops": 15,
       "damage": 1,
       "description": "刺骨的冷言冷语,生命值较低但会频繁出现"
     },
@@ -86,7 +86,7 @@
       "gif_path": ":/enemies/resources/enemies/level2/lonelyness.gif",
       "health": 400,
       "speed": 1,
-      "drops": 20,
+      "drops": 30,
       "damage": 2,
       "description": "无尽的孤独感,生命值适中,请小心应对"
     },
@@ -97,7 +97,7 @@
       "gif_path": ":/enemies/resources/enemies/level2/recall.gif",
       "health": 800,
       "speed": 1,
-      "drops": 25,
+      "drops": 50,
       "damage": 3,
       "description": "令人心碎的回忆,生命值较高,会降低周围防御塔的攻速"
     },
@@ -108,7 +108,7 @@
       "gif_path": ":/enemies/resources/enemies/level2/tears.gif",
       "health": 1200,
       "speed": 1.0,
-      "drops": 60,
+      "drops": 100,
       "damage": 5,
       "description": "伤心的泪水,生命值较高,会治疗周围的敌人",
       "healBelowHp": 0.70,
